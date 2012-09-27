@@ -1,0 +1,1 @@
+mvn-log.sh clean install $*

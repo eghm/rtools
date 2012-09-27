@@ -1,0 +1,22 @@
+Index: web/src/main/webapp/WEB-INF/web.xml
+===================================================================
+--- web/src/main/webapp/WEB-INF/web.xml	(revision 32060)
++++ web/src/main/webapp/WEB-INF/web.xml	(working copy)
+@@ -60,7 +60,17 @@
+ 
+   ${monitoring.mapping}
+ 
++  <filter>
++    <filter-name>W3cMarkupValidationFilter</filter-name>
++    <filter-class>de.michaeltamm.W3cMarkupValidationFilter</filter-class>
++  </filter>
++
+   <filter-mapping>
++    <filter-name>W3cMarkupValidationFilter</filter-name>
++    <url-pattern>/*</url-pattern>
++  </filter-mapping>
++
++  <filter-mapping>
+     <filter-name>HideWebInfFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>

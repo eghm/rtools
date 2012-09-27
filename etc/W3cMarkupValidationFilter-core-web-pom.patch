@@ -1,0 +1,17 @@
+diff --git core/web/pom.xml core/web/pom.xml
+index be2812e..0389238 100644
+--- core/web/pom.xml
++++ core/web/pom.xml
+@@ -76,5 +76,11 @@
+         	<artifactId>servlet-api</artifactId>
+         </dependency>
+ 
++        <dependency>
++          <groupId>de.michaeltamm</groupId>
++          <artifactId>W3cMarkupValidationFilter</artifactId>
++          <version>1.0.2</version>
++        </dependency>
++
+     </dependencies>
+ </project>
+\ No newline at end of file

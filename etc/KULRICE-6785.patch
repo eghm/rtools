@@ -1,0 +1,15 @@
+Index: krad/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/FieldBase.java
+===================================================================
+--- krad/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/FieldBase.java	(revision 31149)
++++ krad/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/FieldBase.java	(working copy)
+@@ -242,8 +242,8 @@
+      * @return FieldSecurity instance
+      */
+     @Override
+-    public FieldSecurity getComponentSecurity() {
+-        return (FieldSecurity) super.getComponentSecurity();
++    public ComponentSecurity getComponentSecurity() {
++        return super.getComponentSecurity();
+     }
+ 
+     /**
