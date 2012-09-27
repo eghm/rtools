@@ -6,7 +6,7 @@ WARNING		WARNING		WARNING		WARNING
 
 Tools developed while developing on OSX for rice with MySQL.  Assuming rtools is in $R_HOME (set as an environmental variable).  I use /r
 
-I don't update, I only create new revisions, which I create a git repository for.
+I don't update.  I only create new revisions, which I create a git repository for.  I do create DBs for each version I setup.
 An example workflow would be:
 * create a new version of rice trunk in $R_HOME/version#:
 ** rDev.sh 34866 rootdbpass
