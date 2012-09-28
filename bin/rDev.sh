@@ -63,7 +63,7 @@ rDtsLogFiles.sh $1
 rKradreload.sh
 
 git add -A
-git commit -a -m "dev init before mvn-clean-install"
+git commit -a -m "applied rDev custom updates"
 
 echo "starting mvn-clean-install.sh"
 mvn-clean-install.sh

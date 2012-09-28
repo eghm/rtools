@@ -36,4 +36,7 @@ git commit -a -m "pre impex"
 
 # remove the % identified bys causing me problems
 patch -p1 <../rtools/etc/impex-no-user-percent.patch 
-gitAll.sh
+
+git add -A
+git commit -a -m "applyed impex-no-user-precent.patch"
+
