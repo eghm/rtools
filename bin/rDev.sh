@@ -50,6 +50,14 @@ if [ ! -z "$4" ]
 then
     rSauceLabs.sh $3 $4
 fi
+
+# get rid of the file not found exceptions
+touch core/impl/OJB.properties
+echo "<descriptor-repository version=\"1.0\"></descriptor-repository>" > core/impl/repository.xml
+touch kns/OJB.properties
+touch impl/OJB.properties
+echo "<descriptor-repository version=\"1.0\"></descriptor-repository>" > impl/repository.xml
+
 # dev tweeks
 rPatches.sh
 rCommonTestConfigMysql.sh $1 rice rice
