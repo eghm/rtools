@@ -11,9 +11,9 @@ mysql -u root -p$2 $1test-jdk7 < scripts/ddl/rice-test-tables-mysql.sql
 mysql -u root -p$2 $1test-bittronix < scripts/ddl/rice-test-tables-mysql.sql
 mysql -u root -p$2 $1test-bittronix-jdk7 < scripts/ddl/rice-test-tables-mysql.sql
 
-mvn-impex.sh $1clean $2
-mvn-impex.sh $1test-jdk7 $2
-mvn-impex.sh $1test-bittronix $2
-mvn-impex.sh $1test-bittronix-jdk7 $2
+mvn-impex.sh $1clean $2 $3 $4
+mvn-impex.sh $1test-jdk7 $2 $3 $4
+mvn-impex.sh $1test-bittronix $2 $3 $4
+mvn-impex.sh $1test-bittronix-jdk7 $2 $3 $4
 
 #mysql -u root -p$2 $1test < scripts/ddl/rice-test-tables-mysql.sql

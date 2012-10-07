@@ -20,7 +20,7 @@ fi
 
 svndiff.sh
 
-export logname=$1$2$3
+export logname=mvn-log
 touch $R_HOME/logs/$rDir/$logname.$DTS.out 
 ln -s $R_HOME/logs/$rDir/$logname.$DTS.out $logname.$DTS.out
 mvn -version  >> $logname.$DTS.out

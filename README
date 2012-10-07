@@ -20,7 +20,7 @@ An example workflow would be:
 
 Directory structure:
 $R_HOME/rtools/bin - scripts
-                   rDev.sh - dev env init script. Required parameters: version# and DB root user password.
+                   rDev.sh - dev env init script. Required parameters: version# and DB root user password.  See script file for options
                    deleteRevisionAndDBs.sh - undo rDev.sh. create git diff patch in $R_HOME. Required parameters: version# and DB root user password.
 $R_HOME/rtools/etc - templates, etc.
 $R_HOME/logs - log directory.  Version logs will be placed in $R_HOME/logs/version#/ and symlinked to $R_HOME/version#/

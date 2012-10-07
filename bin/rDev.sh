@@ -1,15 +1,21 @@
 #!/bin/bash
-# svn revision, db username, db password, [saucelabs username, saucelabs access key]
+# svn revision, db username, db password, [rice db username], [rice db password], [saucelabs username, saucelabs access key]
 if [ -z "$R_HOME" ]
 then
     echo "env R_HOME is not set!  Exiting."
+fi
+
+if [ -z "$3" ]
+then
+    export 3=RICE
+    export 4=RICE
 fi
 
 cd $R_HOME
 mkdir -p $R_HOME/logs/$1
 mkdir -p $R_HOME/$1/.rdev
 
-rMysqlDBs.sh $1 $2
+rMysqlDBs.sh $1 $2 $3 $4
 
 cd $R_HOME/$1
 
@@ -45,10 +51,11 @@ then
 	exit
 fi
 
+# Sauce Labs params are a problem if rice db user and pass are not given
 echo "running custom updates"
-if [ ! -z "$4" ]
+if [ ! -z "$7" ]
 then
-    rSauceLabs.sh $3 $4
+    rSauceLabs.sh $6 $7
 fi
 
 # get rid of the file not found exceptions
@@ -60,9 +67,9 @@ echo "<descriptor-repository version=\"1.0\"></descriptor-repository>" > impl/re
 
 # dev tweeks
 rPatches.sh
-rCommonTestConfigMysql.sh $1 rice rice
-rAppConfigSampleMysql.sh $1 rice rice
-rAppConfigStandaloneMysql.sh $1 rice rice
+rCommonTestConfigMysql.sh $1 $3 $4
+rAppConfigSampleMysql.sh $1 $3 $4
+rAppConfigStandaloneMysql.sh $1 $3 $4
 rSpyProperties.sh $1
 rLogin.sh
 rNoCacheFilter.sh

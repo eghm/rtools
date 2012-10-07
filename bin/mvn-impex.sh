@@ -1,3 +1,4 @@
+# db name, db root password, rice db name, rice db password
 # impex is different enough doing it via mvn-named-log has proved difficult
 export rDir=${PWD##*/}
 export DTS=$(date +%Y%m%d%H%M)
@@ -27,8 +28,8 @@ fi
 
 cd db/impex/master/
 mvn -version >> ../../../impex.$DTS.out
-echo "mvn install -Pdb,mysql -Dimpex.dba.url=jdbc:mysql://localhost:3306 -Dimpex.mysql.default.url=jdbc:mysql://localhost:3306/$1 -Dimpex.database=$1 -Dimpex.username=rice -Dimpex.password=rice -Dimpex.mysql.dba.password=$2 -Dimpex.dba.password=$2 $3 $4 $5 $6 $7 $8 $9"  >> ../../../impex.$DTS.out
-mvn install -Pdb,mysql -Dimpex.dba.url=jdbc:mysql://localhost:3306 -Dimpex.mysql.default.url=jdbc:mysql://localhost:3306/$1 -Dimpex.database=$1 -Dimpex.username=rice -Dimpex.password=rice -Dimpex.mysql.dba.password=$2 -Dimpex.dba.password=$2 $3 $4 $5 $6 $7 $8 $9 >> ../../../impex.$DTS.out
+echo "mvn install -Pdb,mysql -Dimpex.dba.url=jdbc:mysql://localhost:3306 -Dimpex.mysql.default.url=jdbc:mysql://localhost:3306/$1 -Dimpex.database=$1 -Dimpex.username=$3 -Dimpex.password=$4 -Dimpex.mysql.dba.password=$2 -Dimpex.dba.password=$2 $5 $6 $7 $8 $9"  >> ../../../impex.$DTS.out
+mvn install -Pdb,mysql -Dimpex.dba.url=jdbc:mysql://localhost:3306 -Dimpex.mysql.default.url=jdbc:mysql://localhost:3306/$1 -Dimpex.database=$1 -Dimpex.username=$3 -Dimpex.password=$4 -Dimpex.mysql.dba.password=$2 -Dimpex.dba.password=$2 $5 $6 $7 $8 $9 >> ../../../impex.$DTS.out
 cd ../../..
 cat impex.$DTS.out
 
