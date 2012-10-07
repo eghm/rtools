@@ -5,17 +5,20 @@ then
     echo "env R_HOME is not set!  Exiting."
 fi
 
-if [ -z "$3" ]
+export RICE_DB_USER=$3
+export RICE_DB_PASS=$4
+
+if [ -z "$RICE_DB_USER" ]
 then
-    export 3=RICE
-    export 4=RICE
+    export RICE_DB_USER=RICE
+    export RICE_DB_PASS=RICE
 fi
 
 cd $R_HOME
 mkdir -p $R_HOME/logs/$1
 mkdir -p $R_HOME/$1/.rdev
 
-rMysqlDBs.sh $1 $2 $3 $4
+rMysqlDBs.sh $1 $2 $RICE_DB_USER $RICE_DB_PASS
 
 cd $R_HOME/$1
 
@@ -67,9 +70,9 @@ echo "<descriptor-repository version=\"1.0\"></descriptor-repository>" > impl/re
 
 # dev tweeks
 rPatches.sh
-rCommonTestConfigMysql.sh $1 $3 $4
-rAppConfigSampleMysql.sh $1 $3 $4
-rAppConfigStandaloneMysql.sh $1 $3 $4
+rCommonTestConfigMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
+rAppConfigSampleMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
+rAppConfigStandaloneMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
 rSpyProperties.sh $1
 rLogin.sh
 rNoCacheFilter.sh
