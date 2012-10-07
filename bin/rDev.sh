@@ -86,6 +86,7 @@ git commit -a -m "applied rDev custom updates"
 echo "starting mvn-clean-install.sh"
 mvn-clean-install.sh
 
-mvnLinks.sh $1
+#mvnLinks.sh $1
+
 
 

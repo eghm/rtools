@@ -38,6 +38,7 @@ export KVERSION=$1
 # recreate linked mvn repository for the passed in version
 rm -rf $REPO_HOME/$KVERSION
 mkdir -p $REPO_HOME/$KVERSION
+mkdir -p $KUALI_REPO
 for dir in $REPO_DIR/*
 do
   export DIR_BASE=`basename $dir`
