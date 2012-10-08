@@ -1,0 +1,271 @@
+Index: pom.xml
+===================================================================
+--- pom.xml	(revision 35132)
++++ pom.xml	(working copy)
+@@ -1940,6 +1940,46 @@
+         <version>${freemarker.version}</version>
+       </dependency>
+ 
++      <dependency>
++        <groupId>com.saucelabs</groupId>
++        <artifactId>quickstart-webdriver-junit</artifactId>
++        <version>1.0.7</version>
++      </dependency>
++
++      <dependency>
++        <groupId>com.saucelabs</groupId>
++        <artifactId>saucerest</artifactId>
++        <version>[1.0.0,)</version>
++        <scope>test</scope>
++      </dependency>
++
++      <dependency>
++        <groupId>com.saucelabs</groupId>
++        <artifactId>sauce_java_common</artifactId>
++        <version>[1.0.0,)</version>
++        <scope>test</scope>
++      </dependency>
++
++      <dependency>
++        <groupId>com.saucelabs</groupId>
++        <artifactId>sauce_java</artifactId>
++        <version>[1.0.0,)</version>
++        <scope>test</scope>
++      </dependency>
++
++      <dependency>
++        <groupId>com.saucelabs</groupId>
++        <artifactId>sauce_junit</artifactId>
++        <version>[1.0.0,)</version>
++        <scope>test</scope>
++      </dependency>
++
++      <dependency>
++        <groupId>com.googlecode.json-simple</groupId>
++        <artifactId>json-simple</artifactId>
++        <version>1.1</version>
++      </dependency>
++
+     </dependencies>
+   </dependencyManagement>
+ 
+@@ -1954,4 +1994,4 @@
+     <url>https://svn.kuali.org/repos/rice/trunk</url>
+   </scm>
+ 
+-</project>
++</project>
+\ No newline at end of file
+Index: sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java
+===================================================================
+--- sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(revision 35141)
++++ sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(working copy)
+@@ -79,9 +79,9 @@
+     @After
+     public void tearDown() throws Exception {
+         try {
+-//            if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
+-//                SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY), System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
+-//            }
++            if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
++                SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY), System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
++            }
+             if (System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) {
+                 getHTML(ITUtil.prettyHttp(System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) + "?test=" + this.toString() + "&user=" + user));
+             }
+Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
+===================================================================
+--- sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
++++ sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
+@@ -0,0 +1,134 @@
++/**
++ * Copyright 2005-2012 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.common;
++
++import com.saucelabs.common.SauceOnDemandAuthentication;
++import com.saucelabs.common.SauceOnDemandSessionIdProvider;
++import com.saucelabs.junit.SauceOnDemandTestWatcher;
++import com.saucelabs.saucerest.SauceREST;
++import org.junit.Assert;
++import org.junit.rules.TestName;
++import org.openqa.selenium.Platform;
++import org.openqa.selenium.WebDriver;
++import org.openqa.selenium.ie.InternetExplorerDriver;
++import org.openqa.selenium.remote.DesiredCapabilities;
++import org.openqa.selenium.remote.RemoteWebDriver;
++
++import java.net.URL;
++
++/**
++ * Simple {@link org.openqa.selenium.remote.RemoteWebDriver} test that demonstrates how to run your Selenium tests with <a href="http://saucelabs.com/ondemand">Sauce OnDemand</a>.
++ *
++ * This test also includes the <a href="">Sauce JUnit</a> helper classes, which will use the Sauce REST API to mark the Sauce Job as passed/failed.
++ *
++ * In order to use the {@link SauceOnDemandTestWatcher}, the test must implement the {@link SauceOnDemandSessionIdProvider} interface.
++ *
++ */
++public class SauceLabsWebDriverHelper implements SauceOnDemandSessionIdProvider {
++
++    public final static String SAUCE_PROPERTY = "remote.driver.saucelabs";
++    public final static String SAUCE_PLATFORM_PROPERTY = "remote.driver.saucelabs.platform";
++    public final static String SAUCE_BROWSER_PROPERTY = "remote.driver.saucelabs.browser";
++    public final static String SAUCE_USER_PROPERTY = "remote.driver.saucelabs.user";
++    public final static String SAUCE_KEY_PROPERTY = "remote.driver.saucelabs.key";
++    public final static String SAUCE_VERSION_PROPERTY = "remote.driver.saucelabs.version";
++    /**
++     * Constructs a {@link SauceOnDemandAuthentication} instance using the supplied user name/access key.  To use the authentication
++     * supplied by environment variables or from an external file, use the no-arg {@link SauceOnDemandAuthentication} constructor.
++     */
++    public SauceOnDemandAuthentication authentication = new SauceOnDemandAuthentication(System.getProperty(SAUCE_USER_PROPERTY), System.getProperty(SAUCE_KEY_PROPERTY));
++
++    private WebDriver driver;
++
++    private String sessionId;
++
++    /**
++     * Saucelabs setup
++     * @param className
++     * @param testName
++     * @throws Exception
++     */
++    public void setUp(String className, TestName testName) throws Exception {
++        if (System.getProperty(SAUCE_USER_PROPERTY) == null || System.getProperty(SAUCE_KEY_PROPERTY) == null) {
++            Assert.fail("-D" + SAUCE_USER_PROPERTY + " and -D" + SAUCE_KEY_PROPERTY + " must be set to saucelabs user and access key.");
++        }
++        // TODO all this needs to be much more configurable, probably from -D properties we don't want to be creating separate setUps or tests for each combination of OS/Broswer a
++        DesiredCapabilities capabilities = null;
++        if (System.getProperty(SAUCE_BROWSER_PROPERTY) == null) {
++            capabilities = DesiredCapabilities.firefox();
++        } else {
++            capabilities = DesiredCapabilities.internetExplorer();
++            capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,true);
++        }
++        capabilities.setCapability("version", System.getProperty(SAUCE_VERSION_PROPERTY, "6"));
++        capabilities.setCapability("platform", System.getProperty(SAUCE_PLATFORM_PROPERTY, Platform.UNIX.toString()).replaceAll("_", " "));
++        capabilities.setCapability("idle-timeout", 180);
++        capabilities.setCapability("name",  className + "." + testName.getMethodName() + "-" + ITUtil.DTS);
++        this.driver = new RemoteWebDriver(
++                new URL("http://" + authentication.getUsername() + ":" + authentication.getAccessKey() + "@ondemand.saucelabs.com:80/wd/hub"),
++                capabilities);
++        this.sessionId = ((RemoteWebDriver)driver).getSessionId().toString();
++        // TODO it would be better to do these at tear down, passing state could then be included in names, but requires more parameters
++        System.out.println(curlSaveResourceString(className, testName, "selenium-server.log"));
++        System.out.println(curlSaveResourceString(className, testName, "video.flv"));
++//        System.out.println(curlSaveResourceString(className, testName, "XXXXscreenshot.png (where XXXX is a number between 0000 and 9999)")); // TODO
++    }
++
++    private String curlSaveResourceString(String className, TestName testName, String resource) {
++        return "curl -o " + /*ITUtil.DTS.substring(0, ITUtil.DTS.length() - 4) + "-" + */ className + "-" + testName.getMethodName() + "-" + sessionId + "-" + resource + " -u " + authentication.getUsername() + ":" + authentication.getAccessKey() + " https://saucelabs.com/rest/" + authentication.getUsername() + "/jobs/" + sessionId + "/results/" + resource;
++    }
++
++    @Override
++    public String getSessionId() {
++        return sessionId;
++    }
++
++    /**
++     * Returns the driver
++     * @return WebDriver
++     */
++    public WebDriver getDriver() {
++        return driver;
++    }
++
++    /**
++     * Do Suacelabs related teardown things.  Mostly flag the tests as passed or failed.
++     * @param passed
++     * @param sessionId
++     * @param sauceUser
++     * @param sauceKey
++     * @throws Exception
++     */
++    public static void tearDown(boolean passed, String sessionId, String sauceUser, String sauceKey) throws Exception {
++        if (sessionId != null && System.getProperty(SAUCE_PROPERTY) != null) {
++            SauceREST client = new SauceREST(sauceUser, sauceKey);
++            /* Using a map of udpates:
++            * (http://saucelabs.com/docs/sauce-ondemand#alternative-annotation-methods)
++            *
++            * Map<String, Object> updates = new HashMap<String, Object>();
++            * updates.put("name", "this job has a name");
++            * updates.put("passed", true);
++            * updates.put("build", "c234");
++            * client.updateJobInfo("<your-job-id>", updates);
++            */
++            if (passed) {
++                client.jobPassed(sessionId);
++            } else {
++                client.jobFailed(sessionId);
++            }
++        }
++    }
++}
+Index: sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
+===================================================================
+--- sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 35141)
++++ sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
+@@ -52,10 +52,10 @@
+         WebDriver driver = null;
+         if (System.getProperty("remote.driver.saucelabs") == null) {
+             driver = ITUtil.getWebDriver();
+-//        } else {
+-//            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
+-//            saucelabs.setUp(className, testName);
+-//            driver = saucelabs.getDriver();
++        } else {
++            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
++            saucelabs.setUp(className, testName);
++            driver = saucelabs.getDriver();
+         }
+         driver.manage().timeouts().implicitlyWait(120, TimeUnit.SECONDS);
+         driver.get(url);
+Index: sampleapp/pom.xml
+===================================================================
+--- sampleapp/pom.xml	(revision 35132)
++++ sampleapp/pom.xml	(working copy)
+@@ -105,7 +105,7 @@
+       <id>stests</id>
+       <properties>
+         <maven.failsafe.skip>false</maven.failsafe.skip>
+-        <maven.failsafe.includes>**/*IT.java</maven.failsafe.includes>
++        <maven.failsafe.includes>**/*Suite.java</maven.failsafe.includes>
+         <maven.failsafe.excludes>**/XMLIngesterLegacyIT.java</maven.failsafe.excludes>
+       </properties>
+       <build>
+@@ -259,6 +259,24 @@
+       <artifactId>selenium-java</artifactId>
+     </dependency>
+ 
++     <dependency>
++       <groupId>com.saucelabs</groupId>
++       <artifactId>sauce_junit</artifactId>
++       <version>[1.0.0,)</version>
++       <scope>test</scope>
++     </dependency>
++
+   </dependencies>
++
++  <repositories>
++    <repository>
++      <id>saucelabs-repository</id>
++      <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
++      <releases>
++      </releases>
++      <snapshots>
++      </snapshots>
++    </repository>
++  </repositories>
+ </project>
+ 
