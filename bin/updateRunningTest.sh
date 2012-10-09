@@ -1,0 +1,1 @@
+curl http://testuserpool.appspot.com/namepool?test= | JSON.sh | grep -F -e "[\"name\"]" | cut -s -f 4 -d\" > RUNNING_TEST
