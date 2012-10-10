@@ -35,6 +35,7 @@ LOOK AT THESE, DON'T CHECK THESE CHANGES IN!
 You can see these differences via git, or in SVN if you go look at the differences before doing anything after running rDev.sh.
 
 rDev.sh does a lot.  It patches and updates existing files for behavior that makes development easier.  It makes use of these scripts:
+
     gitAll.sh - script to check everything new and modified into the local git copy with a date time stamp comment.
 mysqlCreateDBs.sh - creates three DBs for this version#. version#clean as a reference, version#wip for developing in, and version#test.  Required parameters are version# and DB root user password.
     rPatches.sh - patches that help with development
