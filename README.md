@@ -35,16 +35,16 @@ LOOK AT THESE, DON'T CHECK THESE CHANGES IN!
 You can see these differences via git, or in SVN if you go look at the differences before doing anything after running rDev.sh.
 
 rDev.sh does a lot.  It patches and updates existing files for behavior that makes development easier.  It makes use of these scripts:
-gitAll.sh - script to check everything new and modified into the local git copy with a date time stamp comment.
+    gitAll.sh - script to check everything new and modified into the local git copy with a date time stamp comment.
 mysqlCreateDBs.sh - creates three DBs for this version#. version#clean as a reference, version#wip for developing in, and version#test.  Required parameters are version# and DB root user password.
-rPatches.sh - patches that help with development
-r*Mysql.sh - create configurations for this version# placed in root version# directory
-rSpyProperties.sh - p6spy enabled by default if jar is in /java/drivers see https://wiki.kuali.org/display/KULRICE/Break+on+execution+of+a+certain+SQL+query
-rLogin.sh - autologin as admin
+    rPatches.sh - patches that help with development
+    r*Mysql.sh - create configurations for this version# placed in root version# directory
+    rSpyProperties.sh - p6spy enabled by default if jar is in /java/drivers see https://wiki.kuali.org/display/KULRICE/Break+on+execution+of+a+certain+SQL+query
+    rLogin.sh - autologin as admin
 rNoCacheFilter.sh - configure a servlet filter to set the no cache flag in the http headers
-rIntellijConfigh.sh - configure intellij  run configs to use generated configuration files
-rDtsLogFiles.sh - setup a log4j append that rotates the log file each run
-rKradreload.sh - setup https://wiki.kuali.org/display/KULRICE/Reloading+Data+Dictionary+Setup
-mvn-clean-install.sh - run a mvn clean install using the generated configuration files, and  mvn-log.sh to log the results to $R_HOME/logs/version#/ and linked the the version# root.
-mvnLinks.sh - disabled by default see mvnLinks.sh comments
+    rIntellijConfigh.sh - configure intellij  run configs to use generated configuration files
+    rDtsLogFiles.sh - setup a log4j append that rotates the log file each run
+    rKradreload.sh - setup https://wiki.kuali.org/display/KULRICE/Reloading+Data+Dictionary+Setup
+    mvn-clean-install.sh - run a mvn clean install using the generated configuration files, and  mvn-log.sh to log the results to $R_HOME/logs/version#/ and linked the the version# root.
+    mvnLinks.sh - disabled by default see mvnLinks.sh comments
 
