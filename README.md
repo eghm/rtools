@@ -1,9 +1,9 @@
 WARNING		WARNING		WARNING		WARNING
-
+=========================================================
 rm -rf is used in these scripts!!  Blind use may be hazardous!!!  Have backups available!!!!
 
 WARNING		WARNING		WARNING		WARNING
-
+=========================================================
 Tools developed on OSX for rice with MySQL, I also use these on ec2 unix.  Assuming rtools is in $R_HOME (set as an environmental variable).  I use /r
 
 I don't update.  I only create new revisions, which I create a git repository for.  I do create DBs for each version I setup.
@@ -19,17 +19,21 @@ An example workflow would be:
 
 
 Directory structure:
-$R_HOME/rtools/bin - scripts
+
+    $R_HOME/rtools/bin - scripts
                    rDev.sh - dev env init script. Required parameters: version# and DB root user password.  See script file for options
                    deleteRevisionAndDBs.sh - undo rDev.sh. create git diff patch in $R_HOME. Required parameters: version# and DB root user password.
-$R_HOME/rtools/etc - templates, etc.
-$R_HOME/logs - log directory.  Version logs will be placed in $R_HOME/logs/version#/ and symlinked to $R_HOME/version#/
-$R_HOME/trunk - rice trunk, it is assumed you will _NOT_ be working in this directory
-$R_HOME/version#/ - directories you will be working in.
-$R_HOME/version#/.rdev - directory containing rDev build files create by running the rDev.sh script
+    $R_HOME/rtools/etc - templates, etc.
+    $R_HOME/logs - log directory.  Version logs will be placed in $R_HOME/logs/version#/ and symlinked to $R_HOME/version#/
+    $R_HOME/trunk - rice trunk, it is assumed you will _NOT_ be working in this directory
+    $R_HOME/version#/ - directories you will be working in.
+    $R_HOME/version#/.rdev - directory containing rDev build files create by running the rDev.sh script
 
 
-LOOK AT THESE, DON'T CHECK THESE CHANGES IN! You can see these differences via git, or in SVN if you go look at the differences before doing anything after running rDev.sh.
+LOOK AT THESE, DON'T CHECK THESE CHANGES IN! 
+--------------------------------------------
+You can see these differences via git, or in SVN if you go look at the differences before doing anything after running rDev.sh.
+
 rDev.sh does a lot.  It patches and updates existing files for behavior that makes development easier.  It makes use of these scripts:
 gitAll.sh - script to check everything new and modified into the local git copy with a date time stamp comment.
 mysqlCreateDBs.sh - creates three DBs for this version#. version#clean as a reference, version#wip for developing in, and version#test.  Required parameters are version# and DB root user password.
