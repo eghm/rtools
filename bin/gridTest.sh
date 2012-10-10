@@ -1,3 +1,6 @@
+cd ~/rtools/
+git pull
+cd ~/35158
 updateRunningTest.sh
 export RUNNING_TEST=$(cat RUNNING_TEST)
 while [ "$RUNNING_TEST" != "null" ]; do
