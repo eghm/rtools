@@ -1,7 +1,3 @@
-cd ~/rtools/
-git pull
-#cd
-#rDev.sh 35224 12345678 rice rice
 cd ~/35224
 updateRunningTest.sh
 export RUNNING_TEST=$(cat RUNNING_TEST)
