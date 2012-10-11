@@ -1,14 +1,14 @@
 cd ~/35224
-updateRunningTest.sh
+~/rtools/bin/updateRunningTest.sh
 export RUNNING_TEST=$(cat RUNNING_TEST)
 while [ "$RUNNING_TEST" != "null" ]; do
 # TODO use -Dit.test
 #    cp sampleapp/pom.xml sampleapp/pom.xml.orig
 #    echo "s|<maven.failsafe.includes>\*\*/\*IT.java</maven.failsafe.includes>|<maven.failsafe.includes>\*\*/$RUNNING_TEST.java</maven.failsafe.includes>|g" > namepooltest.sed
 #    sed -f namepooltest.sed sampleapp/pom.xml.orig > sampleapp/pom.xml
-    mvnSmokeTest.sh $*
+    ~/rtools/bin/mvnSmokeTest.sh $*
 #    mv sampleapp/pom.xml.orig sampleapp/pom.xml
-    updateRunningTest.sh
+    ~/rtools/bin/updateRunningTest.sh
     export RUNNING_TEST=$(cat RUNNING_TEST)
 done
 
