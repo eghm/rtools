@@ -2,6 +2,6 @@
 cd ~/rtools/
 git pull
 cd
-gridTest.sh $*
+~/rtools/bin/gridTest.sh $*
 
 
