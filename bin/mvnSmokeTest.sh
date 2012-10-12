@@ -9,7 +9,7 @@ then
 	patch -p0 < ../rtools/etc/SauceLabs.patch
 fi
 
-export logname=$RUNNING_TEST-$DTS
+export logname=$RUNNING_TEST.$DTS
 
 touch ../logs/$rDir/$logname.test-compile.out 
 ln -s ../logs/$rDir/$logname.test-compile.out $logname.test-compile.out
@@ -19,7 +19,7 @@ mvn -f sampleapp/pom.xml test-compile >> $logname.test-compile.out
 
 touch ../logs/$rDir/$logname.out 
 ln -s ../logs/$rDir/$logname.out $logname.out
-mvn -version  >> $logname.$DTS.out
+mvn -version  >> $logname.out
 
 echo "mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dremote.public.userpool=$7 -Dit.test=$RUNNING_TEST" >> $logname.out
 mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dremote.public.userpool=$7 -Dit.test=$RUNNING_TEST >> $logname.out
