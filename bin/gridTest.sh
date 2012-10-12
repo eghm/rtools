@@ -1,4 +1,4 @@
-cd ~/35224
+cd ~/35252
 ~/rtools/bin/updateRunningTest.sh
 export RUNNING_TEST=$(cat RUNNING_TEST)
 while [ "$RUNNING_TEST" != "null" ]; do
