@@ -1,3 +1,5 @@
+echo "deprecated by passing in test and user see mvnSmokeTest.sh"
+exit
 cd ~/35252
 ~/rtools/bin/updateRunningTest.sh
 export RUNNING_TEST=$(cat RUNNING_TEST)
