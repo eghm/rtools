@@ -1,3 +1,5 @@
+echo "deprecated pass in user as parallel param"
+exit
 echo "Getting test to run from pool..."
 echo "curl -o namepooltest.json http://testuserpool.appspot.com/namepool?key=1"
 curl -o namepooltest.json http://testuserpool.appspot.com/namepool?key=1 
