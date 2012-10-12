@@ -77,7 +77,7 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 ===================================================================
 --- sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
 +++ sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
-@@ -0,0 +1,134 @@
+@@ -0,0 +1,153 @@
 +/**
 + * Copyright 2005-2012 The Kuali Foundation
 + *
@@ -145,14 +145,31 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 +        if (System.getProperty(SAUCE_USER_PROPERTY) == null || System.getProperty(SAUCE_KEY_PROPERTY) == null) {
 +            Assert.fail("-D" + SAUCE_USER_PROPERTY + " and -D" + SAUCE_KEY_PROPERTY + " must be set to saucelabs user and access key.");
 +        }
-+        // TODO all this needs to be much more configurable, probably from -D properties we don't want to be creating separate setUps or tests for each combination of OS/Broswer a
++
 +        DesiredCapabilities capabilities = null;
-+        if (System.getProperty(SAUCE_BROWSER_PROPERTY) == null) {
++        if ("ff".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY))) {
 +            capabilities = DesiredCapabilities.firefox();
-+        } else {
++        } else if ("ie".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY)))  {
 +            capabilities = DesiredCapabilities.internetExplorer();
 +            capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,true);
++        } else if ("chrome".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY)))  {
++            capabilities = DesiredCapabilities.chrome();
++        } else if ("opera".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY)))  {
++            capabilities = DesiredCapabilities.opera();
++        } else if ("android".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY)))  {
++            capabilities = DesiredCapabilities.android();
++        } else if ("safari".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY)))  {
++            capabilities = DesiredCapabilities.safari();
++        } else if ("ipad".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY)))  {
++            capabilities = DesiredCapabilities.ipad();
++        } else if ("iphone".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY)))  {
++            capabilities = DesiredCapabilities.iphone();
++        } else if ("iphone".equalsIgnoreCase(System.getProperty(SAUCE_BROWSER_PROPERTY)))  {
++            capabilities = DesiredCapabilities.iphone();
++        } else {
++            capabilities = DesiredCapabilities.firefox();
 +        }
++
 +        capabilities.setCapability("version", System.getProperty(SAUCE_VERSION_PROPERTY, "6"));
 +        capabilities.setCapability("platform", System.getProperty(SAUCE_PLATFORM_PROPERTY, Platform.UNIX.toString()).replaceAll("_", " "));
 +        capabilities.setCapability("idle-timeout", 180);
@@ -205,8 +222,10 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 +            * client.updateJobInfo("<your-job-id>", updates);
 +            */
 +            if (passed) {
++                System.out.println("Registering session passed " + sessionId);
 +                client.jobPassed(sessionId);
 +            } else {
++                System.out.println("Registering session failed " + sessionId);
 +                client.jobFailed(sessionId);
 +            }
 +        }
