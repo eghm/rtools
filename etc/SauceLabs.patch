@@ -60,7 +60,26 @@ Index: sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java
 ===================================================================
 --- sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(revision 35141)
 +++ sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(working copy)
-@@ -79,9 +79,9 @@
+@@ -32,6 +32,7 @@
+ 
+     public static final int DEFAULT_WAIT_SEC = 60;
+     public static final String REMOTE_PUBLIC_USERPOOL_PROPERTY = "remote.public.userpool";
++    public static final String REMOTE_PUBLIC_USER_PROPERTY = "remote.public.user";
+ 
+     public abstract String getTestUrl();
+ 
+@@ -63,7 +64,9 @@
+     public void setUp() throws Exception {
+         // {"test":"1","user":"1"}
+         try {
+-            if (System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) {
++            if (System.getProperty(REMOTE_PUBLIC_USER_PROPERTY) != null) {
++                user = System.getProperty(REMOTE_PUBLIC_USER_PROPERTY);
++            } else if (System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) { // deprecated
+                 String userResponse = getHTML(ITUtil.prettyHttp(System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) + "?test=" + this.toString().trim()));
+                 user = userResponse.substring(userResponse.lastIndexOf(":" ) + 2, userResponse.lastIndexOf("\""));
+             }
+@@ -79,9 +82,9 @@
      @After
      public void tearDown() throws Exception {
          try {
@@ -77,7 +96,7 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 ===================================================================
 --- sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
 +++ sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
-@@ -0,0 +1,153 @@
+@@ -0,0 +1,154 @@
 +/**
 + * Copyright 2005-2012 The Kuali Foundation
 + *
@@ -108,6 +127,8 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 +import org.openqa.selenium.remote.RemoteWebDriver;
 +
 +import java.net.URL;
++import java.util.HashMap;
++import java.util.Map;
 +
 +/**
 + * Simple {@link org.openqa.selenium.remote.RemoteWebDriver} test that demonstrates how to run your Selenium tests with <a href="http://saucelabs.com/ondemand">Sauce OnDemand</a>.
@@ -214,13 +235,12 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 +            SauceREST client = new SauceREST(sauceUser, sauceKey);
 +            /* Using a map of udpates:
 +            * (http://saucelabs.com/docs/sauce-ondemand#alternative-annotation-methods)
-+            *
-+            * Map<String, Object> updates = new HashMap<String, Object>();
-+            * updates.put("name", "this job has a name");
-+            * updates.put("passed", true);
-+            * updates.put("build", "c234");
-+            * client.updateJobInfo("<your-job-id>", updates);
 +            */
++            Map<String, Object> updates = new HashMap<String, Object>();
++            updates.put("name", System.getProperty("it.test", sessionId));
++            updates.put("passed", passed);
++            updates.put("build", System.getProperty("rice.version", "unknown"));
++            client.updateJobInfo(sessionId, updates);
 +            if (passed) {
 +                System.out.println("Registering session passed " + sessionId);
 +                client.jobPassed(sessionId);
