@@ -1,3 +1,5 @@
+export M2_HOME=~/apache-maven-3.0.4/
+export PATH=$PATH:$M2_HOME/bin:~/rtools/bin
 export rDir=${PWD##*/}
 export DTS=$(date +%Y%m%d%H%M)
 export RUNNING_TEST=$(cat RUNNING_TEST)
