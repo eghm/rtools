@@ -1,3 +1,4 @@
-mvn-named-log.sh site -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml > site.$DTS.out 2>&1
+echo "Running mvn site, this will probably take a while..."
+mvn-named-log.sh site site
 #mkdir -p /java/m2/k/$rDir
 

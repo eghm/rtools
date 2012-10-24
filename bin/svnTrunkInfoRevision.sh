@@ -1,4 +1,5 @@
 #!/bin/bash
+# I use trunk in this way because I like to have a clean copy of trunk that I can point SVN tools at, use in diffs, anyway.
 cd $R_HOME/trunk
 svn update
 svn info > svn.info.txt
@@ -17,29 +18,32 @@ fi
 
 if [ -e $R_HOME/$revision ]
 then
-    echo "revision $revision already exists!.  Is revision not changed logic correct?"
+    echo "revision $revision already exists!.  Is revision not changed logic correct?  Maybe you should modify svn.revision.txt to an earlier version."
 	exit 0	
 fi
 
 rDev.sh $revision $1 $2 $3
-# TODO override ~kuali/ configs
 cd $R_HOME/$revision
 mvn-itest.sh
 mvn-site.sh
 cd target
+echo "zipping site output to target/site.zip and then deleting site output directory"
 zip -r site site/
 rm -rf site/
 
 # Jar reports
+echo "running jar dependency reports"
 cd $R_HOME/$revision
-mvn-named-log.sh mvn-versions-display-dependency-updates versions:display-dependency-updates
-mvn-named-log.sh mvn-dependency-analyze dependency:analyze
-mvn-named-log.sh mvn-dependency-analyze-dep-mgt dependency:analyze-dep-mgt
-mvn-named-log.sh mvn-dependency-analyze-only dependency:analyze-only
-mvn-named-log.sh mvn-dependency-analyze-report dependency:analyze-report
-mvn-named-log.sh mvn-dependency-analyze-duplicate dependency:analyze-duplicate
+mvn-named-log.sh jar-versions-display-dependency-updates versions:display-dependency-updates
+mvn-named-log.sh jar-dependency-analyze dependency:analyze
+mvn-named-log.sh jar-dependency-analyze-dep-mgt dependency:analyze-dep-mgt
+mvn-named-log.sh jar-dependency-analyze-only dependency:analyze-only
+mvn-named-log.sh jar-dependency-analyze-report dependency:analyze-report
+mvn-named-log.sh jar-dependency-analyze-duplicate dependency:analyze-duplicate
 
 # Sonar reports
+sonar_restart.sh
+echo "running sonar reports"
 mvn-named-log.sh mvn-sonar sonar:sonar
 
 cd $R_HOME
