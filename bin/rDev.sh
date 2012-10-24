@@ -18,6 +18,7 @@ cd $R_HOME
 mkdir -p $R_HOME/logs/$1
 mkdir -p $R_HOME/$1/.rdev
 
+# we only checkout the db stuff, if there is a problem we avoid checking out everything.
 rMysqlDBs.sh $1 $2 $RICE_DB_USER $RICE_DB_PASS
 
 cd $R_HOME/$1
@@ -30,6 +31,7 @@ fi
 
 if [ ! -e core ]
 then
+    # this could probably be done better the db and scripts dirs are already present from the rMysqlDBs.sh 
 	rm -rf db
 	rm -rf scripts
     svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/ .
@@ -80,8 +82,8 @@ rIntellijConfig.sh $1
 rDtsLogFiles.sh $1
 rKradreload.sh
 
-git add -A
-git commit -a -m "applied rDev custom updates"
+git add -A 2>&1 git.out
+git commit -a -m "applied rDev custom updates" >> git.out 2>&1
 
 echo "starting mvn-clean-install.sh"
 mvn-clean-install.sh
