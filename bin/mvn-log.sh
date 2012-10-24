@@ -24,6 +24,6 @@ export logname=mvn-log
 touch $R_HOME/logs/$rDir/$logname.$DTS.out 
 ln -s $R_HOME/logs/$rDir/$logname.$DTS.out $logname.$DTS.out
 mvn -version  >> $logname.$DTS.out
-echo "mvn $* -Dlog4j.configuration=$R_HOME/$rDir/$rDir-log4j.properties -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml" >> $logname.$DTS.out
-mvn $* -Dlog4j.configuration=$R_HOME/$rDir/$rDir-log4j.properties -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $logname.$DTS.out
+echo "mvn $* -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml" >> $logname.$DTS.out
+mvn $* -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $logname.$DTS.out 2>&1
 cat $logname.$DTS.out

@@ -1,1 +1,1 @@
-mvn-log.sh clean install $*
+mvn-named-log.sh clean-install clean install $*

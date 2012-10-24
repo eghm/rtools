@@ -1,1 +1,1 @@
-mvn-named-log.sh itests -Pitests verify $*
+mvn-named-log.sh itests -Pitests verify -Ddts.log.filename=itests-log.log $*
