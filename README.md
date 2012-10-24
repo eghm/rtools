@@ -23,9 +23,10 @@ Directory structure:
     $R_HOME/rtools/bin - scripts
                    rDev.sh - dev env init script. Required parameters: version# and DB root user password.  See script file for options
                    deleteRevisionAndDBs.sh - undo rDev.sh. create git diff patch in $R_HOME. Required parameters: version# and DB root user password.
+                   svnTrunkInfoRevsion.sh - _1_time_check_ for a change since the last running of the script with SVN using $R_HOME/trunk.  If there is a change, rDev.sh is run, then mvn site, then the mvn jar dependency reports, and finally sonar. Required parameters: DB root user password.
     $R_HOME/rtools/etc - templates, etc.
     $R_HOME/logs - log directory.  Version logs will be placed in $R_HOME/logs/version#/ and symlinked to $R_HOME/version#/
-    $R_HOME/trunk - rice trunk, it is assumed you will _NOT_ be working in this directory
+    $R_HOME/trunk - rice trunk, it is assumed you will _NOT_ be working in this directory, see svnTrunkInfoRevsion.sh above.
     $R_HOME/version#/ - directories you will be working in.
     $R_HOME/version#/.rdev - directory containing rDev build files create by running the rDev.sh script
 
