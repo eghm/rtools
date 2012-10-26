@@ -28,7 +28,7 @@ mvn-itest.sh
 mvn-site.sh
 cd target
 echo "zipping site output to target/site.zip and then deleting site output directory"
-zip -r site site/
+zip -r site site/ 2>&1 zip.site.out
 rm -rf site/
 
 # Jar reports
