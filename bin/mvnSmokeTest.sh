@@ -11,6 +11,15 @@ then
 	patch -p0 < ../rtools/etc/SauceLabs.patch
 fi
 
+export TEST=$7
+export TEST_USER=$8
+if [ -e ../LegacyITsUsers.txt ] 
+then
+	export TEST=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 1)
+	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
+	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.txt
+fi
+
 export logname=$7.$DTS
 
 touch ../logs/$9/$logname.test-compile.out 
@@ -23,5 +32,5 @@ touch ../logs/$9/$logname.out
 ln -s ../logs/$9/$logname.out $logname.out
 mvn -version  >> $logname.out
 
-echo "mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$7 -Dremote.public.user=$8 -Drice.version=$9" >> $logname.out
-mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$7 -Dremote.public.user=$8 -Drice.version=$9 >> $logname.out
+echo "mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$TEST -Dremote.public.user=$$TEST_USER -Drice.version=$9" >> $logname.out
+mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Drice.version=$9 >> $logname.out
