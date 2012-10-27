@@ -12,7 +12,7 @@ mv LegacyITs.cut2.txt LegacyITs.txt
 let "i=0";
 for line in $(cat LegacyITs.txt);
 do
-	echo "$line loadtester$i" >> LegacyITsUsers.txt;
+	echo "$line:loadtester$i" >> LegacyITsUsers.txt;
     let "i+=1";
 done; 
 rm LegacyITs.txt
