@@ -2,7 +2,7 @@
 #then
 #    echo $1-standalone-config.xml already exists, skipping
 #else
-    echo "creating $1-standalone-config.xml from standalone/src/main/resources/org/kuali/rice/standalone/config/standalone-config.xml"
+    echo "creating $1-standalone-config.xml from standalone/src/main/resources/org/kuali/rice/standalone/config/standalone-config.xml use it via -Dalt.config.location=$R_HOME/$1/$1-standalone-config.xml"
 	echo "s|03/19/2007 01:59 PM|$1|g" > .rdev/$1-standalone-config.sed
     echo "s|<config>|<config><param name=\"useQuartzDatabase\">false</param>|g" >> .rdev/$1-standalone-config.sed
     echo "s|RICE094DEV|$2|g" >> .rdev/$1-standalone-config.sed

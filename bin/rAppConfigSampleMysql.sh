@@ -5,7 +5,7 @@
 ##    echo ~/kuali/main/dev/$1-sampleapp-config.xml already exists, skipping
 #else
 #    echo "creating ~/kuali/main/dev/$1-sampleapp-config.xml from config/templates/sampleapp-config.template.xml"
-    echo "creating $1-sampleapp-config.xml from config/templates/sampleapp-config.template.xml"
+    echo "creating $1-sampleapp-config.xml from config/templates/sampleapp-config.template.xml use it via -Dalt.config.location=$R_HOME/$1/$1-sampleapp-config.xml"
 	echo "s|03/19/2007 01:59 PM|$1|g" > .rdev/$1-sampleapp-config.sed
     echo "s|<config>|<config><param name=\"useQuartzDatabase\">false</param>|g" >> .rdev/$1-sampleapp-config.sed
     echo "s|RICE094DEV|$2|g" >> .rdev/$1-sampleapp-config.sed

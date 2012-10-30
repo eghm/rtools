@@ -2,7 +2,7 @@
 #then
 #    echo $1-common-test-config.xml already exists, skipping
 #else
-    echo "creating $1-common-test-config.xml from config/templates/common-test-config.template.xml"
+    echo "creating $1-common-test-config.xml from config/templates/common-test-config.template.xml use it via -Dalt.config.location=$R_HOME/$1/$1-common-test-config.xml"
     echo "s|<config>|<config><param name=\"useQuartzDatabase\">false</param>|g" > .rdev/$1-common-test-config.sed
 # username
     echo "s|RICE094CI|$2|g" >> .rdev/$1-common-test-config.sed
