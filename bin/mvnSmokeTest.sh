@@ -13,15 +13,11 @@ fi
 
 export TEST=$7
 export TEST_USER=$8
-if [ -e ../LegacyITsUsers.txt ] 
+if [ -s ../LegacyITsUsers.txt ] 
 then
 	export TEST=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 1)
 	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
 	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.txt
-    if [ ! -s ../LegacyITsUsers.txt ]
-	then
-        rm ../LegacyITsUsers.txt
-    fi
 fi
 
 export logname=$7.$DTS
