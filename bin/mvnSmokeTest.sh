@@ -18,9 +18,8 @@ then
 	export TEST=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 1)
 	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
 	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.txt
-    if [ -s ../LegacyITsUsers.txt ]
+    if [ ! -s ../LegacyITsUsers.txt ]
 	then
-    else
         rm ../LegacyITsUsers.txt
     fi
 fi
