@@ -8,6 +8,9 @@ then
     echo "env R_HOME is not set!  Exiting."
 fi
 
+echo "During rDev.sh it is normal for there to be a few svn: '.' is not a working copy messages. which are okay to ignore."
+echo "These are from the various logging scripts which run a svndiff to a log before executing commands."
+
 export RICE_DB_USER=$3
 export RICE_DB_PASS=$4
 
@@ -38,19 +41,19 @@ then
     # this could probably be done better the db and scripts dirs are already present from the rMysqlDBs.sh 
 	rm -rf db
 	rm -rf scripts
-    svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/ . >> svn.out 2>&1
+    log-command.sh rdev.svn.co svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/ .
     # what is up with these updates??? why are these directories missing?
     if [ ! -e krms ]
     then
-        svn update krms -r $1 >> svn.out 2>&1
+        log-command.sh rdev.svn.up.krms svn update krms -r $1
     fi
     if [ ! -e it ]
     then
-        svn update it -r $1 >> svn.out 2>&1
+        log-command.sh rdev.svn.up.it svn update it -r $1
     fi
     if [ ! -e client-contrib ]
     then
-        svn update client-contrib -r $1 >> svn.out 2>&1
+        log-command.sh rdev.svn.up.client-contrib svn update client-contrib -r $1
     fi
 fi
 
@@ -86,9 +89,9 @@ rIntellijConfig.sh $1
 rDtsLogFiles.sh $1
 rKradreload.sh
 
-git add -A >> git.out 2>&1 
+log-command.sh rdev.git.add git add -A 
 echo "git applied rDev custom updates commit"
-git commit -a -m "applied rDev custom updates" >> git.out 2>&1
+log-command.sh rdev.svn.commit git commit -a -m "applied rDev custom updates"
 
 echo "starting mvn-clean-install.sh"
 mvn-clean-install.sh
@@ -100,4 +103,6 @@ dt=$((etime - stime))
 ds=$((dt % 60))
 dm=$(((dt / 60) % 60))
 dh=$((dt / 3600))
-printf 'rDev $1 elapsed time %d:%02d:%02d' $dh $dm $ds
+echo -e "Logs are available in $R_HOME/logs/$1"
+printf 'Elapsed time %d:%02d:%02d' $dh $dm $ds
+echo -e "\n\n"

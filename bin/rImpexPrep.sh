@@ -18,11 +18,17 @@ fi
 
 cd $R_HOME/$1
 
+if [ ! -e .rdev ]
+then
+    echo "$RHOME/$1/.rdev should exist.  Permissions?"
+	exit
+fi
+
 if [ ! -e db ]
 then
     echo "svn checkout of db and scripts directories need for impex to $R_HOME/$1"
-	svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/db $R_HOME/$1/db >> svn.out 2>&1
-	svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/scripts/ddl $R_HOME/$1/scripts/ddl	 >> svn.out 2>&1
+	log-command.sh rdev.svn.co.db svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/db $R_HOME/$1/db
+	log-command.sh rdev.svn.co.scripts svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/scripts/ddl $R_HOME/$1/scripts/ddl
 fi
 
 # rice .gitignore + config/ide .svn/ .settings/ .DS_Store
@@ -30,16 +36,16 @@ if [ ! -e .gitignore ]
 then
     echo "creating git repository"
     cp ../rtools/etc/gitignore .gitignore
-    git init -q >> git.out 2>&1
+    log-command.sh rdev.git.init git init -q
 fi
-git add -A >> git.out 2>&1
+log-command.sh rdev.git.add git add -A
 echo "git pre impex commit"
-git commit -a -m "pre impex" >> git.out 2>&1
+log-command.sh rdev.git.commit git commit -a -m "pre impex"
 
 # remove the % identified bys causing me problems
 echo "removing % identified bys"
-patch -p1 <../rtools/etc/impex-no-user-percent.patch
+log-command.sh rdev.impex.patch patch -p1 <../rtools/etc/impex-no-user-percent.patch
 
-git add -A >> git.out 2>&1
-echo "git applyed impex-no-user-precent.patch commit"
-git commit -a -m "applyed impex-no-user-precent.patch" >> git.out 2>&1
+log-command.sh rdev.git.add git add -A
+echo "git applied impex-no-user-precent.patch commit"
+log-command.sh rdev.git.commit git commit -a -m "applied impex-no-user-precent.patch"
