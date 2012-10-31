@@ -19,7 +19,7 @@ then
 	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
 	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.txt
     if [ -s ../LegacyITsUsers.txt ] then
-	    ; # nothing it has data in it still
+	    # nothing it has data in it still
     else
         rm ../LegacyITsUsers.txt
     fi
