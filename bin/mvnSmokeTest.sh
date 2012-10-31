@@ -21,7 +21,7 @@ then
 	mv ../LegacyITsUsers.cut.txt ../LegacyITsUsers.txt
 fi # if changed to while loop the done needs to be at the end of the file
 
-export logname=$7.$DTS
+export logname=$TEST.$TEST_USER.$DTS
 
 touch ../logs/$9/$logname.test-compile.out 
 ln -s ../logs/$9/$logname.test-compile.out $logname.test-compile.out
