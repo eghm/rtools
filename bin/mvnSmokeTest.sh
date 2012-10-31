@@ -17,8 +17,9 @@ if [ -s ../LegacyITsUsers.txt ]
 then
 	export TEST=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 1)
 	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
-	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.txt
-fi
+	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.cut.txt
+	mv ../LegacyITsUsers.cut.txt ../LegacyITsUsers.txt
+fi # if changed to while loop the done needs to be at the end of the file
 
 export logname=$7.$DTS
 
