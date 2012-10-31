@@ -13,15 +13,17 @@ fi
 
 export TEST=$7
 export TEST_USER=$8
-if [ -s ../LegacyITsUsers.txt ] 
-then
+while [ -s ../LegacyITsUsers.txt ] 
+do
+#if [ -s ../LegacyITsUsers.txt ] 
+#then
 	export TEST=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 1)
 	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
 	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.cut.txt
 	mv ../LegacyITsUsers.cut.txt ../LegacyITsUsers.txt
-fi # if changed to while loop the done needs to be at the end of the file
+#fi # if changed to while loop the done needs to be at the end of the file
 
-export logname=$TEST.$DTS
+export logname=$TEST-$TEST_USER-$4-$5-$6-$9-$DTS
 
 touch ../logs/$9/$logname.test-compile.out 
 ln -s ../logs/$9/$logname.test-compile.out $logname.test-compile.out
@@ -35,3 +37,4 @@ mvn -version  >> $logname.out
 
 echo "mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$TEST -Dremote.public.user=$$TEST_USER -Drice.version=$9" >> $logname.out
 mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Drice.version=$9 >> $logname.out
+done
