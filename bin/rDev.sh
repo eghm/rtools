@@ -93,7 +93,7 @@ log-command.sh rdev.git.add git add -A
 echo "git applied rDev custom updates commit"
 log-command.sh rdev.svn.commit git commit -a -m "applied rDev custom updates"
 
-echo "starting mvn-clean-install.sh"
+echo "starting mvn-clean-install.sh this will take a while..."
 mvn-clean-install.sh
 
 #mvnLinks.sh $1
