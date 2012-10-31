@@ -1,2 +1,2 @@
-cd rtools
+cd ~/rtools
 git pull
