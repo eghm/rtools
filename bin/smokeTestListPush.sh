@@ -8,8 +8,8 @@ do
 	export SERVER=$(tail -n 1 $1.tmp)	
 	sed '$d' $1.tmp > $1.tmp2
 	mv $1.tmp2 $1.tmp
-	echo "scp $f ec2-user@$SERVER:LegacyITsUsers.txt"
-	scp $f ec2-user@$SERVER:LegacyITsUsers.txt
+	echo "scp -v $f ec2-user@$SERVER:LegacyITsUsers.txt"
+	scp -v $f ec2-user@$SERVER:LegacyITsUsers.txt
 done;
 rm push-*
 rm $1.tmp

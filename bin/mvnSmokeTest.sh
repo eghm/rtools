@@ -8,7 +8,7 @@ export DTS=$(date +%Y%m%d%H%M)
 if [ ! -e sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java ]
 then
 	echo "Patching for Sauce Labs"
-	patch -p0 < ../rtools/etc/SauceLabs.patch
+	log-command.sh saucelabs.patch patch -p0 < ../rtools/etc/SauceLabs.patch
 fi
 
 export TEST=$7
@@ -18,6 +18,11 @@ then
 	export TEST=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 1)
 	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
 	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.txt
+    if [[ -s $FILE ]] ; then
+	;
+    else
+        rm ../LegacyITsUsers.txt
+    fi
 fi
 
 export logname=$7.$DTS
