@@ -1,6 +1,6 @@
 Index: pom.xml
 ===================================================================
---- pom.xml	(revision 35132)
+--- pom.xml	(revision 35528)
 +++ pom.xml	(working copy)
 @@ -1940,6 +1940,46 @@
          <version>${freemarker.version}</version>
@@ -58,28 +58,9 @@ Index: pom.xml
 \ No newline at end of file
 Index: sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java
 ===================================================================
---- sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(revision 35141)
+--- sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(revision 35559)
 +++ sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(working copy)
-@@ -32,6 +32,7 @@
- 
-     public static final int DEFAULT_WAIT_SEC = 60;
-     public static final String REMOTE_PUBLIC_USERPOOL_PROPERTY = "remote.public.userpool";
-+    public static final String REMOTE_PUBLIC_USER_PROPERTY = "remote.public.user";
- 
-     public abstract String getTestUrl();
- 
-@@ -63,7 +64,9 @@
-     public void setUp() throws Exception {
-         // {"test":"1","user":"1"}
-         try {
--            if (System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) {
-+            if (System.getProperty(REMOTE_PUBLIC_USER_PROPERTY) != null) {
-+                user = System.getProperty(REMOTE_PUBLIC_USER_PROPERTY);
-+            } else if (System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) { // deprecated
-                 String userResponse = getHTML(ITUtil.prettyHttp(System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) + "?test=" + this.toString().trim()));
-                 user = userResponse.substring(userResponse.lastIndexOf(":" ) + 2, userResponse.lastIndexOf("\""));
-             }
-@@ -79,9 +82,9 @@
+@@ -84,9 +84,9 @@
      @After
      public void tearDown() throws Exception {
          try {
@@ -301,11 +282,11 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 +}
 Index: sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
 ===================================================================
---- sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 35141)
+--- sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 35559)
 +++ sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
-@@ -52,10 +52,10 @@
+@@ -53,10 +53,10 @@
          WebDriver driver = null;
-         if (System.getProperty("remote.driver.saucelabs") == null) {
+         if (System.getProperty(REMOTE_DRIVER_SAUCELABS_PROPERTY) == null) {
              driver = ITUtil.getWebDriver();
 -//        } else {
 -//            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
@@ -320,9 +301,9 @@ Index: sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
          driver.get(url);
 Index: sampleapp/pom.xml
 ===================================================================
---- sampleapp/pom.xml	(revision 35132)
+--- sampleapp/pom.xml	(revision 35528)
 +++ sampleapp/pom.xml	(working copy)
-@@ -105,7 +105,7 @@
+@@ -112,7 +112,7 @@
        <id>stests</id>
        <properties>
          <maven.failsafe.skip>false</maven.failsafe.skip>
@@ -331,7 +312,7 @@ Index: sampleapp/pom.xml
          <maven.failsafe.excludes>**/XMLIngesterLegacyIT.java</maven.failsafe.excludes>
        </properties>
        <build>
-@@ -259,6 +259,24 @@
+@@ -266,6 +266,24 @@
        <artifactId>selenium-java</artifactId>
      </dependency>
  
