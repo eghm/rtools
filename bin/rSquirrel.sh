@@ -1,6 +1,19 @@
 export GROOVY_HOME=/java/groovy-2.0.0
 export PATH=$PATH:$GROOVY_HOME/bin
 
+export rDir=${PWD##*/}
+
+if [ "$rDir" = "$R_HOME" ]
+then
+	echo "Usage: run from a directory created using rDev.sh"
+	exit
+fi
+
+if [ ! -e ~/.squirrel-sql ] then
+    echo "SQuirreL ~/.squirrel-sql not found, skipping adding of SQUirreL Aliases"
+    exit
+fi
+
 groovy $R_HOME/rtools/bin/uidToString.groovy > .rdev/$1-$2-uid.txt
 export DBUID=$(cat .rdev/$1-$2-uid.txt)
 export DBNAME=$1$2
@@ -17,11 +30,11 @@ then
 	export DBPORT=3306
 fi
 
-if [ ! -e "~/.squirrel-sql/SQLAliases23.xml.bak" ]
+if [ ! -e ~/.squirrel-sql/SQLAliases23.xml.bak ]
 then
 	cp ~/.squirrel-sql/SQLAliases23.xml ~/.squirrel-sql/SQLAliases23.xml.bak
 fi
-if [ ! -e "~/.squirrel-sql/SQLAliases23_treeStructure.xml.bak" ]
+if [ ! -e ~/.squirrel-sql/SQLAliases23_treeStructure.xml.bak ]
 then
 	cp ~/.squirrel-sql/SQLAliases23_treeStructure.xml ~/.squirrel-sql/SQLAliases23.xml_treeStructure.bak
 fi

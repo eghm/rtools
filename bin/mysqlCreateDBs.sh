@@ -12,4 +12,8 @@ mvn-impex.sh $1wip $2 $3 $4
 mvn-impex.sh $1clean $2 $3 $4
 mvn-impex.sh $1test $2 $3 $4
 
+rSquirrel.sh $1 wip
+rSquirrel.sh $1 clean
+rSquirrel.sh $1 test
+
 #mysql -u root -p$2 $1test < scripts/ddl/rice-test-tables-mysql.sql
