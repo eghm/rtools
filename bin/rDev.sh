@@ -1,5 +1,5 @@
 #!/bin/bash
-# svn revision, db username, db password, [rice db username], [rice db password], [saucelabs username, saucelabs access key]
+# svn revision, db root password, db username, db password, [rice db username], [rice db password], [saucelabs username, saucelabs access key]
 
 stime=$(date '+%s')
 
@@ -8,8 +8,8 @@ then
     echo "env R_HOME is not set!  Exiting."
 fi
 
-echo "During rDev.sh it is normal for there to be a few svn: '.' is not a working copy messages. which are okay to ignore."
-echo "These are from the various logging scripts which run a svndiff to a log before executing commands."
+echo -e "\n\nDuring rDev.sh it is normal for there to be a few svn: '.' is not a working copy messages. which are okay to ignore. These are from the various logging scripts which run a svndiff to a log before executing commands.\n"
+echo -e "ln: File exists are also typically safe to ignore, logging files already exist and will be appended too\n\n "
 
 export RICE_DB_USER=$3
 export RICE_DB_PASS=$4
@@ -37,7 +37,7 @@ fi
 
 if [ ! -e core ]
 then
-    echo "svn checkout of the rest of $1 this will take a while..."
+    echo -e "\nsvn checkout of the rest of $1 this will take a while..."
     # this could probably be done better the db and scripts dirs are already present from the rMysqlDBs.sh 
 	rm -rf db
 	rm -rf scripts

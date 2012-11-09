@@ -1,5 +1,5 @@
-export GROOVY_HOME=/java/groovy-2.0.0
-export PATH=$PATH:$GROOVY_HOME/bin
+#export GROOVY_HOME=/java/groovy-2.0.0
+#export PATH=$PATH:$GROOVY_HOME/bin
 
 export rDir=${PWD##*/}
 
@@ -9,7 +9,8 @@ then
 	exit
 fi
 
-if [ ! -e ~/.squirrel-sql ] then
+if [ ! -e ~/.squirrel-sql ]
+then
     echo "SQuirreL ~/.squirrel-sql not found, skipping adding of SQUirreL Aliases"
     exit
 fi
@@ -38,7 +39,7 @@ if [ ! -e ~/.squirrel-sql/SQLAliases23_treeStructure.xml.bak ]
 then
 	cp ~/.squirrel-sql/SQLAliases23_treeStructure.xml ~/.squirrel-sql/SQLAliases23.xml_treeStructure.bak
 fi
-
+echo -e "\nCreating SQuirreL aliases for $1$2"
 echo "creating .rdev/$1-squirrel-$2.sed with UID of $DBUID"
 echo "s|DBUID|$DBUID|g" > .rdev/$1-squirrel-$2.sed
 echo "s|DBNAME|$DBNAME|g" >> .rdev/$1-squirrel-$2.sed

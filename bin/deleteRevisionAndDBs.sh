@@ -7,3 +7,6 @@ cd $R_HOME/$1
 mysqlDropDBs.sh $1 $2 
 cd $R_HOME
 deleteRevision.sh $1
+rSquirrelDelete.sh $1 wip
+rSquirrelDelete.sh $1 test
+rSquirrelDelete.sh $1 clean

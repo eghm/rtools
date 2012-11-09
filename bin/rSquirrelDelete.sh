@@ -1,3 +1,10 @@
+export XMLSTAR=$(xml --version)
+if [ -z $XMLSTAR ]
+then
+  echo "xmlstar not installed, unable to delete SQuirreLSQL aliases.";
+  exit
+fi
+
 export DBNAME=$1$2
 export DBSERVER=$3
 if [ -z "$3" ]

@@ -1,3 +1,4 @@
+# version, db root password, db user, db pass
 cd $R_HOME/$1
 
 echo "creating mysql dev DBs $1test, $1wip, $1clean"
@@ -12,8 +13,10 @@ mvn-impex.sh $1wip $2 $3 $4
 mvn-impex.sh $1clean $2 $3 $4
 mvn-impex.sh $1test $2 $3 $4
 
-rSquirrel.sh $1 wip
-rSquirrel.sh $1 clean
-rSquirrel.sh $1 test
+rSquirrel.sh $1 wip $3 $4
+rSquirrel.sh $1 clean $3 $4
+rSquirrel.sh $1 test $3 $4
+
+rSqlRest.sh $1 wip $3 $4
 
 #mysql -u root -p$2 $1test < scripts/ddl/rice-test-tables-mysql.sql

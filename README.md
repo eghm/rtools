@@ -25,6 +25,7 @@ Directory structure:
                    deleteRevisionAndDBs.sh - undo rDev.sh. create git diff patch in $R_HOME. Required parameters: version# and DB root user password.
                    svnTrunkInfoRevsion.sh - _1_time_check_ for a change since the last running of the script with SVN using $R_HOME/trunk.  If there is a change, rDev.sh is run, then mvn site, then the mvn jar dependency reports, and finally sonar. Required parameters: DB root user password.
     $R_HOME/rtools/etc - templates, etc.
+    $R_HOME/rtools/dl - for downloads to install see rSqlRestInstall.sh
     $R_HOME/logs - log directory.  Version logs will be placed in $R_HOME/logs/version#/ and symlinked to $R_HOME/version#/
     $R_HOME/trunk - rice trunk, it is assumed you will _NOT_ be working in this directory, see svnTrunkInfoRevsion.sh above.
     $R_HOME/version#/ - directories you will be working in.
@@ -48,4 +49,6 @@ rDev.sh does a lot.  It patches and updates existing files for behavior that mak
 * rKradreload.sh - setup https://wiki.kuali.org/display/KULRICE/Reloading+Data+Dictionary+Setup
 * mvn-clean-install.sh - run a mvn clean install using the generated configuration files, and  mvn-log.sh to log the results to $R_HOME/logs/version#/ and linked the the version# root.
 * mvnLinks.sh - disabled by default see mvnLinks.sh comments
-
+* rSquirrel.sh - create SQuirreLSQL aliases in ~/squirrel-sql/SQLAliases23.xml SQuirreLSQL must NOT be running.  Requires GROOVY_HOME be set (for the rmi.UID) , skips if it is not.
+* rSquirrelDelete.sh - requires xmlstar be installed, deletes aliases created above.
+* rSqlRestInstall.sh - installs sqlrest into $CATALINA_HOME/webapps see http://sqlrest.sourceforge.net/5-minutes-guide.htm visit http://localhost:8080/sqlrest/ skips if $CATALINA_HOME is not set.
