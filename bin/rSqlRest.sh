@@ -5,7 +5,7 @@ then
 	exit
 fi
 
-rSqlRestInstall.sh
+$R_HOME/rtools/bin/rSqlRestInstall.sh
 
 export DBNAME=$1
 export DBUSER=$2
