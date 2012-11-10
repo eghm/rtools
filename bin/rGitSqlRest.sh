@@ -1,4 +1,4 @@
-export R_HOME=.
+export R_HOME=~
 mkdir -p $R_HOME/rtools/bin
 mkdir $R_HOME/rtools/etc
 cd $R_HOME/rtools/bin
