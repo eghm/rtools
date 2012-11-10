@@ -1,6 +1,7 @@
 if [ -z "$R_HOME" ]
 then
     echo "env R_HOME is not set!  Exiting."
+    exit
 fi
 
 export rDir=${PWD##*/}

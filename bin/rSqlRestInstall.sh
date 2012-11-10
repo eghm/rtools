@@ -1,4 +1,9 @@
-# TODO install sqlrest if CATALINA_HOME is set.
+if [ -z "$R_HOME" ]
+then
+    echo "env R_HOME is not set!  Exiting."
+	exit
+fi
+
 if [ -z "$CATALINA_HOME" ]
 then
 	echo "CATALINA_HOME not set skipping sqlrest installation"
