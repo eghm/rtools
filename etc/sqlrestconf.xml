@@ -2,7 +2,7 @@
 <sqlrestconf>
   <database>
     <jdbc-driver-class>DBDRIVER</jdbc-driver-class>
-    <database-url>DBSURL</database-url>
+    <database-url>DBURL</database-url>
     <user>DBUSER</user>
     <password>DBPASS</password>
   </database>

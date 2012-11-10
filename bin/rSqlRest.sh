@@ -45,6 +45,7 @@ echo "creating .rdev/sqlrest-$DBNAME.sed"
 echo "s|DBNAME|$DBNAME|g" > .rdev/sqlrest-$DBNAME.sed
 echo "s|DBUSER|$DBUSER|g" >> .rdev/sqlrest-$DBNAME.sed
 echo "s|DBPASS|$DBPASS|g" >> .rdev/sqlrest-$DBNAME.sed
+echo "s|DBDRIVER|$DBDRIVER|g" >> .rdev/sqlrest-$DBNAME.sed
 echo "s|DBURL|$DBURL|g" >> .rdev/sqlrest-$DBNAME.sed
 echo "sed -f .rdev/sqlrest-$DBNAME.sed $R_HOME/rtools/etc/sqlrestconf.xml > sqlrestconf-$DBNAME.xml"
 sed -f .rdev/sqlrest-$DBNAME.sed $R_HOME/rtools/etc/sqlrestconf.xml > sqlrestconf-$DBNAME.xml
