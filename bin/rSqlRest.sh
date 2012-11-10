@@ -1,11 +1,11 @@
 # TODO per version installation of sqlrest (sqlrest-version)
-rSqlRestInstall.sh
-
 if [ -z "$R_HOME" ]
 then
     echo "env R_HOME is not set!  Exiting."
 	exit
 fi
+
+rSqlRestInstall.sh
 
 export DBNAME=$1
 export DBUSER=$2
