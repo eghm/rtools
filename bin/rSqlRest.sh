@@ -52,6 +52,7 @@ sed -f .rdev/sqlrest-$DBNAME.sed $R_HOME/rtools/etc/sqlrestconf.xml > sqlrestcon
 if [ -e .rdev/safetodelete ]
 then
     rm .rdev/sqlrest-$DBNAME.sed
+    rm .rdev/safetodelete
     rmdir .rdev
 fi
 
