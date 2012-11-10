@@ -10,7 +10,7 @@ echo "s|Unnamed_rice_3|standalone_$1|g" >> .rdev/$1-intellij-standalone-config.s
 
 echo "s|-Xms512m|-Dlog4j.configuration=$R_HOME/$1/$1-log4j.properties -Dalt.config.location=$R_HOME/$1/$1-serviceregistry-config.xml -Xms512m|g" > .rdev/$1-intellij-serviceregistry-config.sed
 
-echo "s|RVERSION|$1|g" > .rdev/$1-intellij-xmlingester-config.sed
+echo "s|RVERSION|$1|g" > .rdev/$1-intellij-rversion.sed
 
 sed -f .rdev/$1-intellij-sampleapp-config.sed ../rtools/etc/rice_sampleapp__jetty_7_.xml > config/ide/intellij/.idea/runConfigurations/rice_sampleapp__jetty_7_.xml
 sed -f .rdev/$1-intellij-sampleapp-config.sed ../rtools/etc/rice_sampleapp__jetty_8_.xml > config/ide/intellij/.idea/runConfigurations/rice_sampleapp__jetty_8_.xml
@@ -27,5 +27,5 @@ sed -f .rdev/$1-intellij-standalone-config.sed ../rtools/etc/rice_standalone__to
 #sed -f .rdev/$1-intellij-serviceregistry-config.sed ../rtools/etc/rice_serviceregistry__tomcat_6_.xml > config/ide/intellij/.idea/runConfigurations/rice_serviceregistry__tomcat_6_.xml
 #sed -f .rdev/$1-intellij-serviceregistry-config.sed ../rtools/etc/rice_serviceregistry__tomcat_7_.xml > config/ide/intellij/.idea/runConfigurations/rice_serviceregistry__tomcat_7_.xml
 
-sed -f .rdev/$1-intellij-sampleapp-config.sed ../rtools/etc/XMLIngesterLegacyIT.xml > config/ide/intellij/.idea/runConfigurations/XMLIngesterLegacyIT.xml
-sed -f .rdev/$1-intellij-sampleapp-config.sed ../rtools/etc/LoginLogoutLegacyIT-HUB.xml > config/ide/intellij/.idea/runConfigurations/LoginLogoutLegacyIT-HUB.xml
+sed -f .rdev/$1-intellij-rversion.sed ../rtools/etc/XMLIngesterLegacyIT.xml > config/ide/intellij/.idea/runConfigurations/XMLIngesterLegacyIT.xml
+sed -f .rdev/$1-intellij-rversion.sed ../rtools/etc/LoginLogoutLegacyIT-HUB.xml > config/ide/intellij/.idea/runConfigurations/LoginLogoutLegacyIT-HUB.xml

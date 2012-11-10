@@ -23,6 +23,8 @@ svndiff.sh
 touch $R_HOME/logs/$rDir/$1.$DTS.out 
 ln -s $R_HOME/logs/$rDir/$1.$DTS.out $1.$DTS.out
 mvn -version >> $1.$DTS.out
+echo "tail -f $R_HOME/logs/$rDir/$1.$DTS.out to watch progress."
 echo "mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml" >> $1.$DTS.out
 mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $1.$DTS.out 2>&1
-cat $1.$DTS.out
+echo -e "\nSee full log at $R_HOME/logs/$rDir/$1.$DTS.out $1.$DTS.out"
+tail -n 40 $1.$DTS.out
