@@ -30,7 +30,7 @@ if [ ! -e "$R_HOME/rtools/dl/sqlrest/sqlrest/webapps/sqlrest" ]
 then
 	cd $R_HOME/rtools/dl/sqlrest
 	echo "unzipping sqlrest-1.0.zip"
-	unzip -f sqlrest-1.0.zip
+	unzip sqlrest-1.0.zip
 fi
 echo "moving $R_HOME/rtools/dl/sqlrest/webapps/sqlrest to $CATALINA_HOME/webapps"
 mv $R_HOME/rtools/dl/sqlrest/webapps/sqlrest $CATALINA_HOME/webapps
