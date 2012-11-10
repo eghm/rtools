@@ -49,7 +49,7 @@ echo "s|DBURL|$DBURL|g" >> .rdev/sqlrest-$DBNAME.sed
 echo "sed -f .rdev/sqlrest-$DBNAME.sed $R_HOME/rtools/etc/sqlrestconf.xml > sqlrestconf-$DBNAME.xml"
 sed -f .rdev/sqlrest-$DBNAME.sed $R_HOME/rtools/etc/sqlrestconf.xml > sqlrestconf-$DBNAME.xml
 
-if [ -e .rdev/safetodelete ]
+if [ -e ".rdev/safetodelete" ]
 then
     rm .rdev/sqlrest-$DBNAME.sed
     rm .rdev/safetodelete
