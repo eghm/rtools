@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sqlrestconf>
   <database>
-    <jdbc-driver-class>com.mysql.jdbc.Driver</jdbc-driver-class>
-    <database-url>jdbc:mysql://DBSERVER:DBPORT/DBNAME</database-url>
+    <jdbc-driver-class>DBDRIVER</jdbc-driver-class>
+    <database-url>DBSURL</database-url>
     <user>DBUSER</user>
     <password>DBPASS</password>
   </database>
