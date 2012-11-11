@@ -6,7 +6,6 @@ then
 fi
 
 export rDir=${PWD##*/}
-
 if [ "$rDir" = "$R_HOME" ]
 then
 	echo "Usage: run from a directory created using rDev.sh"
