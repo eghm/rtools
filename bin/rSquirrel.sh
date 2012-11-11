@@ -18,7 +18,7 @@ then
     echo "SQuirreLSQL ~/.squirrel-sql not found, skipping adding of SQuirreLSQL aliases"
     exit
 fi
-
+cd $R_HOME/$1
 groovy $R_HOME/rtools/bin/uidToString.groovy > .rdev/$1-$2-uid.txt
 export DBUID=$(cat .rdev/$1-$2-uid.txt)
 export DBNAME=$1$2
