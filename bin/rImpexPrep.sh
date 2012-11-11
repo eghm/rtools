@@ -43,9 +43,12 @@ echo "git pre impex commit"
 log-command.sh rdev.git.commit git commit -a -m "pre impex"
 
 # remove the % identified bys causing me problems
-echo "removing % identified bys"
+echo "impex patching - removing % identified bys"
 log-command.sh rdev.impex.patch patch -p1 <../rtools/etc/impex-no-user-percent.patch
 
+echo "impex loadtester copying rtools/etc/KRIM*.xml to db/impex/master/src/main/resources/"
+log-command.sh rdev.impex.loadtesters.cp cp ../rtools/etc/KRIM*.xml db/impex/master/src/main/resources/
+
 log-command.sh rdev.git.add git add -A
-echo "git applied impex-no-user-precent.patch commit"
-log-command.sh rdev.git.commit git commit -a -m "applied impex-no-user-precent.patch"
+echo "git applied pre impex patches commit"
+log-command.sh rdev.git.commit git commit -a -m "applied pre impex patches"
