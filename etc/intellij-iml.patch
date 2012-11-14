@@ -1,41 +1,3 @@
-Index: config/ide/intellij/rice-ksb.iml
-===================================================================
---- config/ide/intellij/rice-ksb.iml	(revision 35706)
-+++ config/ide/intellij/rice-ksb.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../ksb/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../ksb/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../ksb">
--      <excludeFolder url="file://$MODULE_DIR$/../../../ksb/target" />
-+    <output url="file://$MODULE_DIR$/../../../ksb/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../ksb/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../ksb">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../ksb/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
-Index: config/ide/intellij/rice-krad.iml
-===================================================================
---- config/ide/intellij/rice-krad.iml	(revision 35706)
-+++ config/ide/intellij/rice-krad.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../krad/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../krad/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../krad">
--      <excludeFolder url="file://$MODULE_DIR$/../../../krad/target" />
-+    <output url="file://$MODULE_DIR$/../../../krad/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../krad/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../krad">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../krad/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-it-location.iml
 ===================================================================
 --- config/ide/intellij/rice-it-location.iml	(revision 35706)
@@ -2242,25 +2204,6 @@ Index: config/ide/intellij/rice-deploy.iml
      </content>
      <orderEntry type="inheritedJdk" />
      <orderEntry type="sourceFolder" forTests="false" />
-Index: config/ide/intellij/rice-impex-client.iml
-===================================================================
---- config/ide/intellij/rice-impex-client.iml	(revision 35706)
-+++ config/ide/intellij/rice-impex-client.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../db/impex/client/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../db/impex/client/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../db/impex/client">
--      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/client/target" />
-+    <output url="file://$MODULE_DIR$/../../../db/impex/client/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../db/impex/client/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../db/impex/client">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/client/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-impex-server-bootstrap.iml
 ===================================================================
 --- config/ide/intellij/rice-impex-server-bootstrap.iml	(revision 35706)
@@ -2283,25 +2226,6 @@ Index: config/ide/intellij/rice-impex-server-bootstrap.iml
 +      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/server/bootstrap/src/main/resources" isTestSource="false" />
 +      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/server/bootstrap/src/test/groovy" isTestSource="true" />
 +      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/server/bootstrap/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
-Index: config/ide/intellij/rice.iml
-===================================================================
---- config/ide/intellij/rice.iml	(revision 35706)
-+++ config/ide/intellij/rice.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../..">
--      <excludeFolder url="file://$MODULE_DIR$/../../../target" />
-+    <output url="file://$MODULE_DIR$/../../../target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../..">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../target" />
      </content>
      <orderEntry type="inheritedJdk" />
      <orderEntry type="sourceFolder" forTests="false" />
@@ -2607,44 +2531,6 @@ Index: config/ide/intellij/rice-core-web.iml
      <orderEntry type="library" name="Maven: cglib:cglib-nodep:2.2.2" level="project" />
      <orderEntry type="library" name="Maven: org.glassfish.web:jstl-impl:1.2" level="project" />
      <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
-Index: config/ide/intellij/rice-edl.iml
-===================================================================
---- config/ide/intellij/rice-edl.iml	(revision 35706)
-+++ config/ide/intellij/rice-edl.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../edl/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../edl/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../edl">
--      <excludeFolder url="file://$MODULE_DIR$/../../../edl/target" />
-+    <output url="file://$MODULE_DIR$/../../../edl/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../edl/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../edl">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../edl/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
-Index: config/ide/intellij/rice-it.iml
-===================================================================
---- config/ide/intellij/rice-it.iml	(revision 35706)
-+++ config/ide/intellij/rice-it.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../it/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../it/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../it">
--      <excludeFolder url="file://$MODULE_DIR$/../../../it/target" />
-+    <output url="file://$MODULE_DIR$/../../../it/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../it/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../it">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../it/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-client-contrib.iml
 ===================================================================
 --- config/ide/intellij/rice-client-contrib.iml	(revision 35706)
@@ -2809,25 +2695,6 @@ Index: config/ide/intellij/rice-client-contrib.iml
      <orderEntry type="library" name="Maven: org.acegisecurity:acegi-security:1.0.7" level="project" />
      <orderEntry type="library" name="Maven: oro:oro:2.0.8" level="project" />
      <orderEntry type="library" name="Maven: cas:casclient:2.1.1" level="project" />
-Index: config/ide/intellij/rice-krms.iml
-===================================================================
---- config/ide/intellij/rice-krms.iml	(revision 35706)
-+++ config/ide/intellij/rice-krms.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../krms/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../krms/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../krms">
--      <excludeFolder url="file://$MODULE_DIR$/../../../krms/target" />
-+    <output url="file://$MODULE_DIR$/../../../krms/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../krms/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../krms">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../krms/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-it-edl.iml
 ===================================================================
 --- config/ide/intellij/rice-it-edl.iml	(revision 35706)
@@ -3598,31 +3465,6 @@ Index: config/ide/intellij/rice-development-tools.iml
      <orderEntry type="module" module-name="rice-core-service-web" />
      <orderEntry type="module" module-name="rice-core-web" />
      <orderEntry type="module" module-name="rice-ksb-client-impl" />
-Index: config/ide/intellij/rice-impex-client-demo.iml
-===================================================================
---- config/ide/intellij/rice-impex-client-demo.iml	(revision 35706)
-+++ config/ide/intellij/rice-impex-client-demo.iml	(working copy)
-@@ -1,13 +1,13 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../db/impex/client/demo/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../db/impex/client/demo/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../db/impex/client/demo">
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/demo/src/main/groovy" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/demo/src/main/resources" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/demo/src/test/groovy" isTestSource="true" />
--      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/client/demo/target" />
-+    <output url="file://$MODULE_DIR$/../../../db/impex/client/demo/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../db/impex/client/demo/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../db/impex/client/demo">
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/demo/src/main/groovy" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/demo/src/main/resources" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/demo/src/test/groovy" isTestSource="true" />
-+      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/client/demo/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-sampleapp.iml
 ===================================================================
 --- config/ide/intellij/rice-sampleapp.iml	(revision 35706)
@@ -4645,44 +4487,6 @@ Index: config/ide/intellij/rice-kew-impl.iml
      <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
    </component>
  </module>
-Index: config/ide/intellij/rice-impex-server.iml
-===================================================================
---- config/ide/intellij/rice-impex-server.iml	(revision 35706)
-+++ config/ide/intellij/rice-impex-server.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../db/impex/server/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../db/impex/server/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../db/impex/server">
--      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/server/target" />
-+    <output url="file://$MODULE_DIR$/../../../db/impex/server/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../db/impex/server/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../db/impex/server">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/server/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
-Index: config/ide/intellij/rice-core-service.iml
-===================================================================
---- config/ide/intellij/rice-core-service.iml	(revision 35706)
-+++ config/ide/intellij/rice-core-service.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../core-service/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../core-service/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../core-service">
--      <excludeFolder url="file://$MODULE_DIR$/../../../core-service/target" />
-+    <output url="file://$MODULE_DIR$/../../../core-service/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../core-service/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../core-service">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../core-service/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-ksb-web.iml
 ===================================================================
 --- config/ide/intellij/rice-ksb-web.iml	(revision 35706)
@@ -6337,31 +6141,6 @@ Index: config/ide/intellij/rice-location.iml
    </component>
  </module>
  
-Index: config/ide/intellij/rice-impex-server-demo.iml
-===================================================================
---- config/ide/intellij/rice-impex-server-demo.iml	(revision 35706)
-+++ config/ide/intellij/rice-impex-server-demo.iml	(working copy)
-@@ -1,13 +1,13 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../db/impex/server/demo/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../db/impex/server/demo/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../db/impex/server/demo">
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/server/demo/src/main/groovy" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/server/demo/src/main/resources" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/server/demo/src/test/groovy" isTestSource="true" />
--      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/server/demo/target" />
-+    <output url="file://$MODULE_DIR$/../../../db/impex/server/demo/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../db/impex/server/demo/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../db/impex/server/demo">
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/server/demo/src/main/groovy" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/server/demo/src/main/resources" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/server/demo/src/test/groovy" isTestSource="true" />
-+      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/server/demo/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-krms-impl.iml
 ===================================================================
 --- config/ide/intellij/rice-krms-impl.iml	(revision 35706)
@@ -6728,31 +6507,6 @@ Index: config/ide/intellij/rice-krms-impl.iml
      <orderEntry type="module" module-name="rice-krms-framework" />
      <orderEntry type="module" module-name="rice-krms-api" />
      <orderEntry type="module" module-name="rice-krms-api" scope="TEST" />
-Index: config/ide/intellij/rice-impex-master.iml
-===================================================================
---- config/ide/intellij/rice-impex-master.iml	(revision 35706)
-+++ config/ide/intellij/rice-impex-master.iml	(working copy)
-@@ -1,13 +1,13 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../db/impex/master/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../db/impex/master/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../db/impex/master">
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/master/src/main/groovy" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/master/src/main/resources" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/master/src/test/groovy" isTestSource="true" />
--      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/master/target" />
-+    <output url="file://$MODULE_DIR$/../../../db/impex/master/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../db/impex/master/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../db/impex/master">
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/master/src/main/groovy" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/master/src/main/resources" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/master/src/test/groovy" isTestSource="true" />
-+      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/master/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-it-impl.iml
 ===================================================================
 --- config/ide/intellij/rice-it-impl.iml	(revision 35706)
@@ -9630,31 +9384,6 @@ Index: config/ide/intellij/rice-kim-ldap.iml
      <orderEntry type="library" name="Maven: xalan:xalan:2.7.1" level="project" />
      <orderEntry type="library" name="Maven: xalan:serializer:2.7.1" level="project" />
      <orderEntry type="library" name="Maven: org.apache.cxf:cxf-rt-databinding-aegis:2.3.8" level="project" />
-Index: config/ide/intellij/rice-sql.iml
-===================================================================
---- config/ide/intellij/rice-sql.iml	(revision 35706)
-+++ config/ide/intellij/rice-sql.iml	(working copy)
-@@ -1,13 +1,13 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../db/sql/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../db/sql/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../db/sql">
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/sql/src/main/groovy" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/sql/src/main/resources" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/sql/src/test/groovy" isTestSource="true" />
--      <excludeFolder url="file://$MODULE_DIR$/../../../db/sql/target" />
-+    <output url="file://$MODULE_DIR$/../../../db/sql/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../db/sql/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../db/sql">
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/sql/src/main/groovy" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/sql/src/main/resources" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/sql/src/test/groovy" isTestSource="true" />
-+      <excludeFolder url="file://$MODULE_DIR$/../../../db/sql/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-it-kew.iml
 ===================================================================
 --- config/ide/intellij/rice-it-kew.iml	(revision 35706)
@@ -10849,25 +10578,6 @@ Index: config/ide/intellij/rice-it-remote.iml
      <orderEntry type="library" scope="TEST" name="Maven: org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0" level="project" />
    </component>
  </module>
-Index: config/ide/intellij/rice-config.iml
-===================================================================
---- config/ide/intellij/rice-config.iml	(revision 35706)
-+++ config/ide/intellij/rice-config.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../target/test-classes" />
--    <content url="file://$MODULE_DIR$/../..">
--      <excludeFolder url="file://$MODULE_DIR$/../../target" />
-+    <output url="file://$MODULE_DIR$/../../../config/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../config/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../config">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../config/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-location-impl.iml
 ===================================================================
 --- config/ide/intellij/rice-location-impl.iml	(revision 35706)
@@ -11296,41 +11006,6 @@ Index: config/ide/intellij/rice-kim-framework.iml
      <orderEntry type="module" module-name="rice-krad-app-framework" />
      <orderEntry type="module" module-name="rice-kim-api" />
      <orderEntry type="module" module-name="rice-core-api" />
-Index: config/ide/intellij/rice-archetype-quickstart.iml
-===================================================================
---- config/ide/intellij/rice-archetype-quickstart.iml	(revision 35706)
-+++ config/ide/intellij/rice-archetype-quickstart.iml	(working copy)
-@@ -4,22 +4,22 @@
-     <facet type="web" name="Web">
-       <configuration>
-         <descriptors>
--          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../../archetype/quickstart/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml" />
-+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../../../config/archetype/quickstart/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml" />
-         </descriptors>
-         <webroots>
--          <root url="file://$MODULE_DIR$/../../archetype/quickstart/src/main/resources/archetype-resources/src/main/webapp" relative="/" />
-+          <root url="file://$MODULE_DIR$/../../../config/archetype/quickstart/src/main/resources/archetype-resources/src/main/webapp" relative="/" />
-         </webroots>
-         <sourceRoots />
-       </configuration>
-     </facet>
-   </component>
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../archetype/quickstart/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../archetype/quickstart/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../archetype/quickstart">
--      <sourceFolder url="file://$MODULE_DIR$/../../archetype/quickstart/src/test/groovy" isTestSource="true" />
--      <sourceFolder url="file://$MODULE_DIR$/../../archetype/quickstart/src/main/resources" isTestSource="false" />
--      <excludeFolder url="file://$MODULE_DIR$/../../archetype/quickstart/target" />
-+    <output url="file://$MODULE_DIR$/../../../config/archetype/quickstart/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../config/archetype/quickstart/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../config/archetype/quickstart">
-+      <sourceFolder url="file://$MODULE_DIR$/../../../config/archetype/quickstart/src/test/groovy" isTestSource="true" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../config/archetype/quickstart/src/main/resources" isTestSource="false" />
-+      <excludeFolder url="file://$MODULE_DIR$/../../../config/archetype/quickstart/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-kim-impl.iml
 ===================================================================
 --- config/ide/intellij/rice-kim-impl.iml	(revision 35706)
@@ -12088,25 +11763,6 @@ Index: config/ide/intellij/rice-location-web.iml
      <orderEntry type="library" name="Maven: cglib:cglib-nodep:2.2.2" level="project" />
      <orderEntry type="library" name="Maven: org.glassfish.web:jstl-impl:1.2" level="project" />
      <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
-Index: config/ide/intellij/rice-db.iml
-===================================================================
---- config/ide/intellij/rice-db.iml	(revision 35706)
-+++ config/ide/intellij/rice-db.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../db/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../db/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../db">
--      <excludeFolder url="file://$MODULE_DIR$/../../../db/target" />
-+    <output url="file://$MODULE_DIR$/../../../db/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../db/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../db">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../db/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-it-krms.iml
 ===================================================================
 --- config/ide/intellij/rice-it-krms.iml	(revision 35706)
@@ -12509,25 +12165,6 @@ Index: config/ide/intellij/rice-it-krms.iml
      <orderEntry type="library" scope="TEST" name="Maven: org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0" level="project" />
    </component>
  </module>
-Index: config/ide/intellij/rice-core.iml
-===================================================================
---- config/ide/intellij/rice-core.iml	(revision 35706)
-+++ config/ide/intellij/rice-core.iml	(working copy)
-@@ -1,10 +1,10 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../core/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../core/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../core">
--      <excludeFolder url="file://$MODULE_DIR$/../../../core/target" />
-+    <output url="file://$MODULE_DIR$/../../../core/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../core/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../core">
-+      <excludeFolder url="file://$MODULE_DIR$/../../../core/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-krad-app-framework.iml
 ===================================================================
 --- config/ide/intellij/rice-krad-app-framework.iml	(revision 35706)
@@ -13441,27 +13078,6 @@ Index: config/ide/intellij/rice-impl.iml
      <orderEntry type="module" module-name="rice-core-service-web" />
      <orderEntry type="module" module-name="rice-core-web" />
      <orderEntry type="module" module-name="rice-ksb-client-impl" />
-Index: config/ide/intellij/rice-dist.iml
-===================================================================
---- config/ide/intellij/rice-dist.iml	(revision 35706)
-+++ config/ide/intellij/rice-dist.iml	(working copy)
-@@ -1,11 +1,11 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../dist/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../dist/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../dist">
--      <sourceFolder url="file://$MODULE_DIR$/../../../dist/src/main/resources" isTestSource="false" />
--      <excludeFolder url="file://$MODULE_DIR$/../../../dist/target" />
-+    <output url="file://$MODULE_DIR$/../../../dist/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../dist/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../dist">
-+      <sourceFolder url="file://$MODULE_DIR$/../../../dist/src/main/resources" isTestSource="false" />
-+      <excludeFolder url="file://$MODULE_DIR$/../../../dist/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
 Index: config/ide/intellij/rice-it-kcb.iml
 ===================================================================
 --- config/ide/intellij/rice-it-kcb.iml	(revision 35706)
@@ -13842,28 +13458,3 @@ Index: config/ide/intellij/rice-it-kcb.iml
      <orderEntry type="library" scope="TEST" name="Maven: no.geosoft:filemonitor:1.0-kuali" level="project" />
      <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.10" level="project" />
      <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
-Index: config/ide/intellij/rice-impex-client-bootstrap.iml
-===================================================================
---- config/ide/intellij/rice-impex-client-bootstrap.iml	(revision 35706)
-+++ config/ide/intellij/rice-impex-client-bootstrap.iml	(working copy)
-@@ -1,13 +1,13 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
--    <output url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/target/classes" />
--    <output-test url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/target/test-classes" />
--    <content url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap">
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/src/main/groovy" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/src/main/resources" isTestSource="false" />
--      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/src/test/groovy" isTestSource="true" />
--      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/target" />
-+    <output url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/target/classes" />
-+    <output-test url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/target/test-classes" />
-+    <content url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap">
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/src/main/groovy" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/src/main/resources" isTestSource="false" />
-+      <sourceFolder url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/src/test/groovy" isTestSource="true" />
-+      <excludeFolder url="file://$MODULE_DIR$/../../../db/impex/client/bootstrap/target" />
-     </content>
-     <orderEntry type="inheritedJdk" />
-     <orderEntry type="sourceFolder" forTests="false" />
