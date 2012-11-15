@@ -11,4 +11,8 @@ cd $R_HOME
 rm -rf $R_HOME/$1
 rm -rf /java/m2/$1
 rm -rf /java/m2/k/$1
+if [ -e $R_HOME/$1 ]
+then
+	echo "$R_HOME/$1 still exists check for hung file reference!!!!"
+fi
 
