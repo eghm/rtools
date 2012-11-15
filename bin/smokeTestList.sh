@@ -12,7 +12,8 @@ mv LegacyITs.cut2.txt LegacyITs.txt
 let "i=0";
 for line in $(cat LegacyITs.txt);
 do
-	echo "$line:loadtester$i" >> LegacyITsUsers.txt;
+	# TODO i needs to be padded... to the length of the string length of wc -l LegacyITs.txt
+	echo `printf "$line:loadtester%03d" $i` >> LegacyITsUsers.txt;
     let "i+=1";
 done; 
 rm LegacyITs.txt
