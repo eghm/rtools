@@ -17,6 +17,6 @@ rSquirrel.sh $1 wip $3 $4
 rSquirrel.sh $1 clean $3 $4
 rSquirrel.sh $1 test $3 $4
 
-rSqlRest.sh $1wip $3 $4
+#rSqlRest.sh $1wip $3 $4
 
 #mysql -u root -p$2 $1test < scripts/ddl/rice-test-tables-mysql.sql
