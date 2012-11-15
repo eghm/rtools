@@ -2,6 +2,7 @@
 # svn revision, db root password, db username, db password, [rice db username], [rice db password], [saucelabs username, saucelabs access key]
 
 stime=$(date '+%s')
+export DTS=$(date +%Y%m%d%H%M)
 
 if [ -z "$R_HOME" ]
 then
@@ -20,8 +21,23 @@ then
     export RICE_DB_PASS=RICE
 fi
 
+#export RICE_PORT=$5
+#if [ -z "$RICE_PORT" ]
+#then
+#    export RICE_PORT=8080
+#fi
+
+
 cd $R_HOME
 mkdir -p $R_HOME/logs/$1
+mkdir -p $R_HOME/$1
+
+if [ "$(ls -A $R_HOME/$1)" ]
+then
+     echo "$R_HOME/$1 should be emtpy but is not.  Hangning file pointer possible, exiting."
+     exit
+fi
+
 mkdir -p $R_HOME/$1/.rdev
 
 # we only checkout the db stuff, if there is a problem we avoid checking out everything.
@@ -63,12 +79,14 @@ then
 	exit
 fi
 
-# Sauce Labs params are a problem if rice db user and pass are not given
 echo "running custom updates"
-if [ ! -z "$7" ]
-then
-    rSauceLabs.sh $6 $7
-fi
+
+# for installing the saucelabs quickstart, see saucelabs patch in rPatches.sh
+# Sauce Labs params are a problem if rice db user and pass are not given
+#if [ ! -z "$7" ]
+#then
+#    rSauceLabs.sh $6 $7
+#fi
 
 # get rid of the file not found exceptions
 touch core/impl/OJB.properties
@@ -80,7 +98,7 @@ echo "<descriptor-repository version=\"1.0\"></descriptor-repository>" > impl/re
 # dev tweeks
 rPatches.sh
 rCommonTestConfigMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
-rAppConfigSampleMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
+rAppConfigSampleMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS 8080
 rAppConfigStandaloneMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
 rSpyProperties.sh $1
 rLogin.sh
@@ -88,6 +106,9 @@ rNoCacheFilter.sh
 rIntellijConfig.sh $1
 rDtsLogFiles.sh $1
 rKradreload.sh
+
+echo "Creating intellijJunitAltConfigLocation.sh to be used after starting IntelliJ to set JUnit default to use -Dalt.config.location=$R_HOME$/$1/$1-common-test-config.xml"
+echo "xml ed -u \"/project/component/configuration[@type='JUnit']/option[@name='VM_PARAMETERS']/@value\" -v \"-Dalt.config.location=$R_HOME$/$1/$1-common-test-config.xml\" config/ide/intellij/.idea/workspace.xml" > intellijJunitAltConfigLocation.sh
 
 log-command.sh rdev.git.add git add -A 
 echo "git applied rDev custom updates commit"
@@ -97,12 +118,14 @@ echo -e "\nStarting mvn-clean-install.sh this will take a while..."
 mvn-clean-install.sh
 
 #mvnLinks.sh $1
-
+mkdir -p $R_HOME/logs/$1/rDev-$DTS
+mv $R_HOME/logs/$1/*.out $R_HOME/logs/$1/rDev-$DTS/
+mv $R_HOME/logs/$1/*.log $R_HOME/logs/$1/rDev-$DTS/
+echo -e "Logs are available in $R_HOME/logs/$1/rDev-$DTS/"
 etime=$(date '+%s')
 dt=$((etime - stime))
 ds=$((dt % 60))
 dm=$(((dt / 60) % 60))
 dh=$((dt / 3600))
-echo -e "Logs are available in $R_HOME/logs/$1"
 printf 'Elapsed time %d:%02d:%02d' $dh $dm $ds
 echo -e "\n\n"
