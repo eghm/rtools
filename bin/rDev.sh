@@ -107,7 +107,7 @@ rIntellijConfig.sh $1
 rDtsLogFiles.sh $1
 rKradreload.sh
 
-echo "Creating intellijJunitAltConfigLocation.sh to be used after starting IntelliJ to set JUnit default to use -Dalt.config.location=$R_HOME$/$1/$1-common-test-config.xml"
+echo "Creating intellijJunitAltConfigLocation.sh to be used after starting IntelliJ to set JUnit default to use -Dalt.config.location=$R_HOME/$1/$1-common-test-config.xml"
 echo "xml ed -u \"/project/component/configuration[@type='JUnit']/option[@name='VM_PARAMETERS']/@value\" -v \"-Dalt.config.location=$R_HOME$/$1/$1-common-test-config.xml\" config/ide/intellij/.idea/workspace.xml" > intellijJunitAltConfigLocation.sh
 
 log-command.sh rdev.git.add git add -A 
