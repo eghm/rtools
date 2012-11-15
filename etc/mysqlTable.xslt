@@ -7,12 +7,12 @@
   </xsl:template>
 
   <xsl:template match="row">
-    <KRIM_PRNCPL_T>
+    <TABLE_NAME>
       <xsl:for-each select="*">
         <xsl:attribute name="{name()}">
           <xsl:value-of select="text()"/>
         </xsl:attribute>
       </xsl:for-each>
-    </KRIM_PRNCPL_T>
+    </TABLE_NAME>
   </xsl:template>
 </xsl:stylesheet>
