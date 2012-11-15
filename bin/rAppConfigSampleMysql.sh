@@ -26,7 +26,7 @@
     echo "s|security/rice.keystore|/usr/local/rice/rice.keystore|g" >> .rdev/$1-sampleapp-config.sed
 #    echo "s|||g" >> .rdev/$1-sampleapp-config.sed
 #    echo "s|||g" >> .rdev/$1-sampleapp-config.sed
-    echo "s|8080|8080|g" >> .rdev/$1-sampleapp-config.sed
+    echo "s|8080|$4|g" >> .rdev/$1-sampleapp-config.sed
     sed -f .rdev/$1-sampleapp-config.sed config/templates/sample-app-config.template.xml > $1-sampleapp-config.xml
 #fi
 
