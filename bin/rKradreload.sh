@@ -4,7 +4,7 @@ then
 else
     echo "backing up web/pom.xml to web/pom.xml.orig"
     mv web/pom.xml web/pom.xml.orig
-    echo "updating web/pom.xml for reloading"
+    echo "updating web/pom.xml for ReloadingDataDictionary see https://wiki.kuali.org/display/KULRICE/Reloading+Data+Dictionary+Setup"
     sed 's|</dependencies>|  <dependency>\
           <groupId>${project.groupId}</groupId>\
           <artifactId>rice-development-tools</artifactId>\
