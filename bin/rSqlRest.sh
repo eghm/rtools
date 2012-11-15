@@ -26,7 +26,7 @@ fi
 export DBDRIVER=$6
 if [ -z "$6" ]
 then
-	export DBDRIVER=com.mysql.jdbc.Drvier
+	export DBDRIVER=com.mysql.jdbc.Driver
 fi
 
 export DBURL=$7
