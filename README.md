@@ -9,14 +9,15 @@ Tools developed on OSX for rice with MySQL, I also use these on ec2 unix.  Assum
 I don't update.  I only create new revisions, which I create a git repository for.  I do create DBs for each version I setup.
 An example workflow would be:
 * create a new version of rice trunk in $R_HOME/version#:
-** rDev.sh 34866 rootdbpass
+    * rDev.sh 34866 rootdbpass
 * Open the Intellij project $R_HOME/config/idea/intellij
 * Save nice piece of work I want to make sure I don't break:
-** gitAll.sh
+    * gitAll.sh
 * When I want to update I create a version of rice of that version
-** rDev.sh 34892 rootdbpass
+    * rDev.sh 34892 rootdbpass
 * Merge my changes from $R_HOME/34866 to $R_HOME/34892
 
+More examples available in EXAMPLES.md
 
 Directory structure:
 
