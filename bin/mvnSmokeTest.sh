@@ -22,6 +22,7 @@ do
 	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
 	export TEST_PARAM=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 3-)
     export TEST_PARAMS=${TEST_PARAM//:/ }
+    export TEST_PARAMS2=${TEST_PARAMS//:/ }
 	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.cut.txt
 	mv ../LegacyITsUsers.cut.txt ../LegacyITsUsers.txt
 #fi # if changed to while loop the done needs to be at the end of the file
@@ -39,5 +40,5 @@ ln -s ../logs/$9/$logname.out $logname.out
 mvn -version  >> $logname.out
 
 echo "mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$TEST -Dremote.public.user=$$TEST_USER -Drice.version=$9 $TEST_PARAMS" >> $logname.out
-mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Drice.version=$9 $TEST_PARAMS >> $logname.out
+mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs=defined -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.browser=$6 -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Drice.version=$9 $TEST_PARAMS2 >> $logname.out
 done
