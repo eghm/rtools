@@ -1,6 +1,6 @@
 DEVELOPMENT:
 * checkout and setup 35797
-** rDev.sh 35797 dbrootpass
+        rDev.sh 35797 dbrootpass
 * checkout and setup 35797 skipping tests
 ** rDev.sh 35797 dbrootpass -DskipTests=true
 * run integration tests using version specific config.xml
