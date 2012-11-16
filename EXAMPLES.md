@@ -17,8 +17,10 @@ SMOKE TESTS:
     * /r/rtools/bin/smokeTestListPush.sh servers.txt tests.txt
 * Logged in locally as ec2_user, cat the LegacyITsUsers.txt that got pushed to each server
     * parallel --tag --nonall --sshloginfile servers.txt  cat LegacyITsUsers.txt
-* Logged in locally as ec2_user, start the servers executing their LegacyITsUsers.txt, in this case, because LegacyITsUsers.txt is present and verified by the commands above, the it.test (LoginLogoutLegacyIT) is ignored as is the user (admin), but required to keep all the param numbers the same:
+* Logged in locally as ec2-user, start the servers executing their LegacyITsUsers.txt, in this case, because LegacyITsUsers.txt is present and verified by the commands above, the it.test (LoginLogoutLegacyIT) is ignored as is the user (admin), but required to keep all the param numbers the same:
     * parallel --tag --nonall --sshloginfile servers.txt rtools/bin/mvnSmokeTest.sh env11.rice.kuali.org saucelabsuser saucelabskey 12 Windows_2008 opera LoginLogoutLegacyIT admin 35558
+* Logged in as ec2-user, transfer a file to the servers
+    * find 35797 -name 'IdentityPersonRoleWDIT.java' | parallel --sshloginfile ~/servers.txt --transfer wc
 
 SQLRest:
 * (re) installing sqlrest on ENV11 to work with ORACLE and bouncing tomcat, sqlrest gives an error :(
