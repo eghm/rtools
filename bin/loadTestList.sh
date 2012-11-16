@@ -15,6 +15,7 @@ do
 	then
 		let "x=$1"
     fi
-    echo `printf "IdentityPersonRoleWDIT:loadtester%03d:-Dtest.role.user.cnt.start=$z:-Dtest.role.user.cnt=$x" $y`
+    # the total count is passed in becauce the padding uses the cnt value to determine how much padding to add
+    echo `printf "IdentityPersonRoleWDIT:loadtester%03d:-Dtest.role.user.cnt.start=$z:-Dtest.role.user.cnt.finish=$x:-Dtest.role.user.cnt=$1" $y`
 	let "z=x+1"
 done
