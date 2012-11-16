@@ -3,3 +3,5 @@ remotePullRtools.sh
 remoteDbStart.sh
 deleteRevisionAndDBs.sh $1 $3
 rDev.sh $2 $3 rice rice -DskipTests=true
+cd $2
+mvn test-compile -f sampleapp/pom.xml
