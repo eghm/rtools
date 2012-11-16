@@ -6,7 +6,7 @@ DEVELOPMENT:
 * run integration tests using version specific config.xml
     * mvn-itest.sh 
 * run an integration using version specific config.xml
-    *mvn-itest.sh -Dit.test=StyleRepositoryServiceImplTest
+    * mvn-itest.sh -Dit.test=StyleRepositoryServiceImplTest
 * delete 35797 and its databases
     * deleteRevisionAndDBs.sh 35797 dbrootpass
 
