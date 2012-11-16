@@ -18,7 +18,7 @@ parallel --tag --nonall --sshloginfile servers.txt rtools/bin/mvnSmokeTest.sh en
 
 # SQLRest:
 # (re) installing sqlrest on ENV11 to work with ORACLE and bouncing tomcat, sqlrest gives an error :(
-rm rGitSqlRest.sh ; rm -rf rtools ; rm -rf .rdev ; wget https://raw.github.com/eghm/rtools/master/bin/rGitSqlRest.sh ; chmod 755 rGitSqlRest.sh ; ./rGitSqlRest.sh ORACLE RICEENV11 RICEENV11 localhost 1521 oracle.jdbc.driver.OracleDriver jdbc:oracle:thin:@oracle.rice.kuali.org:1521:ORACLE ; cat sqlrestconf-ORACLE.xml
+rm rGitSqlRest.sh ; rm -rf rtools ; rm -rf .rdev ; wget https://raw.github.com/eghm/rtools/master/bin/rGitSqlRest.sh ; chmod 755 rGitSqlRest.sh ; ./rGitSqlRest.sh ORACLE USER PASS localhost 1521 oracle.jdbc.driver.OracleDriver jdbc:oracle:thin:@oracle.rice.kuali.org:1521:ORACLE ; cat sqlrestconf-ORACLE.xml
 /usr/local/tomcat/bin/shutdown.sh
 /usr/local/tomcat/bin/startup.sh
 tail -f /usr/local/tomcat/logs/catalina.out
