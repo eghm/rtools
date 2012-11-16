@@ -1,9 +1,13 @@
 # DEVELOPMENT:
-# checkout and setup 35797
+* checkout and setup 35797
 rDev.sh 35797 dbrootpass
-# checkout and setup 35797 skipping tests
+* checkout and setup 35797 skipping tests
 rDev.sh 35797 dbrootpass -DskipTests=true
-# delete 35797 and its databases
+* run integration tests using version specific config.xml
+mvn-itest.sh 
+* run an integration using version specific config.xml
+mvn-itest.sh -Dit.test=StyleRepositoryServiceImplTest
+* delete 35797 and its databases
 deleteRevisionAndDBs.sh 35797 dbrootpass
 
 # SMOKE TESTS:
