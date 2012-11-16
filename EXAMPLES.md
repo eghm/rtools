@@ -1,14 +1,14 @@
 # DEVELOPMENT:
 * checkout and setup 35797
-rDev.sh 35797 dbrootpass
+** rDev.sh 35797 dbrootpass
 * checkout and setup 35797 skipping tests
-rDev.sh 35797 dbrootpass -DskipTests=true
+** rDev.sh 35797 dbrootpass -DskipTests=true
 * run integration tests using version specific config.xml
-mvn-itest.sh 
+** mvn-itest.sh 
 * run an integration using version specific config.xml
-mvn-itest.sh -Dit.test=StyleRepositoryServiceImplTest
+**mvn-itest.sh -Dit.test=StyleRepositoryServiceImplTest
 * delete 35797 and its databases
-deleteRevisionAndDBs.sh 35797 dbrootpass
+** deleteRevisionAndDBs.sh 35797 dbrootpass
 
 # SMOKE TESTS:
 # create the tests.txt file used in the next example, from within a R_VERSION directory, copy the output file LegacyITsUsers.txt from the output of:
