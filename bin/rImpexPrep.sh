@@ -46,8 +46,7 @@ log-command.sh rdev.git.commit git commit -a -m "pre impex"
 echo "impex patching - removing % identified bys"
 log-command.sh rdev.impex.patch patch -p1 <../rtools/etc/impex-no-user-percent.patch
 
-echo "impex loadtester copying rtools/etc/KRIM*.xml to db/impex/master/src/main/resources/"
-log-command.sh rdev.impex.loadtesters.cp cp ../rtools/etc/KRIM*.xml db/impex/master/src/main/resources/
+loadTestImpex.sh
 
 log-command.sh rdev.git.add git add -A
 echo "git applied pre impex patches commit"

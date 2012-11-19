@@ -19,4 +19,5 @@ fi
 
 touch $R_HOME/logs/$rDir/$1.$DTS.out 
 ln -s $R_HOME/logs/$rDir/$1.$DTS.out $1.$DTS.out
+echo "$2 $3 $4 $5 $6 $7 $8 $9" >> $1.$DTS.out
 $2 $3 $4 $5 $6 $7 $8 $9  >> $1.$DTS.out 2>&1
