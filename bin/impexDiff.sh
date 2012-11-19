@@ -14,5 +14,7 @@ for f in $(cat $R_HOME/rtools/etc/mysqlTables.txt) ; do
 done
 
 find . -maxdepth 1 -name '*.xml' -size 0 -exec rm {} \;
+# 48 bytes is the data xml tag only
 find . -maxdepth 1 -name '*.xml' -size 48 -exec rm {} \;
-#find . -maxdepth 1 -name '*_S.xml' -exec rm {} \;
+# sequence tables
+find . -maxdepth 1 -name '*_S.xml' -exec rm {} \;
