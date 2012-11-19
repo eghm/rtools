@@ -1,7 +1,8 @@
 # TODO maybe better done sooner
 # where db1 are those you are going to keep
 # db1, db2
-for f in $(cat $R_HOME/rtools/etc/LoadTesterTables.txt) ; do 
+# mysqlTables.txt can be created with mysqlShowTables user password db
+for f in $(cat $R_HOME/rtools/etc/mysqlTables.txt) ; do 
     if [ -z `diff $f.$1.impex.xml $f.$2.impex.xml` ]
 	then
 		rm $f.$1.impex.xml
@@ -12,5 +13,6 @@ for f in $(cat $R_HOME/rtools/etc/LoadTesterTables.txt) ; do
 	fi
 done
 
+find . -maxdepth 1 -name '*.xml' -size 0 -exec rm {} \;
 find . -maxdepth 1 -name '*.xml' -size 48 -exec rm {} \;
-find . -maxdepth 1 -name '*_S.xml' -exec rm {} \;
+#find . -maxdepth 1 -name '*_S.xml' -exec rm {} \;
