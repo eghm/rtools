@@ -17,7 +17,7 @@ for f in $(cat $R_HOME/rtools/etc/mysqlTables.txt) ; do
     rm $f-Dump2Impex.sh
 
     perl $R_HOME/rtools/bin/mysqlDump2ImpexDateFormat.pl -f $f.$3.impex.xml > $f.$3.tmp.xml
-    sed -f $R_HOME/rtools/etc/mysqlDumpDates.sed $f.$3.tmp.xml > $f.$3.impex.xml
+    sed -f $R_HOME/rtools/etc/mysqlDump2ImpexReplacements.sed $f.$3.tmp.xml > $f.$3.impex.xml
 
 	rm $f.$3.tmp.xml
 
