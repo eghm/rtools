@@ -22,6 +22,6 @@ do
     ln -s ../logs/$9/$logname.test-compile.out $logname.test-compile.out
     mvn -version  >> $logname.test-compile.out
 
-    echo "" >> $logname.out
-    ~/rtools/bin/mvn-itest.sh -Dit.test=$TEST $TEST_PARAMS2 >> $logname.out
+    echo "mvn itests -Pitests verify -Ddts.log.filename=itests-log.log -Dit.test=$TEST $TEST_PARAMS2" >> $logname.out
+    mvn itests -Pitests verify -Ddts.log.filename=itests-log.log -Dit.test=$TEST $TEST_PARAMS2 >> $logname.out
 done
