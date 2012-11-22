@@ -23,5 +23,5 @@ do
     mvn -version  >> $logname.test-compile.out
 
     echo "" >> $logname.out
-    ~/rtools/bin/mvn-itests.sh -Dit.test=$TEST $TEST_PARAMS2 >> $logname.out
+    ~/rtools/bin/mvn-itest.sh -Dit.test=$TEST $TEST_PARAMS2 >> $logname.out
 done
