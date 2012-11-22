@@ -10,9 +10,9 @@ export TEST_PARAMS2=""
 while [ -s ../iTests.txt ] 
 do
 	export TEST=$(tail -n 1 ../iTests.txt)
-	export TEST_PARAM=$(tail -n 1 ../iTests.txt | cut -d : -f 2-)
-    export TEST_PARAMS=${TEST_PARAM//:/ }
-    export TEST_PARAMS2=${TEST_PARAMS//:/ }
+#	export TEST_PARAM=$(tail -n 1 ../iTests.txt | cut -d : -f 2-)
+#    export TEST_PARAMS=${TEST_PARAM//:/ }
+#    export TEST_PARAMS2=${TEST_PARAMS//:/ }
 	sed '$d' ../iTests.txt > ../iTests.cut.txt
 	mv ../iTests.cut.txt ../iTests.txt
 
@@ -22,6 +22,6 @@ do
     ln -s ../logs/$9/$logname.test-compile.out $logname.test-compile.out
     mvn -version  >> $logname.test-compile.out
 
-    echo "mvn -Pitests verify -Ddts.log.filename=itests-log.log -Dit.test=$TEST $TEST_PARAMS2" >> $logname.out
-    mvn -Pitests verify -Ddts.log.filename=itests-log.log -Dit.test=$TEST $TEST_PARAMS2 >> $logname.out
+    echo "mvn -Pitests verify -Ddts.log.filename=itests-log.log -Dit.test=$TEST $*" >> $logname.out
+    mvn -Pitests verify -Ddts.log.filename=itests-log.log -Dit.test=$TEST $* >> $logname.out
 done
