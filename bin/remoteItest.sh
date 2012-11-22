@@ -13,7 +13,7 @@ do
 	export TEST_PARAM=$(tail -n 1 ../iTests.txt | cut -d : -f 2-)
     export TEST_PARAMS=${TEST_PARAM//:/ }
     export TEST_PARAMS2=${TEST_PARAMS//:/ }
-	sed '$d' ..iTests.txt > ../iTests.cut.txt
+	sed '$d' ../iTests.txt > ../iTests.cut.txt
 	mv ../iTests.cut.txt ../iTests.txt
 
     export logname=$TEST-$DTS
