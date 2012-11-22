@@ -1,12 +1,13 @@
 # rice.version 
+source ~/.bash_profile
 cd ~/$1
-export M2_HOME=~/apache-maven-3.0.4/
-export PATH=$PATH:$M2_HOME/bin:~/rtools/bin
+#export M2_HOME=~/apache-maven-3.0.4/
+#export PATH=$PATH:$M2_HOME/bin:~/rtools/bin
 export DTS=$(date +%Y%m%d%H%M)
-#export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=512m"
+export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=512m"
 
 export TEST=""
-export TEST_PARAMS2=""
+#export TEST_PARAMS2=""
 while [ -s ../iTests.txt ] 
 do
 	export TEST=$(tail -n 1 ../iTests.txt)
