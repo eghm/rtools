@@ -1,0 +1,4712 @@
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlListGetterListener.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlListGetterListener.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlListGetterListener.java	(revision 0)
+@@ -0,0 +1,26 @@
++package org.kuali.rice.core.impl.xml;
++
++/**
++ * Helper interface for use with the RiceXmlExportList class.
++ * 
++ * <p>If semi-"streaming" of child elements is desired during JAXB marshalling, then the parent element
++ * assigns an instance of RiceXmlExportList to the appropriate list field/property, and gives the
++ * list an implementation of this interface for the list to invoke whenever it receives notification of
++ * needing to create the next child element. This allows the implementation to create and then discard
++ * child elements without having to hold onto them all.
++ * 
++ * <p>The "E" type is the type returned by the associated list, and the "T" type is the type that must
++ * be converted to the "E" type.
++ */
++public interface RiceXmlListGetterListener<E,T> {
++
++	/**
++	 * Listener method that converts the given item into the one expected by the list. It is invoked
++	 * whenever the associated list's "get" method is called.
++	 * 
++	 * @param nextElement The item to convert.
++	 * @param index The index being accessed on the RiceXmlExportList instance.
++	 * @return The converted element that the list is expected to return.
++	 */
++	public E gettingNextElement(T nextElement, int index);
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlExportList.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlExportList.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlExportList.java	(revision 0)
+@@ -0,0 +1,67 @@
++package org.kuali.rice.core.impl.xml;
++
++import java.util.AbstractList;
++import java.util.List;
++
++/**
++ * Custom subclass of AbstractList that, when iterating over a provided internal list, will pass
++ * the internal list's object to the given listener for conversion into another object of the
++ * list's type.
++ * 
++ * <p>These lists are constructed by passing in another list containing the unconverted elements,
++ * as well as a listener that will create items of this list's type upon each invocation of
++ * the "get" method.
++ * 
++ * <p>This is similar to the "steaming" unmarshalling strategy presented in one of the JAXB
++ * sample apps and the RiceXmlImportList class, except that this class has been adapted for
++ * export instead.
++ * 
++ * <p>The "E" type is the list's type, and the "T" type is the type of the internal list.
++ */
++public final class RiceXmlExportList<E,T> extends AbstractList<E> {
++
++	private final List<? extends T> sourceList;
++	private final RiceXmlListGetterListener<E,T> listGetterListener;
++	
++	/**
++	 * Constructs a new export list that will rely on the given listener for converting the provided
++	 * list's elements into the appropriate type.
++	 * 
++	 * @param sourceList The list of objects to convert.
++	 * @param listGetterListener The listener to use.
++	 * @throws IllegalArgumentException if sourceList or listGetterListener are null.
++	 */
++	public RiceXmlExportList(List<? extends T> sourceList, RiceXmlListGetterListener<E,T> listGetterListener) {
++		super();
++		if (sourceList == null) {
++			throw new IllegalArgumentException("sourceList cannot be null");
++		} else if (listGetterListener == null) {
++			throw new IllegalArgumentException("listGetterListener cannot be null");
++		}
++		this.sourceList = sourceList;
++		this.listGetterListener = listGetterListener;
++	}
++	
++	/**
++	 * Passes the element at the given index of the internal list to the listener, and then returns
++	 * the listener's result.
++	 * 
++	 * @param index The element's index in the internal list.
++	 * @return The element converted by the listener at the given list index.
++	 */
++	@Override
++	public E get(int index) {
++		return listGetterListener.gettingNextElement(sourceList.get(index), index);
++	}
++
++	/**
++	 * Returns the size of the internal list.
++	 * 
++	 * @return The size of the internal list.
++	 */
++	@Override
++	public int size() {
++		return sourceList.size();
++	}
++
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlListAdditionListener.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlListAdditionListener.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlListAdditionListener.java	(revision 0)
+@@ -0,0 +1,21 @@
++package org.kuali.rice.core.impl.xml;
++
++/**
++ * Helper interface for use with the RiceXmlStreamingList class.
++ * 
++ * <p>If "streaming" of child elements is desired during JAXB unmarshalling, then the parent element
++ * assigns an instance of RiceXmlStreamingList to the appropriate list field/property, and gives the
++ * list an implementation of this interface for the list to invoke whenever it receives a 
++ * newly-unmarshalled child element. Then, implementation can process the new element and then
++ * discard it.
++ */
++public interface RiceXmlListAdditionListener<T> {
++
++	/**
++	 * This method is invoked whenever the associated RiceXmlStreamingList instance receives
++	 * a newly-unmarshalled child element.
++	 * 
++	 * @param item The unmarshalled element (or adapter-generated object) to be processed.
++	 */
++	public void newElementAdded(T item);
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/CoreXmlConstants.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/CoreXmlConstants.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/CoreXmlConstants.java	(revision 0)
+@@ -0,0 +1,8 @@
++package org.kuali.rice.core.impl.xml;
++
++/**
++ * A convenience class for storing several common XML-parsing-related constants.
++ */
++public final class CoreXmlConstants {
++	public static final String NS_COMMON = "ns:workflow/common";
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTO.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTO.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTO.java	(revision 0)
+@@ -0,0 +1,46 @@
++package org.kuali.rice.core.impl.xml;
++
++import java.io.Serializable;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlAttribute;
++import javax.xml.bind.annotation.XmlType;
++import javax.xml.bind.annotation.XmlValue;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
++
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="NameAndNamespaceType")
++public class NameAndNamespaceDTO implements Serializable {
++	
++	@XmlAttribute(name="namespaceCode", required=true)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String namespaceCode;
++	
++	@XmlValue
++	private String name;
++	
++	public NameAndNamespaceDTO() {}
++	
++	public NameAndNamespaceDTO(String namespaceCode, String name) {
++		this.namespaceCode = namespaceCode;
++		this.name = name;
++	}
++	
++	public String getNamespaceCode() {
++		return namespaceCode;
++	}
++
++	public void setNamespaceCode(String namespaceCode) {
++		this.namespaceCode = namespaceCode;
++	}
++
++	public String getName() {
++		return name;
++	}
++
++	public void setName(String name) {
++		this.name = name;
++	}
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/StringToDateTimeAdapter.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/StringToDateTimeAdapter.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/StringToDateTimeAdapter.java	(revision 0)
+@@ -0,0 +1,27 @@
++package org.kuali.rice.core.impl.xml;
++
++import java.util.Date;
++
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlAdapter;
++
++import org.kuali.rice.core.api.CoreApiServiceLocator;
++
++/**
++ * An adapter for converting between a string and a {@link java.util.Date}. If the string or date
++ * is non-null, then it has to be convertible by the DateTimeService. If the string or date
++ * is null, then a null value will be returned during marshalling/unmarshalling.
++ */
++public class StringToDateTimeAdapter extends XmlAdapter<String,Date> {
++
++	@Override
++	public String marshal(Date v) throws Exception {
++		return (v != null) ? CoreApiServiceLocator.getDateTimeService().toDateTimeString(v) : null;
++	}
++
++	@Override
++	public Date unmarshal(String v) throws Exception {
++		return (v != null) ? CoreApiServiceLocator.getDateTimeService().convertToDateTime(new NormalizedStringAdapter().unmarshal(v)) : null;
++	}
++
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlImportList.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlImportList.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/RiceXmlImportList.java	(revision 0)
+@@ -0,0 +1,67 @@
++package org.kuali.rice.core.impl.xml;
++
++import java.util.AbstractList;
++
++/**
++ * Custom subclass of AbstractList that, when adding new items, will pass them on to a listener instead of
++ * adding them to this list.
++ * 
++ * <p>This is based off of the JAXB "streaming" unmarshalling strategy, which is briefly mentioned here:
++ * 
++ * <p>http://jaxb.java.net/guide/Dealing_with_large_documents.html
++ * 
++ * <p>and is presented in the example code available here:
++ * 
++ * <p>http://jaxb.java.net/2.2.4/
++ */
++public final class RiceXmlImportList<E> extends AbstractList<E> {
++
++	private final RiceXmlListAdditionListener<E> listAdditionListener;
++	
++	/**
++	 * Constructs a new list that will pass new elements to the given listener instead of storing them.
++	 * 
++	 * @param listAdditionListener The listener to use.
++	 * @throws IllegalArgumentException if the listener is null.
++	 */
++	public RiceXmlImportList(RiceXmlListAdditionListener<E> listAdditionListener) {
++		super();
++		if (listAdditionListener == null) {
++			throw new IllegalArgumentException("listAdditionListener cannot be null");
++		}
++		this.listAdditionListener = listAdditionListener;
++	}
++	
++	/**
++	 * Instead of adding the element to the list, simply invoke the appropriate listener.
++	 * 
++	 * <p>This is based off of the "streaming" unmarshalling strategy used in one of the JAXB sample apps.
++	 * 
++	 * @return false, since the list never gets altered as a result of invoking this method.
++	 */
++	@Override
++	public boolean add(E e) {
++		listAdditionListener.newElementAdded(e);
++		return false;
++	}
++
++	/**
++	 * This method always throws an exception, since the list never contains any items.
++	 * 
++	 * @throws IndexOutOfBoundsException
++	 */
++	@Override
++	public E get(int index) {
++		throw new IndexOutOfBoundsException();
++	}
++
++	/**
++	 * This method always returns zero, since items are never actually added to the list.
++	 * 
++	 * @return zero.
++	 */
++	@Override
++	public int size() {
++		return 0;
++	}
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTOToKimTypeIdAdapter.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTOToKimTypeIdAdapter.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTOToKimTypeIdAdapter.java	(revision 0)
+@@ -0,0 +1,41 @@
++package org.kuali.rice.core.impl.xml;
++
++import javax.xml.bind.MarshalException;
++import javax.xml.bind.UnmarshalException;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlAdapter;
++
++import org.apache.commons.lang.StringUtils;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++import org.kuali.rice.kim.api.type.KimType;
++
++
++public class NameAndNamespaceDTOToKimTypeIdAdapter extends XmlAdapter<NameAndNamespaceDTO,String> {
++
++	@Override
++	public NameAndNamespaceDTO marshal(String v) throws Exception {
++		if (v != null) {
++			KimType kimType = KimApiServiceLocator.getKimTypeInfoService().getKimType(StringUtils.trim(v));
++			if (kimType == null) {
++				throw new MarshalException("Cannot find KIM type with ID \"" + v + "\"");
++			}
++			return new NameAndNamespaceDTO(kimType.getNamespaceCode(), kimType.getName());
++		}
++		return null;
++	}
++
++	@Override
++	public String unmarshal(NameAndNamespaceDTO v) throws Exception {
++		if (v != null) {
++			KimType kimType = KimApiServiceLocator.getKimTypeInfoService().findKimTypeByNameAndNamespace(v.getNamespaceCode(),
++					new NormalizedStringAdapter().unmarshal(v.getName()));
++			if (kimType == null) {
++				throw new UnmarshalException("Cannot find KIM type with namespace \"" + v.getNamespaceCode() + "\" and name \"" + 
++						new NormalizedStringAdapter().unmarshal(v.getName()) + "\"");
++			}
++			return kimType.getId();
++		}
++		return null;
++	}
++
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTOValidatingAdapter.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTOValidatingAdapter.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/NameAndNamespaceDTOValidatingAdapter.java	(revision 0)
+@@ -0,0 +1,50 @@
++package org.kuali.rice.core.impl.xml;
++
++import javax.xml.bind.MarshalException;
++import javax.xml.bind.UnmarshalException;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlAdapter;
++
++import org.apache.commons.lang.StringUtils;
++import org.kuali.rice.coreservice.api.CoreServiceApiServiceLocator;
++
++public class NameAndNamespaceDTOValidatingAdapter extends XmlAdapter<NameAndNamespaceDTO,NameAndNamespaceDTO> {
++
++	@Override
++	public NameAndNamespaceDTO marshal(NameAndNamespaceDTO v) throws Exception {
++		if (v != null) {
++			// Verify that the name is non-blank and the namespace code maps to a valid KNS namespace.
++			if (StringUtils.isBlank(v.getName())) {
++				throw new MarshalException("Cannot export a name-and-namespace pair with a blank name");
++			} else if (StringUtils.isBlank(v.getNamespaceCode())) {
++				throw new MarshalException("Cannot export a name-and-namespace pair with a blank namespace code");
++			} else if (CoreServiceApiServiceLocator.getNamespaceService().getNamespace(v.getNamespaceCode()) == null) {
++				throw new MarshalException("Cannot export a name-and-namespace pair with invalid or unknown namespace \"" +
++						v.getNamespaceCode() + "\"");
++			}
++			
++			v.setName(new NormalizedStringAdapter().marshal(v.getName()));
++			v.setNamespaceCode(v.getNamespaceCode());
++		}
++		return v;
++	}
++
++	@Override
++	public NameAndNamespaceDTO unmarshal(NameAndNamespaceDTO v) throws Exception {
++		if (v != null) {
++			// Verify that the name is non-blank and the namespace code maps to a valid KNS namespace.
++			if (StringUtils.isBlank(v.getName())) {
++				throw new UnmarshalException("Cannot import a name-and-namespace pair with a blank name");
++			} else if (StringUtils.isBlank(v.getNamespaceCode())) {
++				throw new UnmarshalException("Cannot import a name-and-namespace pair with a blank namespace code");
++			} else if (CoreServiceApiServiceLocator.getNamespaceService().getNamespace(v.getNamespaceCode()) == null) {
++				throw new UnmarshalException("Cannot import a name-and-namespace pair with invalid or unknown namespace \"" +
++						v.getNamespaceCode() + "\"");
++			}
++			
++			v.setName(new NormalizedStringAdapter().unmarshal(v.getName()));
++			v.setNamespaceCode(v.getNamespaceCode());
++		}
++		return v;
++	}
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/KeyValueDTO.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/KeyValueDTO.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/KeyValueDTO.java	(revision 0)
+@@ -0,0 +1,45 @@
++package org.kuali.rice.core.impl.xml;
++
++import java.io.Serializable;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlAttribute;
++import javax.xml.bind.annotation.XmlType;
++import javax.xml.bind.annotation.XmlValue;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
++
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="KeyValueType")
++public class KeyValueDTO implements Serializable {
++	@XmlAttribute(name="key", required=true)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String key;
++	
++	@XmlValue
++	private String value;
++	
++	public KeyValueDTO() {}
++	
++	public KeyValueDTO(String key, String value) {
++		this.key = key;
++		this.value = value;
++	}
++
++	public String getKey() {
++		return key;
++	}
++
++	public void setKey(String key) {
++		this.key = key;
++	}
++
++	public String getValue() {
++		return value;
++	}
++
++	public void setValue(String value) {
++		this.value = value;
++	}
++}
+Index: core/impl/src/main/java/org/kuali/rice/core/impl/xml/StringTrimmingAdapter.java
+===================================================================
+--- core/impl/src/main/java/org/kuali/rice/core/impl/xml/StringTrimmingAdapter.java	(revision 0)
++++ core/impl/src/main/java/org/kuali/rice/core/impl/xml/StringTrimmingAdapter.java	(revision 0)
+@@ -0,0 +1,22 @@
++package org.kuali.rice.core.impl.xml;
++
++import javax.xml.bind.annotation.adapters.XmlAdapter;
++
++import org.apache.commons.lang.StringUtils;
++
++/**
++ * An adapter that simply performs a null-safe trim on whatever value is being marshalled or unmarshalled.
++ */
++public class StringTrimmingAdapter extends XmlAdapter<String,String> {
++
++	@Override
++	public String marshal(String v) throws Exception {
++		return StringUtils.trim(v);
++	}
++
++	@Override
++	public String unmarshal(String v) throws Exception {
++		return StringUtils.trim(v);
++	}
++
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/KimXmlUtil.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/KimXmlUtil.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/KimXmlUtil.java	(revision 0)
+@@ -0,0 +1,85 @@
++package org.kuali.rice.kim.impl.xml;
++
++import java.io.InputStream;
++import java.io.OutputStream;
++import java.util.List;
++
++import javax.xml.bind.JAXBContext;
++import javax.xml.bind.JAXBElement;
++import javax.xml.bind.JAXBException;
++import javax.xml.bind.Marshaller;
++import javax.xml.bind.Unmarshaller;
++import javax.xml.namespace.QName;
++import javax.xml.stream.XMLOutputFactory;
++import javax.xml.stream.XMLStreamException;
++
++import org.kuali.rice.kim.impl.data.xml.DataXmlDTO;
++import org.kuali.rice.kim.impl.permission.xml.PermissionDataXmlDTO;
++import org.kuali.rice.kim.impl.permission.xml.PermissionsXmlDTO;
++import org.kuali.rice.kim.impl.role.xml.RoleDataXmlDTO;
++import org.kuali.rice.kim.impl.role.xml.RolesXmlDTO;
++import org.kuali.rice.kim.impl.user.xml.UsersXmlDTO;
++
++/**
++ * Contains static helper methods for parsing and exporting all the KIM-related XML.
++ */
++public final class KimXmlUtil {
++	
++	/**
++	 * Parses all the KIM data in the XML from the given input stream.
++	 * 
++	 * @param inputStream
++	 */
++	public static void parseKimXml(InputStream inputStream) {
++		try {
++			JAXBContext jaxbContext = JAXBContext.newInstance(DataXmlDTO.class);
++			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
++			// Add a schema for validation here!!!!
++			unmarshaller.unmarshal(inputStream);
++		} catch (Exception e) { 
++			throw new RuntimeException(e);
++		}
++	}
++	
++	/**
++	 * Exports a list of roles or permissions to XML.
++	 * 
++	 * @param outputStream
++	 * @param permissions
++	 * @param roles
++	 */
++	public static void exportKimXml(OutputStream outputStream, List<? extends Object> permissions, List<? extends Object> roles) {
++		PermissionDataXmlDTO permissionData = (permissions != null && !permissions.isEmpty()) ?
++				new PermissionDataXmlDTO(new PermissionsXmlDTO(permissions)) : null;
++		RoleDataXmlDTO roleData = (roles != null && !roles.isEmpty()) ?
++				new RoleDataXmlDTO(new RolesXmlDTO(roles)) : null;
++		// Due to the difficulty of setting up namespace prefix mappings with JAXB in an implementation-independent
++		// manner, a JAXB-and-XMLStreamWriter hybrid approach is used here instead, in an effort to simplify the
++		// prefix mapping process.
++		CynergyXMLStreamWriterImpl customWriter = null;
++		try {
++			customWriter = new CynergyXMLStreamWriterImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream));
++			JAXBContext jaxbContext = JAXBContext.newInstance(DataXmlDTO.class);
++			Marshaller marshaller = jaxbContext.createMarshaller();
++			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
++			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.FALSE);
++			
++			marshaller.marshal(new JAXBElement<DataXmlDTO>(new QName("ns:workflow", "data"), DataXmlDTO.class, null,
++					new DataXmlDTO(new UsersXmlDTO(permissionData, roleData), null)), customWriter);
++			
++		} catch (JAXBException e) {
++			throw new RuntimeException(e);
++		} catch (XMLStreamException e) {
++			throw new RuntimeException(e);
++		} finally {
++			if (customWriter != null) {
++				try {
++					customWriter.close();
++				} catch (Exception e) {}
++			}
++		}
++	}
++
++
++	
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/CynergyXMLStreamWriterImpl.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/CynergyXMLStreamWriterImpl.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/CynergyXMLStreamWriterImpl.java	(revision 0)
+@@ -0,0 +1,485 @@
++package org.kuali.rice.kim.impl.xml;
++
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.HashMap;
++import java.util.Iterator;
++import java.util.List;
++import java.util.Map;
++
++import javax.xml.XMLConstants;
++import javax.xml.namespace.NamespaceContext;
++import javax.xml.stream.XMLStreamException;
++import javax.xml.stream.XMLStreamWriter;
++
++import org.apache.commons.lang.StringUtils;
++
++/**
++ * A custom XMLStreamWriter that fixes up the auto-generated namespace prefixes and
++ * namespace declaration locations created by JAXB marshaling, and also adds
++ * newlines and indentation as needed.
++ * 
++ * <p>It is difficult (if not impossible) to define custom namespace prefixes with
++ * JAXB in an implementation-dependent way, and JAXB typically puts the namespace
++ * declarations in just the root tag. Thus, this XMLStreamWriter was created to
++ * remedy both of those problems when writing out the XML.
++ * 
++ * <p>In addition, some JAXB marshallers may lose their indentation if their
++ * output is sent to a stream writer. This stream writer solves that problem by
++ * adding its own indentation to the JAXB-outputted elements.
++ * 
++ * <p>Most operations on this stream writer will simply invoke the corresponding
++ * operation on an underlying XMLStreamWriter implementation, or will perform
++ * additional calls to that writer before or after invoking the corresponding
++ * operation. See the method descriptions for which methods do not perform a
++ * straightforward write-through.
++ * 
++ * <p>Portions of this stream writer are based off of the one shown at the URL
++ * below, which served as the basis for this class's XML namespace fix-ups:
++ * 
++ * <p>http://stackoverflow.com/questions/5720501/jaxb-marshalling-xmpp-stanzas
++ */
++public class CynergyXMLStreamWriterImpl implements XMLStreamWriter {
++	
++	private static final String XSI_URI = "http://www.w3.org/2001/XMLSchema-instance";
++	
++	private static final List<String> XML_NS_PREFIXES = Collections.singletonList(XMLConstants.XML_NS_PREFIX);
++	private static final List<String> XMLNS_ATTRIBUTE_PREFIXES = Collections.singletonList(XMLConstants.XMLNS_ATTRIBUTE);
++	private static final List<String> XSI_PREFIXES = Collections.singletonList("xsi");
++	private static final List<String> EMPTY_PREFIXES = Collections.emptyList();
++	
++	// A char array for conveniently adding newlines and indentation without having to create lots of Strings.
++	private static final char[] newLineChars = {'\n', '\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t'};
++	
++	// A mapping from Rice namespaces to their corresponding XSI schema locations.
++	private static final Map<String,String> KNOWN_SCHEMA_LOCS = new HashMap<String,String>();
++	
++	static {
++		KNOWN_SCHEMA_LOCS.put("ns:workflow", "ns:workflow resource:WorkflowData");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/ApplicationConstants", "ns:workflow/ApplicationConstants resource:ApplicationConstants");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/common", "ns:workflow/common resource:common");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/DocumentType", "ns:workflow/DocumentType resource:DocumentType");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/EDocLite", "ns:workflow/EDocLite resource:EDocLite");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/Group", "ns:workflow/Group resource:Group");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/Help", "ns:workflow/Help resource:Help");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/Rule", "ns:workflow/Rule resource:Rule");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/RuleAttribute", "ns:workflow/RuleAttribute resource:RuleAttribute");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/RuleTemplate", "ns:workflow/RuleTemplate resource:RuleTemplate");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/Style", "ns:workflow/Style resource:Style");
++		KNOWN_SCHEMA_LOCS.put("ns:workflow/User", "ns:workflow/User resource:User");
++	}
++	
++	/** The underlying XMLStreamWriter that this writer uses. */
++	private XMLStreamWriter streamWriter;
++	/** The NamespaceContext implementation to use. */
++	private NamespaceContext nsContext;
++	/** An indicator of whether an opening tag was just processed, to aid in deciding when to write newlines and indents. */
++	private boolean justEnteredTag;
++	/** A counter for the number of spaces to indent. */
++	private int numIndents = 0;
++	/** An indicator of whether the XSI namespace declaration still needs to be added. */
++	private boolean addedXSINamespace = false;
++	
++	/** A list (used as a stack) of the differing default namespaces used by the parent elements. */
++	private List<String> nsStack = new ArrayList<String>();
++	/** The current default namespace. */
++	private String nsStackTop = "";
++	/** The depth at which the entries in the "nsStack" list appeared. */
++	private List<Integer> depthStack = new ArrayList<Integer>();
++	/** The depth at which the current default namespace was first encountered. */
++	private int depthStackTop = -1;
++	/** The current element depth. */
++	private int currDepth = 0;
++	
++	/**
++	 * Constructs a new instance. Any existing NamespaceContext on the underlying
++	 * stream writer will be overwritten by a custom one specific to this class.
++	 * 
++	 * @param streamWriter The underlying XMLStreamWriter to write to.
++	 * @throws IllegalArgumentException if streamWriter is null.
++	 */
++	public CynergyXMLStreamWriterImpl(XMLStreamWriter streamWriter) {
++		if (streamWriter == null) {
++			throw new IllegalArgumentException("streamWriter cannot be null");
++		}
++		this.streamWriter = streamWriter;
++		this.nsContext = new CynergyNamespaceContextImpl();
++		this.justEnteredTag = false;
++		
++		try {
++			this.streamWriter.setNamespaceContext(this.nsContext);
++		} catch (XMLStreamException e) {
++			throw new RuntimeException(e);
++		}
++	}
++	
++	public void close() throws XMLStreamException {
++		streamWriter.close();
++	}
++
++	public void flush() throws XMLStreamException {
++		streamWriter.flush();
++	}
++
++	public NamespaceContext getNamespaceContext() {
++		return streamWriter.getNamespaceContext();
++	}
++
++	public String getPrefix(String uri) throws XMLStreamException {
++		return streamWriter.getPrefix(uri);
++	}
++
++	public Object getProperty(String name) throws IllegalArgumentException {
++		return streamWriter.getProperty(name);
++	}
++
++	public void setDefaultNamespace(String uri) throws XMLStreamException {
++		streamWriter.setDefaultNamespace(uri);
++	}
++
++	/**
++	 * Overridden to do nothing, since the NamespaceContext is set internally upon writer construction.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#setNamespaceContext(javax.xml.namespace.NamespaceContext)
++	 */
++	public void setNamespaceContext(NamespaceContext context) throws XMLStreamException {}
++
++	public void setPrefix(String prefix, String uri) throws XMLStreamException {
++		streamWriter.setPrefix(prefix, uri);
++	}
++
++	/**
++	 * This method will use the class's internal NamespaceContext to overwrite the current prefix before writing the attribute.
++	 * 
++	 * <p>See this class's NamespaceContext implementation for details on how this overwriting works.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeAttribute(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
++	 */
++	public void writeAttribute(String prefix, String namespaceURI, String localName, String value) throws XMLStreamException {
++		prefix = nsContext.getPrefix(namespaceURI);
++		streamWriter.writeAttribute(prefix, namespaceURI, localName, value);
++	}
++
++	public void writeAttribute(String namespaceURI, String localName, String value) throws XMLStreamException {
++		streamWriter.writeAttribute(namespaceURI, localName, value);
++	}
++
++	public void writeAttribute(String localName, String value) throws XMLStreamException {
++		streamWriter.writeAttribute(localName, value);
++	}
++
++	public void writeCData(String data) throws XMLStreamException {
++		streamWriter.writeCData(data);
++	}
++
++	public void writeCharacters(char[] text, int start, int len) throws XMLStreamException {
++		streamWriter.writeCharacters(text, start, len);
++	}
++
++	public void writeCharacters(String text) throws XMLStreamException {
++		streamWriter.writeCharacters(text);
++	}
++
++	public void writeComment(String data) throws XMLStreamException {
++		streamWriter.writeComment(data);
++	}
++
++	public void writeDefaultNamespace(String namespaceURI) throws XMLStreamException {
++		streamWriter.writeDefaultNamespace(namespaceURI);
++	}
++
++	public void writeDTD(String dtd) throws XMLStreamException {
++		streamWriter.writeDTD(dtd);
++	}
++
++	/**
++	 * Adds indentation as needed, then invokes the underlying XMLStreamWriter's version of the method;
++	 * also uses the class's internal NamespaceContext to overwrite the current prefix before writing the element.
++	 * 
++	 * <p>See this class's NamespaceContext implementation for details on how this overwriting works.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeEmptyElement(java.lang.String, java.lang.String, java.lang.String)
++	 */
++	public void writeEmptyElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
++		if (justEnteredTag) {
++			numIndents++;
++		}
++		
++		streamWriter.writeCharacters(newLineChars, 0, 1 + (numIndents % 10));
++		for (int i = numIndents / 10; i > 0; i--) {
++			streamWriter.writeCharacters(newLineChars, 1, 10);
++		}
++		
++		prefix = nsContext.getPrefix(namespaceURI);
++		streamWriter.writeEmptyElement(prefix, localName, namespaceURI);
++		justEnteredTag = false;
++	}
++
++	/**
++	 * Adds indentation as needed, then invokes the underlying XMLStreamWriter's version of the method.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeEmptyElement(java.lang.String, java.lang.String)
++	 */
++	public void writeEmptyElement(String namespaceURI, String localName) throws XMLStreamException {
++		if (justEnteredTag) {
++			numIndents++;
++		}
++		
++		streamWriter.writeCharacters(newLineChars, 0, 1 + (numIndents % 10));
++		for (int i = numIndents / 10; i > 0; i--) {
++			streamWriter.writeCharacters(newLineChars, 1, 10);
++		}
++		
++		streamWriter.writeEmptyElement(namespaceURI, localName);
++		justEnteredTag = false;
++	}
++
++	/**
++	 * Adds indentation as needed, then invokes the underlying XMLStreamWriter's version of the method.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeEmptyElement(java.lang.String)
++	 */
++	public void writeEmptyElement(String localName) throws XMLStreamException {
++		if (justEnteredTag) {
++			numIndents++;
++		}
++		
++		streamWriter.writeCharacters(newLineChars, 0, 1 + (numIndents % 10));
++		for (int i = numIndents / 10; i > 0; i--) {
++			streamWriter.writeCharacters(newLineChars, 1, 10);
++		}
++		
++		streamWriter.writeEmptyElement(localName);
++		justEnteredTag = false;
++	}
++
++	public void writeEndDocument() throws XMLStreamException {
++		streamWriter.writeEndDocument();
++	}
++
++	/**
++	 * Adds indentation as needed, then invokes the underlying XMLStreamWriter's version of the method.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeEndElement()
++	 */
++	public void writeEndElement() throws XMLStreamException {
++		if (!justEnteredTag) {
++			numIndents--;
++			
++			streamWriter.writeCharacters(newLineChars, 0, 1 + numIndents % 10);
++			for (int i = 0; i < numIndents / 10; i++) {
++				streamWriter.writeCharacters(newLineChars, 1, 10);
++			}
++		}
++		
++		streamWriter.writeEndElement();
++		if (currDepth == depthStackTop) {
++			depthStackTop = depthStack.remove(depthStack.size() - 1).intValue();
++			nsStackTop = nsStack.remove(nsStack.size() - 1);
++		}
++		currDepth--;
++		justEnteredTag = false;
++	}
++
++	public void writeEntityRef(String name) throws XMLStreamException {
++		streamWriter.writeEntityRef(name);
++	}
++
++	/**
++	 * Overridden to not write namespace declarations unless it is one of the namespaces
++	 * recognized by this class's NamespaceContext implementation.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeNamespace(java.lang.String, java.lang.String)
++	 */
++	public void writeNamespace(String prefix, String namespaceURI) throws XMLStreamException {
++		prefix = nsContext.getPrefix(namespaceURI);
++		if (!"".equals(prefix)) {
++			streamWriter.writeNamespace(prefix, namespaceURI);
++		}
++	}
++
++	public void writeProcessingInstruction(String target, String data) throws XMLStreamException {
++		streamWriter.writeProcessingInstruction(target, data);
++	}
++
++	public void writeProcessingInstruction(String target) throws XMLStreamException {
++		streamWriter.writeProcessingInstruction(target);
++	}
++
++	public void writeStartDocument() throws XMLStreamException {
++		streamWriter.writeStartDocument();
++		nsStack.clear();
++		nsStackTop = "";
++		depthStack.clear();
++		depthStackTop = -1;
++		justEnteredTag = false;
++		numIndents = 0;
++		addedXSINamespace = false;
++	}
++
++	public void writeStartDocument(String encoding, String version) throws XMLStreamException {
++		streamWriter.writeStartDocument(encoding, version);
++		nsStack.clear();
++		nsStackTop = "";
++		depthStack.clear();
++		depthStackTop = -1;
++		justEnteredTag = false;
++		numIndents = 0;
++		addedXSINamespace = false;
++	}
++
++	public void writeStartDocument(String version) throws XMLStreamException {
++		streamWriter.writeStartDocument(version);
++		nsStack.clear();
++		nsStackTop = "";
++		depthStack.clear();
++		depthStackTop = -1;
++		justEnteredTag = false;
++		numIndents = 0;
++		addedXSINamespace = false;
++	}
++
++	/**
++	 * Adds indentation and corrects namespaces as needed, then invokes the underlying XMLStreamWriter's version of the method.
++	 * 
++	 * <p>This method will use the class's internal NamespaceContext to overwrite the current prefix before writing the attribute.
++	 * In addition, if this element requires introducing a new default namespace, then appropriate "xmlns:[prefix]", "xmlns:xsi",
++	 * and "xsi:schemaLocation" attributes will be written out as needed.
++	 * 
++	 * <p>See this class's NamespaceContext implementation for details on how this overwriting works.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeStartElement(java.lang.String, java.lang.String, java.lang.String)
++	 */
++	public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
++		if (justEnteredTag) {
++			numIndents++;
++		}
++		
++		streamWriter.writeCharacters(newLineChars, 0, 1 + (numIndents % 10));
++		for (int i = numIndents / 10; i > 0; i--) {
++			streamWriter.writeCharacters(newLineChars, 1, 10);
++		}
++		
++		currDepth++;
++		prefix = nsContext.getPrefix(namespaceURI);
++		streamWriter.writeStartElement(prefix, localName, namespaceURI);
++		if (StringUtils.isNotBlank(namespaceURI) && !nsStackTop.equals(namespaceURI)) {
++			nsStack.add(nsStackTop);
++			nsStackTop = namespaceURI;
++			depthStack.add(Integer.valueOf(depthStackTop));
++			depthStackTop = currDepth;
++			streamWriter.writeDefaultNamespace(namespaceURI);
++			
++			if (!addedXSINamespace) {
++				streamWriter.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
++				addedXSINamespace = true;
++			}
++			
++			if (KNOWN_SCHEMA_LOCS.containsKey(namespaceURI)) {
++				streamWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", KNOWN_SCHEMA_LOCS.get(namespaceURI));
++			}
++		}
++		justEnteredTag = true;
++	}
++
++	/**
++	 * Adds indentation as needed, then invokes the underlying XMLStreamWriter's version of the method.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeStartElement(java.lang.String, java.lang.String)
++	 */
++	public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
++		if (justEnteredTag) {
++			numIndents++;
++		}
++		
++		streamWriter.writeCharacters(newLineChars, 0, 1 + (numIndents % 10));
++		for (int i = numIndents / 10; i > 0; i--) {
++			streamWriter.writeCharacters(newLineChars, 1, 10);
++		}
++		
++		currDepth++;
++		streamWriter.writeStartElement(namespaceURI, localName);
++		justEnteredTag = true;
++	}
++
++	/**
++	 * Adds indentation as needed, then invokes the underlying XMLStreamWriter's version of the method.
++	 * 
++	 * @see javax.xml.stream.XMLStreamWriter#writeStartElement(java.lang.String)
++	 */
++	public void writeStartElement(String localName) throws XMLStreamException {
++		if (justEnteredTag) {
++			numIndents++;
++		}
++		
++		streamWriter.writeCharacters(newLineChars, 0, 1 + (numIndents % 10));
++		for (int i = numIndents / 10; i > 0; i--) {
++			streamWriter.writeCharacters(newLineChars, 1, 10);
++		}
++		
++		currDepth++;
++		streamWriter.writeStartElement(localName);
++		justEnteredTag = true;
++	}
++
++	/**
++	 * An implementation of NamespaceContext resembling the one from the URL below,
++	 * except this implementation contains extra handling for the prefixes "xml",
++	 * "xmlns", and "xsi":
++	 * 
++	 * <p>http://stackoverflow.com/questions/5720501/jaxb-marshalling-xmpp-stanzas
++	 */
++	private class CynergyNamespaceContextImpl implements NamespaceContext {
++
++		/**
++		 * Returns the corresponding W3 namespace if the prefix is "xml", "xmlns",
++		 * or "xsi", or returns the current default namespace if the prefix is an
++		 * empty string, or returns null for all other prefixes.
++		 */
++		public String getNamespaceURI(String prefix) {
++			if (XMLConstants.XML_NS_PREFIX.equals(prefix)) {
++				return XMLConstants.XML_NS_URI;
++			} else if (XMLConstants.XMLNS_ATTRIBUTE.equals(prefix)) {
++				return XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
++			} else if ("xsi".equals(prefix)) {
++				return "http://www.w3.org/2001/XMLSchema-instance";
++			} else if ("".equals(prefix)) {
++				return nsStackTop;
++			} else {
++				return null;
++			}
++		}
++
++		/**
++		 * Returns "xml", "xmlns", or "xsi" if the namespace is a W3 one corresponding
++		 * to one of those prefixes, or returns an empty string for all other namespaces.
++		 */
++		public String getPrefix(String namespaceURI) {
++			if (XMLConstants.XML_NS_URI.equals(namespaceURI)) {
++				return XMLConstants.XML_NS_PREFIX;
++			} else if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(namespaceURI)) {
++				return XMLConstants.XMLNS_ATTRIBUTE;
++			} else if ("http://www.w3.org/2001/XMLSchema-instance".equals(namespaceURI)) {
++				return "xsi";
++			}
++			return "";
++		}
++
++		/**
++		 * Returns an iterator over a singleton "xml", "xmlns", or "xsi" prefix if the
++		 * namespace is a W3 one corresponding to one of those prefixes, or returns
++		 * an iterator over an empty list for all other namespaces.
++		 */
++		public Iterator<?> getPrefixes(String namespaceURI) {
++			if (XMLConstants.XML_NS_URI.equals(namespaceURI)) {
++				return XML_NS_PREFIXES.iterator();
++			} else if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(namespaceURI)) {
++				return XMLNS_ATTRIBUTE_PREFIXES.iterator();
++			} else if (XSI_URI.equals(namespaceURI)) {
++				return XSI_PREFIXES.iterator();
++			}
++			return EMPTY_PREFIXES.iterator();
++		}
++		
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/CynergyKimImportExport.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/CynergyKimImportExport.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/CynergyKimImportExport.java	(revision 0)
+@@ -0,0 +1,46 @@
++package org.kuali.rice.kim.impl.xml;
++
++import java.io.IOException;
++import java.io.InputStream;
++import java.io.OutputStream;
++import java.util.Collections;
++import java.util.List;
++
++import org.kuali.rice.core.framework.impex.xml.XmlLoader;
++import org.kuali.rice.kim.api.permission.PermissionContract;
++import org.kuali.rice.kim.api.role.RoleContract;
++import org.kuali.rice.krad.bo.Exporter;
++import org.kuali.rice.krad.exception.ExportNotSupportedException;
++import org.kuali.rice.krad.util.KRADConstants;
++
++/**
++ * Helper class for importing and exporting KIM-related data.
++ */
++public class CynergyKimImportExport implements XmlLoader, Exporter {
++
++	private final List<String> supportedFormats = Collections.singletonList(KRADConstants.XML_FORMAT);
++	
++	public void export(Class<?> dataObjectClass, List<? extends Object> dataObjects,
++			String exportFormat, OutputStream outputStream) throws IOException, ExportNotSupportedException {
++		if (!supportedFormats.contains(exportFormat)) {
++			throw new ExportNotSupportedException("The CynergyKimImportExport class does not support the \"" + exportFormat + "\" export format");
++		}
++		
++		if (PermissionContract.class.isAssignableFrom(dataObjectClass)) {
++			KimXmlUtil.exportKimXml(outputStream, dataObjects, null);
++		} else if (RoleContract.class.isAssignableFrom(dataObjectClass)) {
++			KimXmlUtil.exportKimXml(outputStream, null, dataObjects);
++		} else {
++			throw new ExportNotSupportedException("The CynergyKimImportExport class cannot export non-permission and non-role objects");
++		}
++	}
++
++	public List<String> getSupportedFormats(Class<?> dataObjectClass) {
++		return supportedFormats;
++	}
++
++	public void loadXml(InputStream inputStream, String principalId) {
++		KimXmlUtil.parseKimXml(inputStream);
++	}
++
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/KimXmlConstants.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/KimXmlConstants.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/xml/KimXmlConstants.java	(revision 0)
+@@ -0,0 +1,9 @@
++package org.kuali.rice.kim.impl.xml;
++
++/**
++ * A convenience class for storing constants pertaining to KIM XML.
++ */
++public final class KimXmlConstants {
++	public static final String NS_ROLE = "ns:workflow/RoleData";
++	public static final String NS_PERM = "ns:workflow/PermissionData";
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilitiesXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilitiesXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilitiesXmlDTO.java	(revision 0)
+@@ -0,0 +1,101 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++import java.util.List;
++
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.kim.api.role.RoleResponsibilityContract;
++
++import org.kuali.rice.core.impl.xml.RiceXmlImportList;
++import org.kuali.rice.core.impl.xml.RiceXmlListAdditionListener;
++import org.kuali.rice.core.impl.xml.RiceXmlListGetterListener;
++
++@XmlTransient
++public abstract class RoleResponsibilitiesXmlDTO<T extends RoleResponsibilityXmlDTO> implements RiceXmlListAdditionListener<T>, Serializable {
++
++	
++	public abstract List<T> getRoleResponsibilities();
++	
++	public abstract void setRoleResponsibilities(List<T> roleResponsibilities);
++	
++	void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		setRoleResponsibilities(new RiceXmlImportList<T>(this));
++	}
++	
++	void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		setRoleResponsibilities(null);
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibilities", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="StandaloneRoleResponsibilitiesType", propOrder={"roleResponsibilities"})
++	public static class OutsideOfRole extends RoleResponsibilitiesXmlDTO<RoleResponsibilityXmlDTO.OutsideOfRole> {
++		
++		@XmlElement(name="roleResponsibility", namespace=NS_ROLE)
++		private List<RoleResponsibilityXmlDTO.OutsideOfRole> roleResponsibilities;
++		
++		public List<RoleResponsibilityXmlDTO.OutsideOfRole> getRoleResponsibilities() {
++			return roleResponsibilities;
++		}
++
++		public void setRoleResponsibilities(List<RoleResponsibilityXmlDTO.OutsideOfRole> roleResponsibilities) {
++			this.roleResponsibilities = roleResponsibilities;
++		}
++		
++		public void newElementAdded(RoleResponsibilityXmlDTO.OutsideOfRole item) {
++			
++		}
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibilities", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RoleResponsibilitiesType", propOrder={"roleResponsibilities"})
++	public static class WithinRole extends RoleResponsibilitiesXmlDTO<RoleResponsibilityXmlDTO.WithinRole>
++			implements RiceXmlListGetterListener<RoleResponsibilityXmlDTO.WithinRole,RoleResponsibilityContract> {
++		
++		@XmlElement(name="roleResponsibility", namespace=NS_ROLE)
++		private List<RoleResponsibilityXmlDTO.WithinRole> roleResponsibilities;
++		
++		@XmlTransient
++		private String roleId;
++		
++		public WithinRole() {}
++		
++		public WithinRole(String roleId) {
++			this.roleId = roleId;
++		}
++
++		public List<RoleResponsibilityXmlDTO.WithinRole> getRoleResponsibilities() {
++			return roleResponsibilities;
++		}
++
++		public void setRoleResponsibilities(List<RoleResponsibilityXmlDTO.WithinRole> roleResponsibilities) {
++			this.roleResponsibilities = roleResponsibilities;
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++		
++		public void newElementAdded(RoleResponsibilityXmlDTO.WithinRole item) {
++			
++		}
++		
++		public RoleResponsibilityXmlDTO.WithinRole gettingNextElement(RoleResponsibilityContract nextElement, int index) {
++			return null;
++		}
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionXmlDTO.java	(revision 0)
+@@ -0,0 +1,203 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
++
++import org.kuali.rice.kim.api.permission.Permission;
++import org.kuali.rice.kim.api.role.Role;
++import org.kuali.rice.kim.api.role.RolePermissionContract;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTO;
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTOValidatingAdapter;
++
++@XmlTransient
++public abstract class RolePermissionXmlDTO implements RolePermissionContract, Serializable {
++	@XmlElement(name="permissionId", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String permissionId;
++	
++	@XmlElement(name="permissionName", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++	private NameAndNamespaceDTO permissionNameAndNamespace;
++
++	@XmlElement(name="active", namespace=NS_ROLE)
++	private boolean active;
++	
++	@XmlTransient
++	private String id;
++	
++	@XmlTransient
++	private String objectId;
++	
++	@XmlTransient
++	private Long versionNumber;
++	
++	public RolePermissionXmlDTO() {}
++	
++	public RolePermissionXmlDTO(Permission permission) {
++		if (permission == null) {
++			throw new IllegalArgumentException("Cannot construct a role permission with a null permission");
++		}
++		this.permissionId = permission.getId();
++		this.permissionNameAndNamespace = new NameAndNamespaceDTO(permission.getNamespaceCode(), permission.getName());
++	}
++	
++	public String getPermissionId() {
++		return permissionId;
++	}
++
++	public void setPermissionId(String permissionId) {
++		this.permissionId = permissionId;
++	}
++
++	public NameAndNamespaceDTO getPermissionNameAndNamespace() {
++		return permissionNameAndNamespace;
++	}
++
++	public void setPermissionNameAndNamespace(NameAndNamespaceDTO permissionNameAndNamespace) {
++		this.permissionNameAndNamespace = permissionNameAndNamespace;
++	}
++	
++	public String getPermissionName() {
++		return (permissionNameAndNamespace != null) ? permissionNameAndNamespace.getName() : null;
++	}
++	
++	public String getPermissionNamespaceCode() {
++		return (permissionNameAndNamespace != null) ? permissionNameAndNamespace.getNamespaceCode() : null;
++	}
++	
++	public boolean isActive() {
++		return active;
++	}
++
++	public void setActive(boolean active) {
++		this.active = active;
++	}
++
++	public String getId() {
++		return id;
++	}
++
++	public void setId(String id) {
++		this.id = id;
++	}
++
++	public String getObjectId() {
++		return objectId;
++	}
++
++	public void setObjectId(String objectId) {
++		this.objectId = objectId;
++	}
++
++	public Long getVersionNumber() {
++		return versionNumber;
++	}
++
++	public void setVersionNumber(Long versionNumber) {
++		this.versionNumber = versionNumber;
++	}
++	
++	// =======================================================================================================
++	
++	/**
++	 * Maps to a "rolePermission" element that does not have a "role" element as an ancestor.
++	 */
++	@XmlRootElement(name="rolePermission", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="StandaloneRolePermissionType", propOrder={
++			"permissionId", "permissionNameAndNamespace", "roleId", "roleNameAndNamespace"
++	})
++	public static class OutsideOfRole extends RolePermissionXmlDTO {
++		@XmlElement(name="roleId", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++		private String roleId;
++
++		@XmlElement(name="roleName", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++		private NameAndNamespaceDTO roleNameAndNamespace;
++		
++		public OutsideOfRole() {
++			super();
++		}
++		
++		public OutsideOfRole(Permission permission, String roleId) {
++			super(permission);
++			Role role = KimApiServiceLocator.getRoleService().getRole(roleId);
++			if (role == null) {
++				throw new IllegalArgumentException("Cannot find role with ID \"" + roleId + "\"");
++			}
++			this.roleNameAndNamespace = new NameAndNamespaceDTO(role.getNamespaceCode(), role.getName());
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++		
++		public void setRoleId(String roleId) {
++			this.roleId = roleId;
++		}
++
++		public NameAndNamespaceDTO getRoleNameAndNamespace() {
++			return roleNameAndNamespace;
++		}
++
++		public void setRoleNameAndNamespace(NameAndNamespaceDTO roleNameAndNamespace) {
++			this.roleNameAndNamespace = roleNameAndNamespace;
++		}
++
++		public String getRoleName() {
++			return (roleNameAndNamespace != null) ? roleNameAndNamespace.getName() : null;
++		}
++		
++		public String getRoleNamespaceCode() {
++			return (roleNameAndNamespace != null) ? roleNameAndNamespace.getNamespaceCode() : null;
++		}
++	}
++	
++	// =======================================================================================================
++	
++	/**
++	 * Maps to a "rolePermission" element that has a "role" element as an ancestor.
++	 */
++	@XmlRootElement(name="rolePermission", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RolePermissionType", propOrder={
++			"permissionId", "permissionNameAndNamespace"
++	})
++	public static class WithinRole extends RolePermissionXmlDTO  {
++		@XmlTransient
++		private String roleId;
++
++		public WithinRole() {
++			super();
++		}
++		
++		public WithinRole(Permission permission) {
++			super(permission);
++		}
++
++		void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++			if (parent instanceof RolePermissionsXmlDTO.WithinRole) {
++				roleId = ((RolePermissionsXmlDTO.WithinRole) parent).getRoleId();
++			}
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++		
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleMembersXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleMembersXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleMembersXmlDTO.java	(revision 0)
+@@ -0,0 +1,142 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++import java.util.List;
++
++import javax.xml.bind.Marshaller;
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.core.api.criteria.PredicateFactory;
++import org.kuali.rice.core.api.criteria.QueryByCriteria;
++import org.kuali.rice.kim.api.role.RoleMember;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++
++import org.kuali.rice.core.impl.xml.RiceXmlExportList;
++import org.kuali.rice.core.impl.xml.RiceXmlImportList;
++import org.kuali.rice.core.impl.xml.RiceXmlListAdditionListener;
++import org.kuali.rice.core.impl.xml.RiceXmlListGetterListener;
++
++/**
++ * Base class for "roleMembers" elements. Refer to the static interior subclasses for the two contexts of this element.
++ */
++@XmlTransient
++public abstract class RoleMembersXmlDTO<T extends RoleMemberXmlDTO> implements RiceXmlListAdditionListener<T>, Serializable {
++	
++	public abstract List<T> getRoleMembers();
++	
++	public abstract void setRoleMembers(List<T> roleMembers);
++	
++	void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		setRoleMembers(new RiceXmlImportList<T>(this));
++	}
++	
++	void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		setRoleMembers(null);
++	}
++	
++	// =======================================================================================================
++	
++	/**
++	 * Maps to a "roleMembers" element that does not have a "role" element as its parent.
++	 */
++	@XmlRootElement(name="roleMembers", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="StandaloneRoleMembersType", propOrder={"roleMembers"})
++	public static class OutsideOfRole extends RoleMembersXmlDTO<RoleMemberXmlDTO.OutsideOfRole> {
++		
++		@XmlElement(name="roleMember", namespace=NS_ROLE)
++		private List<RoleMemberXmlDTO.OutsideOfRole> roleMembers;
++		
++		public List<RoleMemberXmlDTO.OutsideOfRole> getRoleMembers() {
++			return roleMembers;
++		}
++
++		public void setRoleMembers(List<RoleMemberXmlDTO.OutsideOfRole> roleMembers) {
++			this.roleMembers = roleMembers;
++		}
++		
++		public void newElementAdded(RoleMemberXmlDTO.OutsideOfRole item) {
++			if (!item.isAlreadyPersisted()) {
++				RoleXmlUtil.validateAndPersistNewRoleMember(item);
++			}
++		}
++	}
++	
++	// =======================================================================================================
++	
++	/**
++	 * Maps to a "roleMembers" element that has a "role" element as its parent.
++	 */
++	@XmlRootElement(name="roleMembers", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RoleMembersType", propOrder={"roleMembers"})
++	public static class WithinRole extends RoleMembersXmlDTO<RoleMemberXmlDTO.WithinRole>
++			implements RiceXmlListGetterListener<RoleMemberXmlDTO.WithinRole,RoleMember> {
++		
++		@XmlElement(name="roleMember", namespace=NS_ROLE)
++		private List<RoleMemberXmlDTO.WithinRole> roleMembers;
++		
++		@XmlTransient
++		private String roleId;
++		
++		public WithinRole() {}
++		
++		public WithinRole(String roleId) {
++			this.roleId = roleId;
++		}
++		
++		public List<RoleMemberXmlDTO.WithinRole> getRoleMembers() {
++			return roleMembers;
++		}
++
++		public void setRoleMembers(List<RoleMemberXmlDTO.WithinRole> roleMembers) {
++			this.roleMembers = roleMembers;
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++		
++		@Override
++		void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++			if (parent instanceof RoleXmlDTO) {
++				// If necessary, persist the enclosing role before unmarshalling its members.
++				if (!((RoleXmlDTO)parent).isAlreadyPersisted()) {
++					RoleXmlUtil.validateAndPersistNewRole(((RoleXmlDTO)parent));
++				}
++				roleId = ((RoleXmlDTO)parent).getId();
++			}
++			super.beforeUnmarshal(unmarshaller, parent);
++		}
++		
++		public void newElementAdded(RoleMemberXmlDTO.WithinRole item) {
++			if (!item.isAlreadyPersisted()) {
++				RoleXmlUtil.validateAndPersistNewRoleMember(item);
++			}
++		}
++		
++		void beforeMarshal(Marshaller marshaller) {
++			List<RoleMember> members = KimApiServiceLocator.getRoleService().findRoleMembers(
++					QueryByCriteria.Builder.fromPredicates(PredicateFactory.equal("roleId", roleId))).getResults();
++			if (members != null && !members.isEmpty()) {
++				setRoleMembers(new RiceXmlExportList<RoleMemberXmlDTO.WithinRole,RoleMember>(members, this));
++			}
++		}
++		
++		void afterMarshal(Marshaller marshaller) {
++			setRoleMembers(null);
++		}
++
++		public RoleMemberXmlDTO.WithinRole gettingNextElement(RoleMember nextElement, int index) {
++			return new RoleMemberXmlDTO.WithinRole(nextElement);
++		}
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityActionsXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityActionsXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityActionsXmlDTO.java	(revision 0)
+@@ -0,0 +1,189 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++import java.util.List;
++
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.kim.api.role.RoleResponsibilityActionContract;
++
++import org.kuali.rice.core.impl.xml.RiceXmlImportList;
++import org.kuali.rice.core.impl.xml.RiceXmlListAdditionListener;
++import org.kuali.rice.core.impl.xml.RiceXmlListGetterListener;
++
++@XmlTransient
++public abstract class RoleResponsibilityActionsXmlDTO<T extends RoleResponsibilityActionXmlDTO> implements RiceXmlListAdditionListener<T>, Serializable {
++
++	public abstract List<T> getRoleResponsibilityActions();
++	
++	public abstract void setRoleResponsibilityActions(List<T> roleResponsibilityActions);
++
++	void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		setRoleResponsibilityActions(new RiceXmlImportList<T>(this));
++	}
++	
++	void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		setRoleResponsibilityActions(null);
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibilityActions", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RoleResponsibilitiesType", propOrder={"roleResponsibilityActions"})
++	public static class WithinRoleResponsibility extends RoleResponsibilityActionsXmlDTO<RoleResponsibilityActionXmlDTO.WithinRoleResponsibility>
++			implements RiceXmlListGetterListener<RoleResponsibilityActionXmlDTO.WithinRoleResponsibility,RoleResponsibilityActionContract> {
++
++		@XmlElement(name="roleResponsibilityAction", namespace=NS_ROLE)
++		private List<RoleResponsibilityActionXmlDTO.WithinRoleResponsibility> roleResponsibilityActions;
++		
++		@XmlTransient
++		private String roleResponsibilityId;
++		
++		@XmlTransient
++		private RoleResponsibilityXmlDTO roleResponsibility;
++		
++		public WithinRoleResponsibility() {}
++		
++		public WithinRoleResponsibility(String roleResponsibilityId) {
++			this.roleResponsibilityId = roleResponsibilityId;
++		}
++		
++		public List<RoleResponsibilityActionXmlDTO.WithinRoleResponsibility> getRoleResponsibilityActions() {
++			return roleResponsibilityActions;
++		}
++
++		public void setRoleResponsibilityActions(List<RoleResponsibilityActionXmlDTO.WithinRoleResponsibility> roleResponsibilityActions) {
++			this.roleResponsibilityActions = roleResponsibilityActions;
++		}
++
++		public String getRoleResponsibilityId() {
++			return roleResponsibilityId;
++		}
++		
++		@Override
++		void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++			if (parent instanceof RoleResponsibilityXmlDTO) {
++				this.roleResponsibility = (RoleResponsibilityXmlDTO) parent;
++			}
++			super.beforeUnmarshal(unmarshaller, parent);
++		}
++		
++		@Override
++		void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++			this.roleResponsibility = null;
++			super.afterUnmarshal(unmarshaller, parent);
++		}
++		
++		public void newElementAdded(RoleResponsibilityActionXmlDTO.WithinRoleResponsibility item) {
++			if (roleResponsibility != null) {
++				if (roleResponsibility.getRoleRspAction() != null) {
++					throw new IllegalStateException("Cannot specify more than one responsibility action per role responsibility");
++				}
++				roleResponsibility.setRoleRspAction(item);
++			}
++		}
++
++		public RoleResponsibilityActionXmlDTO.WithinRoleResponsibility gettingNextElement(RoleResponsibilityActionContract nextElement, int index) {
++			return null;
++		}
++
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibilityActions", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RoleMemberRoleResponsibilitiesType", propOrder={"roleResponsibilityActions"})
++	public static class WithinRoleMember extends RoleResponsibilityActionsXmlDTO<RoleResponsibilityActionXmlDTO.WithinRoleMember>
++			implements RiceXmlListGetterListener<RoleResponsibilityActionXmlDTO.WithinRoleMember,RoleResponsibilityActionContract> {
++
++		@XmlElement(name="roleResponsibilityAction", namespace=NS_ROLE)
++		private List<RoleResponsibilityActionXmlDTO.WithinRoleMember> roleResponsibilityActions;
++		
++		@XmlTransient
++		private String roleMemberId;
++		
++		@XmlTransient
++		private RoleMemberXmlDTO roleMember;
++		
++		public WithinRoleMember() {}
++		
++		public WithinRoleMember(String roleMemberId) {
++			this.roleMemberId = roleMemberId;
++		}
++		
++		public List<RoleResponsibilityActionXmlDTO.WithinRoleMember> getRoleResponsibilityActions() {
++			return roleResponsibilityActions;
++		}
++
++		public void setRoleResponsibilityActions(List<RoleResponsibilityActionXmlDTO.WithinRoleMember> roleResponsibilityActions) {
++			this.roleResponsibilityActions = roleResponsibilityActions;
++		}
++		
++		public String getRoleMemberId() {
++			return roleMemberId;
++		}
++		
++		@Override
++		void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++			if (parent instanceof RoleMemberXmlDTO) {
++				this.roleMember = (RoleMemberXmlDTO) parent;
++			}
++			super.beforeUnmarshal(unmarshaller, parent);
++		}
++		
++		@Override
++		void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++			this.roleMember = null;
++			super.afterUnmarshal(unmarshaller, parent);
++		}
++		
++		public void newElementAdded(RoleResponsibilityActionXmlDTO.WithinRoleMember item) {
++			if (roleMember != null) {
++				if (roleMember.getRoleRspAction() != null) {
++					throw new IllegalStateException("Cannot specify more than one responsibility action per role member");
++				}
++				roleMember.setRoleRspAction(item);
++			}
++		}
++
++		public RoleResponsibilityActionXmlDTO.WithinRoleMember gettingNextElement(RoleResponsibilityActionContract nextElement, int index) {
++			return null;
++		}
++		
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibilityActions", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="StandaloneRoleResponsibilitiesType", propOrder={"roleResponsibilityActions"})
++	public static class OutsideRoleResponsibilityAndMember
++			extends RoleResponsibilityActionsXmlDTO<RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember> {
++
++		@XmlElement(name="roleResponsibilityAction", namespace=NS_ROLE)
++		private List<RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember> roleResponsibilityActions;
++		
++		public List<RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember> getRoleResponsibilityActions() {
++			return roleResponsibilityActions;
++		}
++
++		public void setRoleResponsibilityActions(List<RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember> roleResponsibilityActions) {
++			this.roleResponsibilityActions = roleResponsibilityActions;
++		}
++		
++		public void newElementAdded(RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember item) {
++			// TODO: Implement this!
++		}
++		
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolesXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolesXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolesXmlDTO.java	(revision 0)
+@@ -0,0 +1,66 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++import java.util.List;
++
++import javax.xml.bind.Marshaller;
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.kim.api.role.RoleContract;
++
++import org.kuali.rice.core.impl.xml.RiceXmlExportList;
++import org.kuali.rice.core.impl.xml.RiceXmlImportList;
++import org.kuali.rice.core.impl.xml.RiceXmlListAdditionListener;
++import org.kuali.rice.core.impl.xml.RiceXmlListGetterListener;
++
++@XmlRootElement(name="roles", namespace=NS_ROLE)
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="", propOrder={"roles"})
++public class RolesXmlDTO implements RiceXmlListAdditionListener<RoleXmlDTO>, RiceXmlListGetterListener<RoleXmlDTO,Object>, Serializable {
++	@XmlElement(name="role", namespace=NS_ROLE)
++	private List<RoleXmlDTO> roles;
++	
++	public RolesXmlDTO() {}
++	
++	public RolesXmlDTO(List<? extends Object> rolesToExport) {
++		this.roles = new RiceXmlExportList<RoleXmlDTO,Object>(rolesToExport, this);
++	}
++	
++	public List<RoleXmlDTO> getRoles() {
++		return roles;
++	}
++
++	public void setRoles(List<RoleXmlDTO> role) {
++		this.roles = role;
++	}
++
++	void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		roles = new RiceXmlImportList<RoleXmlDTO>(this);
++	}
++	
++	void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		roles = null;
++	}
++	
++	public void newElementAdded(RoleXmlDTO item) {
++		if (!item.isAlreadyPersisted()) {
++			RoleXmlUtil.validateAndPersistNewRole(item);
++		}
++	}
++
++	void afterMarshal(Marshaller marshaller) {
++		roles = null;
++	}
++	
++	public RoleXmlDTO gettingNextElement(Object nextElement, int index) {
++		return new RoleXmlDTO((RoleContract) nextElement,
++				new RoleMembersXmlDTO.WithinRole(((RoleContract) nextElement).getId()));
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleXmlUtil.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleXmlUtil.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleXmlUtil.java	(revision 0)
+@@ -0,0 +1,291 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import org.apache.commons.lang.StringUtils;
++import org.kuali.rice.core.api.membership.MemberType;
++import org.kuali.rice.kim.api.group.Group;
++import org.kuali.rice.kim.api.group.GroupService;
++import org.kuali.rice.kim.api.identity.IdentityService;
++import org.kuali.rice.kim.api.identity.principal.Principal;
++import org.kuali.rice.kim.api.role.Role;
++import org.kuali.rice.kim.api.role.RoleMember;
++import org.kuali.rice.kim.api.role.RoleService;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++
++/**
++ * Helper class containing static methods for aiding in parsing role XML.
++ * 
++ * <p>All non-public, non-private methods are package-private so that only the KIM-parsing-related code can make use of them.
++ */
++public final class RoleXmlUtil {
++	// Do not allow outside code to instantiate this class.
++	private RoleXmlUtil() {}
++
++	private static RoleService roleService;
++	private static GroupService groupService;
++	private static IdentityService identityService;
++
++	/**
++	 * Performs the necessary validation on the new role, then saves it.
++	 * 
++	 * @param newRole
++	 */
++	static void validateAndPersistNewRole(RoleXmlDTO newRole) {
++		if (newRole == null) {
++			throw new IllegalArgumentException("Cannot persist a null role");
++		}
++		
++		// Validate the role's ID, name, and namespace.
++		validateRoleIdAndRoleNameForRole(newRole);
++		
++		// Save the role.
++		if (newRole.getVersionNumber() == null || newRole.getVersionNumber().longValue() == 0) {
++			getRoleService().createRole(Role.Builder.create(newRole).build());
++		} else {
++			getRoleService().updateRole(Role.Builder.create(newRole).build());
++		}
++		
++		// Set a flag on the role to indicate that it has now been persisted so that the unmarshalling process will not save this role twice.
++		newRole.setAlreadyPersisted(true);
++	}
++	
++	/**
++	 * Performs the necessary validation on the new role member, then saves it.
++	 * 
++	 * @param newRoleMember
++	 */
++	static void validateAndPersistNewRoleMember(RoleMemberXmlDTO newRoleMember) {
++		if (newRoleMember == null) {
++			throw new IllegalArgumentException("Cannot persist a null role member");
++		}
++		
++		// Validate role ID and role name/namespace.
++		validateRoleIdAndRoleNameForMember(newRoleMember);
++		
++		// Validate member type, member ID, and member name/namespace.
++		validateMemberTypeAndIdAndNameForMember(newRoleMember);
++		
++		// Validate the uniqueness of the role member, and assign data from an existing member if necessary.
++		validateRoleMemberIdAndUniqueness(newRoleMember);
++		
++		// Validate the role member's responsibility actions (if any).
++		validateRoleMemberResponsibilityActions(newRoleMember);
++		
++		// Save the role member.
++		if (newRoleMember.getVersionNumber() == null || newRoleMember.getVersionNumber().longValue() == 0) {
++			getRoleService().createRoleMember(RoleMember.Builder.create(newRoleMember).build());
++		} else {
++			getRoleService().updateRoleMember(RoleMember.Builder.create(newRoleMember).build());
++		}
++	}
++	
++	/*
++	 * Validates a new role's ID, name, and namespace.
++	 */
++	private static void validateRoleIdAndRoleNameForRole(RoleXmlDTO newRole) {
++		// Ensure that the role name and role namespace have both been specified.
++		if (StringUtils.isBlank(newRole.getName()) || StringUtils.isBlank(newRole.getNamespaceCode())) {
++			throw new RuntimeException("Cannot create or override a role with a blank name or a blank namespace");
++		}
++		
++		// Attempt to find a matching role in the DB, and retrieve its ID or use its ID for validation if one exists.
++		// TODO: Do we need to use Rice's new criteria API in order to locate inactive roles?
++		Role matchingRole = getRoleService().getRoleByNamespaceCodeAndName(newRole.getNamespaceCode(), newRole.getName());
++		if (matchingRole != null) {
++			if (StringUtils.isBlank(newRole.getId())) {
++				newRole.setId(matchingRole.getId());
++			} else if (!matchingRole.getId().equals(newRole.getId())) {
++				throw new RuntimeException("Cannot create or override role with ID \"" + newRole.getId() + "\", namespace \"" + newRole.getNamespaceCode() +
++						"\", and name \"" + newRole.getName() + "\" because an existing role with the same namespace and names but with an ID of \"" +
++								matchingRole.getId() + "\" already exists");
++			}
++			// Copy over the object ID and version number from the existing role.
++			newRole.setObjectId(matchingRole.getObjectId());
++			newRole.setVersionNumber(matchingRole.getVersionNumber());
++		}
++	}
++	
++	/*
++	 * Validates a new role member's role ID, role name, and role namespace.
++	 */
++	private static void validateRoleIdAndRoleNameForMember(RoleMemberXmlDTO newRoleMember) {
++		// If the "roleMember" tag was not a descendant of a "role" tag, derive and validate its role information accordingly.
++		if (newRoleMember instanceof RoleMemberXmlDTO.OutsideOfRole) {
++			RoleMemberXmlDTO.OutsideOfRole standaloneMember = (RoleMemberXmlDTO.OutsideOfRole) newRoleMember;
++			if (StringUtils.isNotBlank(standaloneMember.getRoleName())) {
++				// If a name + namespace combo is given, verify that the combo maps to an existing role.
++				String existingId = getRoleService().getRoleIdByNamespaceCodeAndName(standaloneMember.getRoleNamespaceCode(), standaloneMember.getRoleName());
++				if (StringUtils.isBlank(existingId)) {
++					throw new RuntimeException("Cannot create role member for role with name \"" + standaloneMember.getRoleName() + "\" and namespace \"" +
++							standaloneMember.getRoleNamespaceCode() + "\" because such a role does not exist");
++				}
++				
++				// If the role member defines its own role ID, verify that it's the same as the one from the existing role; otherwise, assign the member's role ID.
++				if (StringUtils.isBlank(standaloneMember.getRoleId())) {
++					standaloneMember.setRoleId(existingId);
++				} else if (!standaloneMember.getRoleId().equals(existingId)) {
++					throw new RuntimeException("Cannot create role member for role with ID \"" + standaloneMember.getRoleId() + "\", name \"" +
++							standaloneMember.getRoleName() + "\", and namespace \"" + standaloneMember.getRoleNamespaceCode() +
++									"\" because the existing role with the same name and namespace has an ID of \"" + existingId + "\" instead");
++				}
++			}
++		}
++		
++		// Ensure that a role ID was explicitly defined or was derived from a name + namespace combo.
++		if (StringUtils.isBlank(newRoleMember.getRoleId())) {
++			throw new RuntimeException("Cannot create role member without providing the role ID or role name + namespace that the member belongs to");
++		}
++	}
++	
++	/*
++	 * Validates a new role member's member type, member ID, member name, and (if applicable) member namespace code.
++	 * Returns the member's type code as a String.
++	 */
++	private static void validateMemberTypeAndIdAndNameForMember(RoleMemberXmlDTO newRoleMember) {
++		// Ensure that a valid member type was specified.
++		MemberType type = newRoleMember.getType();
++		if (type == null) {
++			throw new RuntimeException("Cannot create a role member without any member principal, member group, or member role information specified");
++		}
++		
++		// Ensure that a valid member ID was specified, if present.
++		if (StringUtils.isNotBlank(newRoleMember.getMemberId())) {
++			switch (type) {
++				// Member ID is a principal ID.
++				case PRINCIPAL :
++					if (getIdentityService().getPrincipal(newRoleMember.getMemberId()) == null) {
++						throw new RuntimeException("Cannot create principal role member with principal ID \"" +
++								newRoleMember.getMemberId() + "\" because such a person does not exist");
++					}
++					break;
++				
++				// Member ID is a group ID.
++				case GROUP :
++					if (getGroupService().getGroup(newRoleMember.getMemberId()) == null) {
++						throw new RuntimeException("Cannot create group role member with group ID \"" +
++								newRoleMember.getMemberId() + "\" because such a group does not exist");
++					}
++					break;
++				
++				// Member ID is a role ID.
++				case ROLE :
++					if (getRoleService().getRole(newRoleMember.getMemberId()) == null) {
++						throw new RuntimeException("Cannot use role with ID \"" + newRoleMember.getMemberId() +
++								"\" as a role member because such a role does not exist");
++					} else if (newRoleMember.getMemberId().equals(newRoleMember.getRoleId())) {
++						throw new RuntimeException("The role with ID \"" + newRoleMember.getMemberId() + "\" cannot be made a member of itself");
++					}
++					break;
++				
++				// This should never happen.
++				default :
++					throw new RuntimeException("Cannot create a role member that is not a principal, group, or role");
++			}
++		}
++		
++		// Ensure that a valid member name (and possibly namespace) was specified, if present.
++		if (StringUtils.isNotBlank(newRoleMember.getMemberName())) {
++			switch (type) {
++				// Member name is a principal name.	
++				case PRINCIPAL :
++					Principal principal = getIdentityService().getPrincipalByPrincipalName(newRoleMember.getMemberName());
++					if (principal == null) {
++						throw new RuntimeException("Cannot create principal role member with principal name \"" +
++								newRoleMember.getMemberName() + "\" because such a person does not exist");
++					} else if (StringUtils.isBlank(newRoleMember.getMemberId())) {
++						newRoleMember.setPrincipalId(principal.getPrincipalId());
++					} else if (!newRoleMember.getMemberId().equals(principal.getPrincipalId())) {
++						throw new RuntimeException("Cannot create principal role member with principal ID \"" + newRoleMember.getMemberId() +
++								"\" and principal name \"" + newRoleMember.getMemberName() + "\" because the principal with that name has an ID of \"" +
++										principal.getPrincipalId() + "\" instead");
++					}
++					break;
++				
++				// Member name is a group name.
++				case GROUP :
++					if (StringUtils.isBlank(newRoleMember.getMemberNamespaceCode())) {
++						throw new RuntimeException("Cannot create a group role member with a blank or unspecified group namepace code");
++					}
++					
++					Group group = getGroupService().getGroupByNamespaceCodeAndName(newRoleMember.getMemberNamespaceCode(), newRoleMember.getMemberName());
++					if (group == null) {
++						throw new RuntimeException("Cannot create group role member with namespace \"" + newRoleMember.getMemberNamespaceCode() +
++								"\" and name \"" + newRoleMember.getMemberName() + "\" because such a group does not exist");
++					} else if (StringUtils.isBlank(newRoleMember.getMemberId())) {
++						newRoleMember.setGroupId(group.getId());
++					} else if (!newRoleMember.getMemberId().equals(group.getId())) {
++						throw new RuntimeException("Cannot create group role member with ID \"" + newRoleMember.getMemberId() + "\", namespace \"" +
++								newRoleMember.getMemberNamespaceCode() + "\", and name \"" + newRoleMember.getMemberName() +
++										"\" because the group with that namespace and name has an ID of \"" + group.getId() + "\" instead");
++					}
++					break;
++				
++				// Member name is a role name.
++				case ROLE :
++					if (StringUtils.isBlank(newRoleMember.getMemberNamespaceCode())) {
++						throw new RuntimeException("Cannot use a role as a role member without specifying a role namespace code");
++					}
++					
++					Role role = getRoleService().getRoleByNamespaceCodeAndName(newRoleMember.getMemberNamespaceCode(), newRoleMember.getMemberName());
++					if (role == null) {
++						throw new RuntimeException("Cannot use role with namespace \"" + newRoleMember.getMemberNamespaceCode() +
++								"\" and name \"" + newRoleMember.getMemberNamespaceCode() +
++										"\" as a role member because such a role does not exist");
++					} else if (StringUtils.isBlank(newRoleMember.getMemberId())) {
++						newRoleMember.setRoleIdAsMember(role.getId());
++					} else if (!newRoleMember.getMemberId().equals(role.getId())) {
++						throw new RuntimeException("Cannot use role with ID \"" + newRoleMember.getMemberId() + "\", namespace \"" +
++								newRoleMember.getMemberNamespaceCode() + "\", and name \"" + newRoleMember.getMemberName() +
++										"\" as a role member because the role with that namespace and name has an ID of \"" +
++												role.getId() + "\" instead");
++					}
++					
++					if (newRoleMember.getMemberId().equals(newRoleMember.getRoleId())) {
++						throw new RuntimeException("The role with namespace \"" + newRoleMember.getMemberNamespaceCode() +
++								"\" and name \"" + newRoleMember.getMemberName() + "\" cannot be made a member of itself");
++					}
++					break;
++				
++				// This should never happen.
++				default :
++					throw new RuntimeException("Cannot create a role member that is not a principal, group, or role");
++			}
++		}
++
++		// Ensure that a member ID was either explicitly defined or was derived from the member name.
++		if (StringUtils.isBlank(newRoleMember.getMemberId())) {
++			throw new RuntimeException("Cannot create a role member without specifying a member ID or a member name");
++		}
++	}
++	
++	private static void validateRoleMemberIdAndUniqueness(RoleMemberXmlDTO roleMember) {
++		// TODO: Implement this!!!!
++	}
++	
++	private static void validateRoleMemberResponsibilityActions(RoleMemberXmlDTO roleMember) {
++		
++	}
++	
++	
++	
++	private static RoleService getRoleService() {
++		if (roleService == null) {
++			roleService = KimApiServiceLocator.getRoleService();
++		}
++		return roleService;
++	}
++	
++	private static GroupService getGroupService() {
++		if (groupService == null) {
++			groupService = KimApiServiceLocator.getGroupService();
++		}
++		return groupService;
++	}
++	
++	private static IdentityService getIdentityService() {
++		if (identityService == null) {
++			identityService = KimApiServiceLocator.getIdentityService();
++		}
++		return identityService;
++	}
++
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityXmlUtil.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityXmlUtil.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityXmlUtil.java	(revision 0)
+@@ -0,0 +1,218 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import java.util.List;
++
++import org.apache.commons.lang.StringUtils;
++import org.kuali.rice.kew.api.action.ActionRequestPolicy;
++import org.kuali.rice.kew.api.action.ActionRequestType;
++import org.kuali.rice.kim.api.responsibility.Responsibility;
++import org.kuali.rice.kim.api.responsibility.ResponsibilityService;
++import org.kuali.rice.kim.api.role.RoleService;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++
++public class RoleResponsibilityXmlUtil {
++
++	private RoleResponsibilityXmlUtil() {}
++	
++	private static RoleService roleService;
++	private static ResponsibilityService responsibilityService;
++	
++	static void validateAndPersistNewRoleResponsibility(RoleResponsibilityXmlDTO newRoleResponsibility) {
++		if (newRoleResponsibility == null) {
++			throw new IllegalArgumentException("role responsibility cannot be null");
++		}
++		
++		validateResponsibilityIdentityForRoleResponsibility(newRoleResponsibility);
++		
++		validateRoleIdentityForRoleResponsibility(newRoleResponsibility);
++		
++		// TODO: Do we have to resort to using the BusinessObjectService to save role responsibilities?
++	}
++	
++	static void validateRoleResponsibilityActions(List<RoleResponsibilityActionXmlDTO> newRoleResponsibilityActions) {
++		if (newRoleResponsibilityActions == null || newRoleResponsibilityActions.isEmpty()) {
++			throw new IllegalArgumentException("responsibility actions list cannot be null or empty");
++		}
++		
++		for (RoleResponsibilityActionXmlDTO newRoleResponsibilityAction : newRoleResponsibilityActions) {
++			validateRoleResponsibilityAction(newRoleResponsibilityAction);
++		}
++	}
++	
++	private static void validateResponsibilityIdentityForRoleResponsibility(RoleResponsibilityXmlDTO newRoleResponsibility) {
++		// If the responsibility name and namespace were given, then retrieve the corresponding responsibility ID or use it for validation.
++		if (StringUtils.isNotBlank(newRoleResponsibility.getResponsibilityName()) && StringUtils.isNotBlank(newRoleResponsibility.getResponsibilityNamespaceCode())) {
++			// If a name + namespace combo is given, verify that the combo maps to an existing responsibility.
++			Responsibility existingResp = getResponsibilityService().findRespByNamespaceCodeAndName(
++					newRoleResponsibility.getResponsibilityNamespaceCode(), newRoleResponsibility.getResponsibilityName());
++			if (existingResp == null) {
++				throw new RuntimeException("Cannot have role assigned to responsibility with name \"" + newRoleResponsibility.getResponsibilityName() + "\" and namespace \"" +
++						newRoleResponsibility.getResponsibilityNamespaceCode() + "\" because such a responsibility does not exist");
++			}
++			String existingId = existingResp.getId();
++			
++			// If the role resp defines its own resp ID, verify that it's the same as the one from the existing resp; otherwise, assign the role resp's responsibility ID.
++			if (StringUtils.isBlank(newRoleResponsibility.getResponsibilityId())) {
++				newRoleResponsibility.setResponsibilityId(existingId);
++			} else if (!newRoleResponsibility.getResponsibilityId().equals(existingId)) {
++				throw new RuntimeException("Cannot have role assigned to responsibility with ID \"" + newRoleResponsibility.getResponsibilityId() + "\", name \"" +
++						newRoleResponsibility.getResponsibilityName() + "\", and namespace \"" + newRoleResponsibility.getResponsibilityNamespaceCode() +
++								"\" because the existing responsibility with the same name and namespace has an ID of \"" + existingId + "\" instead");
++			}
++		} else if (StringUtils.isBlank(newRoleResponsibility.getResponsibilityId())) {
++			// If no name + namespace combo was given, fail validation if no responsibility ID was given either.
++			throw new RuntimeException("Cannot create role responsibility without specifying a responsibility ID or responsibility name and namespace");
++		} else if (getResponsibilityService().getResponsibility(newRoleResponsibility.getResponsibilityId()) == null) {
++			throw new RuntimeException("Cannot have role assigned to responsibility with ID \"" + newRoleResponsibility.getResponsibilityId() +
++					"\" because such a responsibility does not exist");
++		}
++	}
++	
++	private static void validateRoleIdentityForRoleResponsibility(RoleResponsibilityXmlDTO newRoleResponsibility) {
++		// If the "roleResponsibility" tag was not a descendant of the "role" tag, then validate or derive the role ID as needed.
++		if (newRoleResponsibility instanceof RoleResponsibilityXmlDTO.OutsideOfRole) {
++			RoleResponsibilityXmlDTO.OutsideOfRole standaloneRoleResp = (RoleResponsibilityXmlDTO.OutsideOfRole) newRoleResponsibility;
++			// If the role name and role namespace were given, then retrieve the corresponding role ID or use it for validation.
++			if (StringUtils.isNotBlank(standaloneRoleResp.getRoleName()) && StringUtils.isNotBlank(standaloneRoleResp.getRoleNamespaceCode())) {
++				// If a name + namespace combo is given, verify that the combo maps to an existing role.
++				String existingId = getRoleService().getRoleIdByNamespaceCodeAndName(standaloneRoleResp.getRoleNamespaceCode(), standaloneRoleResp.getRoleName());
++				if (StringUtils.isBlank(existingId)) {
++					throw new RuntimeException("Cannot assign responsibility to role with name \"" + standaloneRoleResp.getRoleName() + "\" and namespace \"" +
++							standaloneRoleResp.getRoleNamespaceCode() + "\" because such a role does not exist");
++				}
++				
++				// If the role resp defines its own role ID, verify that it's the same as the one from the existing role; otherwise, assign the role's own role ID.
++				if (StringUtils.isBlank(standaloneRoleResp.getRoleId())) {
++					standaloneRoleResp.setRoleId(existingId);
++				} else if (!standaloneRoleResp.getRoleId().equals(existingId)) {
++					throw new RuntimeException("Cannot assign responsibility to role with ID \"" + standaloneRoleResp.getRoleId() + "\", name \"" +
++							standaloneRoleResp.getRoleName() + "\", and namespace \"" + standaloneRoleResp.getRoleNamespaceCode() +
++									"\" because the existing role with the same name and namespace has an ID of \"" + existingId + "\" instead");
++				}
++			} else if (StringUtils.isBlank(standaloneRoleResp.getRoleId())) {
++				// If no name + namespace combo was given, fail validation if no role ID was given either.
++				throw new RuntimeException("Cannot create role responsibility without specifying a role ID or role name and namespace");
++			} else if (getRoleService().getRole(standaloneRoleResp.getRoleId()) == null) {
++				throw new RuntimeException("Cannot assign responsibility to role with ID \"" + standaloneRoleResp.getRoleId() +
++						"\" because such a role does not exist");
++			}
++		}
++		
++		// Ensure that a role ID was explicitly specified or derived.
++		if (StringUtils.isBlank(newRoleResponsibility.getRoleId())) {
++			throw new RuntimeException("Cannot create new role responsibility assignment without specifying a responsibility ID " +
++					"or the non-ID responsibility uniqueness fields");
++		}
++	}
++	
++	private static void validateRoleResponsibilityAction(RoleResponsibilityActionXmlDTO newRoleResponsibilityAction) {
++		// Validate common attributes.
++		ActionRequestType.fromCode(newRoleResponsibilityAction.getActionTypeCode());
++		ActionRequestPolicy.fromCode(newRoleResponsibilityAction.getActionPolicyCode());
++		
++		// Validate role member and/or role responsibility identities based on responsibility action sub-type.
++		if (newRoleResponsibilityAction instanceof RoleResponsibilityActionXmlDTO.WithinRoleResponsibility) {
++			
++			// Validate an action within a role responsibility element, meaning the action is at the role level.
++			RoleResponsibilityActionXmlDTO.WithinRoleResponsibility newRespAction =
++				(RoleResponsibilityActionXmlDTO.WithinRoleResponsibility) newRoleResponsibilityAction;
++			
++			// TODO: Is any special validation needed here?
++			if (newRespAction != null) {
++				
++			}
++			
++		} else if (newRoleResponsibilityAction instanceof RoleResponsibilityActionXmlDTO.WithinRoleMember) {
++			
++			// Validate an action within a role member element meaning the action is at the role member level.
++			RoleResponsibilityActionXmlDTO.WithinRoleMember newRespAction =
++				(RoleResponsibilityActionXmlDTO.WithinRoleMember) newRoleResponsibilityAction;
++			
++			// TODO: Is any special validation needed here?
++			if (newRespAction != null) {
++				
++			}
++			
++		} else if (newRoleResponsibilityAction instanceof RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember) {
++			
++			// Validate a standalone action, which could be at either the role level or the role member level.
++			RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember newRespAction =
++				(RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember) newRoleResponsibilityAction;
++			
++			validateRoleResponsibilityActionIdentity(newRespAction);
++			
++			
++		} else {
++			// This should never happen!
++			throw new RuntimeException("Unknown role responsibility action XML DTO was supplied for validation");
++		}
++	}
++	
++	private static void validateRoleResponsibilityActionIdentity(RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember newRespAction) {
++		boolean roleResponsibilityIdGiven = false;
++		boolean roleAndResponsibilityIdGiven = false;
++		boolean roleMemberIdGiven = false;
++		
++		// Check for info identifying a role responsibility.
++		if (StringUtils.isNotBlank(newRespAction.getRoleResponsibilityId())) {
++			roleResponsibilityIdGiven = true;
++		}
++		
++		// Check for info identifying a role and/or a responsibility.
++		if (StringUtils.isNotBlank(newRespAction.getResponsibilityId()) || StringUtils.isNotBlank(newRespAction.getResponsibilityName()) ||
++				StringUtils.isNotBlank(newRespAction.getResponsibilityNamespaceCode()) || StringUtils.isNotBlank(newRespAction.getRoleId()) ||
++						StringUtils.isNotBlank(newRespAction.getRoleName()) || StringUtils.isNotBlank(newRespAction.getRoleNamespaceCode())) {
++			roleAndResponsibilityIdGiven = true;
++			if (roleResponsibilityIdGiven) {
++				throw new RuntimeException("Cannot create responsibility action containing two or more of role responsibility, role + responsibility, or role member info");
++			}
++		}
++		
++		// Check for info identifying a role member.
++		if (StringUtils.isNotBlank(newRespAction.getRoleMemberId()) || StringUtils.isNotBlank(newRespAction.getMemberId()) ||
++				StringUtils.isNotBlank(newRespAction.getMemberName()) || StringUtils.isNotBlank(newRespAction.getMemberNamespaceCode()) ||
++						newRespAction.getRoleMemberAttributes() != null) {
++			roleMemberIdGiven = true;
++			if (roleResponsibilityIdGiven || roleAndResponsibilityIdGiven) {
++				throw new RuntimeException("Cannot create responsibility action containing two or more of role responsibility, role + responsibility, or role member info");
++			}
++		}
++		
++		// Perform validation based on what identity information is being used.
++		if (roleResponsibilityIdGiven) {
++			validateRoleResponsibilityIdentity(newRespAction);
++		} else if (roleAndResponsibilityIdGiven) {
++			validateRoleAndResponsibilityIdentity(newRespAction);
++		} else if (roleMemberIdGiven) {
++			validateRoleMemberIdentity(newRespAction);
++		} else {
++			throw new RuntimeException("Cannot create responsibility action without specifying a role responsibility, a role + a responsibility, or a role member");
++		}
++	}
++	
++	private static void validateRoleResponsibilityIdentity(RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember newRespAction) {
++		
++	}
++	
++	private static void validateRoleAndResponsibilityIdentity(RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember newRespAction) {
++		
++	}
++	
++	private static void validateRoleMemberIdentity(RoleResponsibilityActionXmlDTO.OutsideRoleResponsibilityAndMember newRespAction) {
++		
++	}
++	
++	private static RoleService getRoleService() {
++		if (roleService == null) {
++			roleService = KimApiServiceLocator.getRoleService();
++		}
++		return roleService;
++	}
++	
++	private static ResponsibilityService getResponsibilityService() {
++		if (responsibilityService == null) {
++			responsibilityService = KimApiServiceLocator.getResponsibilityService();
++		}
++		return responsibilityService;
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleMemberXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleMemberXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleMemberXmlDTO.java	(revision 0)
+@@ -0,0 +1,456 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++import java.util.Collections;
++import java.util.List;
++import java.util.Map;
++
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
++
++import org.apache.commons.lang.StringUtils;
++import org.joda.time.DateTime;
++import org.kuali.rice.core.api.membership.MemberType;
++import org.kuali.rice.core.api.mo.common.active.InactivatableFromToUtils;
++import org.kuali.rice.kim.api.group.Group;
++import org.kuali.rice.kim.api.identity.principal.Principal;
++import org.kuali.rice.kim.api.role.Role;
++import org.kuali.rice.kim.api.role.RoleMember;
++import org.kuali.rice.kim.api.role.RoleMemberContract;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTO;
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTOValidatingAdapter;
++import org.kuali.rice.core.impl.xml.StringToDateTimeAdapter;
++
++/**
++ * Base class for "roleMember" elements. Refer to the static interior subclasses for the two contexts of this element.
++ */
++@XmlTransient
++public abstract class RoleMemberXmlDTO implements RoleMemberContract, Serializable {
++	@XmlElement(name="id", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String id;
++	
++	@XmlElement(name="principalId", namespace=NS_ROLE)
++    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++    private String principalId;
++    
++    @XmlElement(name="principalName", namespace=NS_ROLE)
++    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++    private String principalName;
++    
++    @XmlElement(name="groupId", namespace=NS_ROLE)
++    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++    private String groupId;
++    
++    @XmlElement(name="groupName", namespace=NS_ROLE)
++    @XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++    private NameAndNamespaceDTO groupName;
++    
++    @XmlElement(name="roleIdAsMember", namespace=NS_ROLE)
++    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++    private String roleIdAsMember;
++    
++    @XmlElement(name="roleNameAsMember", namespace=NS_ROLE)
++    @XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++    private NameAndNamespaceDTO roleNameAsMember;
++	
++	@XmlElement(name="activeFromDate", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(StringToDateTimeAdapter.class)
++	private DateTime activeFromDate;
++	
++	@XmlElement(name="activeToDate", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(StringToDateTimeAdapter.class)
++	private DateTime activeToDate;
++	
++	@XmlElement(name="attributes", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(QualifierDTOToAttributeSetAdapter.class)
++	private Map<String,String> attributes;
++
++	@XmlElement(name="responsibilityActions", namespace=NS_ROLE)
++	private RoleResponsibilityActionsXmlDTO.WithinRoleMember roleResponsibilityActions;
++	
++	@XmlTransient
++	private List<RoleResponsibilityActionXmlDTO.WithinRoleMember> roleRspActions;
++	
++	@XmlTransient
++	private MemberType type;
++	
++	@XmlTransient
++	private String objectId;
++	
++	@XmlTransient
++	private Long versionNumber;
++	
++	@XmlTransient
++	private boolean alreadyPersisted = false;
++	
++	public RoleMemberXmlDTO() {}
++	
++	public RoleMemberXmlDTO(RoleMember roleMember, boolean populateMemberId) {
++		if (roleMember == null) {
++			throw new IllegalArgumentException("roleMember cannot be null");
++		}
++		
++		this.id = roleMember.getId();
++		this.type = roleMember.getType();
++		
++		// Populate the appropriate membership information based on member type.
++		switch (type) {
++			case PRINCIPAL :
++				if (populateMemberId) {
++					this.principalId = roleMember.getMemberId();
++				}
++				Principal principal = KimApiServiceLocator.getIdentityService().getPrincipal(roleMember.getMemberId());
++				if (principal == null) {
++					throw new IllegalArgumentException("Cannot find principal with ID \"" +  roleMember.getMemberId() + "\"");
++				}
++				this.principalName = principal.getPrincipalName();
++				break;
++			case GROUP :
++				if (populateMemberId) {
++					this.groupId = roleMember.getMemberId();
++				}
++				Group group = KimApiServiceLocator.getGroupService().getGroup(roleMember.getMemberId());
++				if (group == null) {
++					throw new IllegalArgumentException("Cannot find group with ID \"" + roleMember.getMemberId() + "\"");
++				}
++				this.groupName = new NameAndNamespaceDTO(group.getNamespaceCode(), group.getName());
++				break;
++			case ROLE :
++				if (populateMemberId) {
++					this.roleIdAsMember = roleMember.getMemberId();
++				}
++				Role role = KimApiServiceLocator.getRoleService().getRole(roleMember.getMemberId());
++				if (role == null) {
++					throw new IllegalArgumentException("Cannot find role with ID \"" + roleMember.getMemberId() + "\"");
++				}
++				this.roleNameAsMember = new NameAndNamespaceDTO(role.getNamespaceCode(), role.getName());
++				break;
++			default :
++				throw new IllegalArgumentException("Cannot create XML for role member with invalid member type of \"" + (type != null ? type.toString() : "null") + "\"");
++		}
++		
++		this.activeFromDate = roleMember.getActiveFromDate();
++		this.activeToDate = roleMember.getActiveToDate();
++		if (roleMember.getAttributes() != null) {
++			this.attributes = roleMember.getAttributes();
++		}
++	}
++	
++	public String getId() {
++		return id;
++	}
++
++	public void setId(String id) {
++		this.id = id;
++	}
++
++	public String getPrincipalId() {
++		return principalId;
++	}
++
++	public void setPrincipalId(String principalId) {
++		this.principalId = principalId;
++	}
++
++	public String getPrincipalName() {
++		return principalName;
++	}
++
++	public void setPrincipalName(String principalName) {
++		this.principalName = principalName;
++	}
++
++	public String getGroupId() {
++		return groupId;
++	}
++
++	public void setGroupId(String groupId) {
++		this.groupId = groupId;
++	}
++
++	public NameAndNamespaceDTO getGroupName() {
++		return groupName;
++	}
++
++	public void setGroupName(NameAndNamespaceDTO groupName) {
++		this.groupName = groupName;
++	}
++
++	public String getRoleIdAsMember() {
++		return roleIdAsMember;
++	}
++
++	public void setRoleIdAsMember(String roleIdAsMember) {
++		this.roleIdAsMember = roleIdAsMember;
++	}
++
++	public NameAndNamespaceDTO getRoleNameAsMember() {
++		return roleNameAsMember;
++	}
++
++	public void setRoleNameAsMember(NameAndNamespaceDTO roleNameAsMember) {
++		this.roleNameAsMember = roleNameAsMember;
++	}
++
++	public DateTime getActiveFromDate() {
++		return activeFromDate;
++	}
++
++	public void setActiveFromDate(DateTime activeFromDate) {
++		this.activeFromDate = activeFromDate;
++	}
++
++	public DateTime getActiveToDate() {
++		return activeToDate;
++	}
++
++	public void setActiveToDate(DateTime activeToDate) {
++		this.activeToDate = activeToDate;
++	}
++
++	public boolean isActive(DateTime activeAsOfDate) {
++		return InactivatableFromToUtils.isActive(activeFromDate, activeToDate, activeAsOfDate);
++	}
++	
++	public boolean isActive() {
++		return InactivatableFromToUtils.isActive(activeFromDate, activeToDate, null);
++	}
++	
++	public Map<String,String> getAttributes() {
++		return attributes;
++	}
++
++	public void setAttributes(Map<String,String> attributes) {
++		this.attributes = attributes;
++	}
++	
++	public MemberType getType() {
++		if (type == null) {
++			boolean foundMemberInfo = false;
++			
++			if (StringUtils.isNotBlank(principalId) || StringUtils.isNotBlank(principalName)) {
++				this.type = MemberType.PRINCIPAL;
++				foundMemberInfo = true;
++			}
++			
++			if (StringUtils.isNotBlank(groupId) || groupName != null) {
++				if (foundMemberInfo) {
++					this.type = null;
++					throw new IllegalStateException(
++							"Cannot have a role member that is simultaneously populated with member principal, member group, and/or member role information");
++				}
++				this.type = MemberType.GROUP;
++				foundMemberInfo = true;
++			}
++			
++			if (StringUtils.isNotBlank(roleIdAsMember) || roleNameAsMember != null) {
++				if (foundMemberInfo) {
++					this.type = null;
++					throw new IllegalStateException(
++							"Cannot have a role member that is simultaneously populated with member principal, member group, and/or member role information");
++				}
++				this.type = MemberType.ROLE;
++				foundMemberInfo = true;
++			}
++		}
++		return this.type;
++	}
++	
++	public String getMemberId() {
++		if (getType() != null) {
++			switch (getType()) {
++				case PRINCIPAL :
++					return principalId;
++				case GROUP :
++					return groupId;
++				case ROLE :
++					return roleIdAsMember;
++			}
++		}
++		return null;		
++	}
++	
++	public String getMemberName() {
++		if (getType() != null) {
++			switch (getType()) {
++				case PRINCIPAL :
++					return principalName;
++				case GROUP :
++					return (groupName != null) ? groupName.getName() : null;
++				case ROLE :
++					return (roleNameAsMember != null) ? roleNameAsMember.getName() : null;
++			}
++		}
++		return null;
++	}
++	
++	public String getMemberNamespaceCode() {
++		if (getType() != null) {
++			switch (getType()) {
++				case PRINCIPAL :
++					return principalName;
++				case GROUP :
++					return (groupName != null) ? groupName.getNamespaceCode() : null;
++				case ROLE :
++					return (roleNameAsMember != null) ? roleNameAsMember.getNamespaceCode() : null;
++			}
++		}
++		return null;
++	}
++	
++	public RoleResponsibilityActionsXmlDTO.WithinRoleMember getRoleResponsibilityActions() {
++		return roleResponsibilityActions;
++	}
++
++	public void setRoleResponsibilityActions(RoleResponsibilityActionsXmlDTO.WithinRoleMember roleResponsibilityActions) {
++		this.roleResponsibilityActions = roleResponsibilityActions;
++	}
++
++	public List<RoleResponsibilityActionXmlDTO.WithinRoleMember> getRoleRspActions() {
++		return roleRspActions;
++	}
++	
++	public RoleResponsibilityActionXmlDTO.WithinRoleMember getRoleRspAction() {
++		return (roleRspActions != null && !roleRspActions.isEmpty()) ? roleRspActions.get(0) : null;
++	}
++	
++	public void setRoleRspAction(RoleResponsibilityActionXmlDTO.WithinRoleMember roleRspAction) {
++		this.roleRspActions = (roleRspAction != null) ? Collections.singletonList(roleRspAction) : null;
++	}
++	
++	public String getObjectId() {
++		return objectId;
++	}
++
++	public void setObjectId(String objectId) {
++		this.objectId = objectId;
++	}
++
++	public Long getVersionNumber() {
++		return versionNumber;
++	}
++
++	public void setVersionNumber(Long versionNumber) {
++		this.versionNumber = versionNumber;
++	}
++	
++	/*
++	 * This method has been intentionally left as package-private so that only the KIM-XML-related code can get this property.
++	 */
++	boolean isAlreadyPersisted() {
++		return alreadyPersisted;
++	}
++
++	/*
++	 * This method has been intentionally left as package-private so that only the KIM-XML-related code can set this property.
++	 */
++	void setAlreadyPersisted(boolean alreadyPersisted) {
++		this.alreadyPersisted = alreadyPersisted;
++	}
++	
++	// =======================================================================================================
++	
++	/**
++	 * Maps to a "roleMember" element that does not have a "role" element as an ancestor.
++	 */
++	@XmlRootElement(name="roleMember", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="StandaloneRoleMemberType", propOrder={
++			"roleMemberId", "roleId", "roleNameAndNamespace", "principalId", "principalName", "groupId", "groupName",
++					"roleIdAsMember", "roleNameAsMember", "activeFromDate", "activeToDate", "qualifications"
++	})
++	public static class OutsideOfRole extends RoleMemberXmlDTO {
++		@XmlElement(name="roleId", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++		private String roleId;
++		
++		@XmlElement(name="roleName", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++		private NameAndNamespaceDTO roleNameAndNamespace;
++		
++		public OutsideOfRole() {
++			super();
++		}
++		
++		public OutsideOfRole(RoleMember roleMember) {
++			super(roleMember, false);
++			
++			this.roleId = roleMember.getRoleId();
++			Role role = KimApiServiceLocator.getRoleService().getRole(roleId);
++			if (role == null) {
++				throw new IllegalArgumentException("Cannot find role with ID \"" + roleId + "\"");
++			}
++			this.roleNameAndNamespace = new NameAndNamespaceDTO(role.getNamespaceCode(), role.getName());
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++
++		public void setRoleId(String roleId) {
++			this.roleId = roleId;
++		}
++
++		public NameAndNamespaceDTO getRoleNameAndNamespace() {
++			return roleNameAndNamespace;
++		}
++
++		public void setRoleNameAndNamespace(NameAndNamespaceDTO roleNameAndNamespace) {
++			this.roleNameAndNamespace = roleNameAndNamespace;
++		}
++		
++		public String getRoleName() {
++			return (roleNameAndNamespace != null) ? roleNameAndNamespace.getName() : null;
++		}
++
++		public String getRoleNamespaceCode() {
++			return (roleNameAndNamespace != null) ? roleNameAndNamespace.getNamespaceCode() : null;
++		}
++	}
++	
++	// =======================================================================================================
++	
++	/**
++	 * Maps to a "roleMember" element that has a "role" element as an ancestor.
++	 */
++	@XmlRootElement(name="roleMember", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RoleMemberType", propOrder={
++			"roleMemberId", "principalId", "principalName", "groupId", "groupName", "roleIdAsMember",
++					"roleNameAsMember", "activeFromDate", "activeToDate", "qualifications"
++	})
++	public static class WithinRole extends RoleMemberXmlDTO {
++		@XmlTransient
++		private String roleId;
++		
++		public WithinRole() {
++			super();
++		}
++		
++		public WithinRole(RoleMember roleMember) {
++			super(roleMember, false);
++		}
++		
++		void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++			if (parent instanceof RoleMembersXmlDTO.WithinRole) {
++				roleId = ((RoleMembersXmlDTO.WithinRole) parent).getRoleId();
++			}
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleDataXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleDataXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleDataXmlDTO.java	(revision 0)
+@@ -0,0 +1,46 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlType;
++
++@XmlRootElement(name="roleData", namespace=NS_ROLE)
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="", propOrder={"roles", "roleMembers"})
++public class RoleDataXmlDTO implements Serializable {
++
++	@XmlElement(name="roles", namespace=NS_ROLE)
++	private RolesXmlDTO roles;
++	
++	@XmlElement(name="roleMembers", namespace=NS_ROLE)
++	private RoleMembersXmlDTO.OutsideOfRole roleMembers;
++
++	public RoleDataXmlDTO() {}
++	
++	public RoleDataXmlDTO(RolesXmlDTO roles) {
++		this.roles = roles;
++	}
++	
++	public RolesXmlDTO getRoles() {
++		return roles;
++	}
++
++	public void setRoles(RolesXmlDTO roles) {
++		this.roles = roles;
++	}
++
++	public RoleMembersXmlDTO.OutsideOfRole getRoleMembers() {
++		return roleMembers;
++	}
++
++	public void setRoleMembers(RoleMembersXmlDTO.OutsideOfRole roleMembers) {
++		this.roleMembers = roleMembers;
++	}
++	
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionsXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionsXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionsXmlDTO.java	(revision 0)
+@@ -0,0 +1,150 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++import java.util.ArrayList;
++import java.util.Collection;
++import java.util.Collections;
++import java.util.List;
++
++import javax.xml.bind.Marshaller;
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.kim.api.permission.Permission;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++import org.kuali.rice.kim.impl.role.RolePermissionBo;
++import org.kuali.rice.krad.service.KRADServiceLocator;
++
++import org.kuali.rice.core.impl.xml.RiceXmlExportList;
++import org.kuali.rice.core.impl.xml.RiceXmlImportList;
++import org.kuali.rice.core.impl.xml.RiceXmlListAdditionListener;
++import org.kuali.rice.core.impl.xml.RiceXmlListGetterListener;
++
++@XmlTransient
++public abstract class RolePermissionsXmlDTO<T extends RolePermissionXmlDTO> implements RiceXmlListAdditionListener<T>, Serializable {
++	
++	public abstract List<T> getRolePermissions();
++	
++	public abstract void setRolePermissions(List<T> rolePermissions);
++	
++	void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		setRolePermissions(new RiceXmlImportList<T>(this));
++	}
++	
++	void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		setRolePermissions(null);
++	}
++	
++	// =======================================================================================================
++	
++	/**
++	 * Maps to a "rolePermissions" element that does not have a "role" element as its parent.
++	 */
++	@XmlRootElement(name="rolePermissions", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="StandaloneRolePermissionsType", propOrder={"rolePermissions"})
++	public static class OutsideOfRole extends RolePermissionsXmlDTO<RolePermissionXmlDTO.OutsideOfRole> {
++		
++		@XmlElement(name="rolePermission", namespace=NS_ROLE)
++		private List<RolePermissionXmlDTO.OutsideOfRole> rolePermissions;
++		
++		public List<RolePermissionXmlDTO.OutsideOfRole> getRolePermissions() {
++			return rolePermissions;
++		}
++
++		public void setRolePermissions(List<RolePermissionXmlDTO.OutsideOfRole> rolePermissions) {
++			this.rolePermissions = rolePermissions;
++		}
++		
++		public void newElementAdded(RolePermissionXmlDTO.OutsideOfRole item) {
++			RolePermissionXmlUtil.validateAndPersistNewRolePermission(item);
++		}
++		
++	}
++	
++	// =======================================================================================================
++	
++	/**
++	 * Maps to a "rolePermissions" element that has a "role" element as its parent.
++	 */
++	@XmlRootElement(name="rolePermissions", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RolePermissionsType", propOrder={"rolePermissions"})
++	public static class WithinRole extends RolePermissionsXmlDTO<RolePermissionXmlDTO.WithinRole>
++			implements RiceXmlListGetterListener<RolePermissionXmlDTO.WithinRole,String> {
++		
++		@XmlElement(name="rolePermission", namespace=NS_ROLE)
++		private List<RolePermissionXmlDTO.WithinRole> rolePermissions;
++		
++		@XmlTransient
++		private String roleId;
++		
++		public WithinRole() {}
++		
++		public WithinRole(String roleId) {
++			this.roleId = roleId;
++		}
++		
++		public List<RolePermissionXmlDTO.WithinRole> getRolePermissions() {
++			return rolePermissions;
++		}
++
++		public void setRolePermissions(List<RolePermissionXmlDTO.WithinRole> rolePermissions) {
++			this.rolePermissions = rolePermissions;
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++		
++		@Override
++		void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++			if (parent instanceof RoleXmlDTO) {
++				// Persist the enclosing role before unmarshalling its role assignments.
++				RoleXmlUtil.validateAndPersistNewRole((RoleXmlDTO)parent);
++				roleId = ((RoleXmlDTO)parent).getId();
++			}
++			super.beforeUnmarshal(unmarshaller, parent);
++		}
++		
++		public void newElementAdded(RolePermissionXmlDTO.WithinRole item) {
++			RolePermissionXmlUtil.validateAndPersistNewRolePermission(item);
++		}
++		
++		void beforeMarshal(Marshaller marshaller) {
++			// TODO: Is there an API method that can be used instead of this BO service approach?
++			Collection<RolePermissionBo> rolePermissionBos = KRADServiceLocator.getBusinessObjectService().findMatching(
++					RolePermissionBo.class, Collections.singletonMap("roleId", roleId));
++			if (rolePermissionBos != null && !rolePermissionBos.isEmpty()) {
++				List<String> permissionIds = new ArrayList<String>(rolePermissionBos.size());
++				for (RolePermissionBo rolePermissionBo : rolePermissionBos) {
++					permissionIds.add(rolePermissionBo.getId());
++				}
++				setRolePermissions(new RiceXmlExportList<RolePermissionXmlDTO.WithinRole,String>(permissionIds, this));
++			}
++			//List<String> roleIds = KimApiServiceLocator.getPermissionService().getRoleIdsForPermission(permission.getNamespaceCode(), permission.getName());
++			//if (roleIds != null && !roleIds.isEmpty()) {
++				//setRolePermissions(new RiceXmlExportList<RolePermissionXmlDTO.WithinPermission,String>(roleIds, this));
++			//}
++		}
++		
++		void afterMarshal(Marshaller marshaller) {
++			setRolePermissions(null);
++		}
++
++		public RolePermissionXmlDTO.WithinRole gettingNextElement(String nextElement, int index) {
++			Permission permission = KimApiServiceLocator.getPermissionService().getPermission(nextElement);
++			if (permission == null) {
++				throw new RuntimeException("Cannot find permission with ID \"" + nextElement + "\"");
++			}
++			return new RolePermissionXmlDTO.WithinRole(permission);
++		}
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityActionXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityActionXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityActionXmlDTO.java	(revision 0)
+@@ -0,0 +1,425 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++import java.util.Map;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
++
++import org.apache.commons.lang.StringUtils;
++import org.kuali.rice.core.api.membership.MemberType;
++import org.kuali.rice.kim.api.role.RoleResponsibilityActionContract;
++import org.kuali.rice.kim.api.role.RoleResponsibilityContract;
++
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTO;
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTOValidatingAdapter;
++
++@XmlTransient
++public abstract class RoleResponsibilityActionXmlDTO implements RoleResponsibilityActionContract, Serializable {
++
++	@XmlElement(name="id", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String id;
++	
++	@XmlElement(name="actionTypeCode", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String actionTypeCode;
++	
++	@XmlElement(name="actionPolicyCode", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String actionPolicyCode;
++	
++	@XmlElement(name="forceAction", namespace=NS_ROLE)
++	private boolean forceAction;
++	
++	@XmlElement(name="priority", namespace=NS_ROLE)
++	private Integer priorityNumber;
++	
++	@XmlTransient
++	private Long versionNumber;
++
++	public String getId() {
++		return id;
++	}
++
++	public void setId(String id) {
++		this.id = id;
++	}
++
++	public String getActionTypeCode() {
++		return actionTypeCode;
++	}
++
++	public void setActionTypeCode(String actionTypeCode) {
++		this.actionTypeCode = actionTypeCode;
++	}
++
++	public String getActionPolicyCode() {
++		return actionPolicyCode;
++	}
++
++	public void setActionPolicyCode(String actionPolicyCode) {
++		this.actionPolicyCode = actionPolicyCode;
++	}
++
++	public boolean isForceAction() {
++		return forceAction;
++	}
++
++	public void setForceAction(boolean forceAction) {
++		this.forceAction = forceAction;
++	}
++
++	public Integer getPriorityNumber() {
++		return priorityNumber;
++	}
++
++	public void setPriorityNumber(Integer priorityNumber) {
++		this.priorityNumber = priorityNumber;
++	}
++
++	public Long getVersionNumber() {
++		return versionNumber;
++	}
++
++	public void setVersionNumber(Long versionNumber) {
++		this.versionNumber = versionNumber;
++	}
++
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibilityAction", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RoleRespActionType", propOrder={
++			"id", "actionTypeCode", "actionPolicyCode", "forceAction", "priorityNumber"
++	})
++	public static class WithinRoleResponsibility extends RoleResponsibilityActionXmlDTO {
++		
++		@XmlTransient
++		private String roleResponsibilityId;
++		
++		@XmlTransient
++		private RoleResponsibilityContract roleResponsibility;
++		
++		public String getRoleResponsibilityId() {
++			return roleResponsibilityId;
++		}
++
++		public void setRoleResponsibilityId(String roleResponsibilityId) {
++			this.roleResponsibilityId = roleResponsibilityId;
++		}
++		
++		public RoleResponsibilityContract getRoleResponsibility() {
++			return roleResponsibility;
++		}
++		
++		public String getRoleMemberId() {
++			return "*";
++		}
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibilityAction", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RoleMemberRoleRespActionType", propOrder={
++			"id", "actionTypeCode", "actionPolicyCode", "forceAction", "priorityNumber"
++	})
++	public static class WithinRoleMember extends RoleResponsibilityActionXmlDTO {
++		
++		@XmlTransient
++		private String roleMemberId;
++		
++		public String getRoleMemberId() {
++			return roleMemberId;
++		}
++
++		public void setRoleMemberId(String roleMemberId) {
++			this.roleMemberId = roleMemberId;
++		}
++		
++		public String getRoleResponsibilityId() {
++			return "*";
++		}
++		
++		public RoleResponsibilityContract getRoleResponsibility() {
++			return null;
++		}
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibilityAction", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="StandaloneRoleRespActionType", propOrder={
++			"id", "roleResponsibilityId", "responsibilityId", "responsibilityNameAndNamespace", "roleId", "roleNameAndNamespace",
++			"roleMemberId", "principalId", "principalName", "groupId", "groupName", "roleIdAsMember", "roleNameAsMember", "roleMemberAttributes",
++			"actionTypeCode", "actionPolicyCode", "forceAction", "priorityNumber"
++	})
++	public static class OutsideRoleResponsibilityAndMember extends RoleResponsibilityActionXmlDTO {
++		
++		@XmlElement(name="roleResponsibilityId", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++		private String roleResponsibilityId;
++		
++		@XmlElement(name="responsibilityId", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++		private String responsibilityId;
++		
++		@XmlElement(name="responsibilityName", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++		private NameAndNamespaceDTO responsibilityNameAndNamespace;
++		
++		@XmlElement(name="roleId", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++		private String roleId;
++		
++		@XmlElement(name="roleName", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++		private NameAndNamespaceDTO roleNameAndNamespace;
++		
++		@XmlElement(name="roleMemberId", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++		private String roleMemberId;
++		
++		@XmlElement(name="principalId", namespace=NS_ROLE)
++	    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	    private String principalId;
++	    
++	    @XmlElement(name="principalName", namespace=NS_ROLE)
++	    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	    private String principalName;
++	    
++	    @XmlElement(name="groupId", namespace=NS_ROLE)
++	    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	    private String groupId;
++	    
++	    @XmlElement(name="groupName", namespace=NS_ROLE)
++	    @XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++	    private NameAndNamespaceDTO groupName;
++	    
++	    @XmlElement(name="roleIdAsMember", namespace=NS_ROLE)
++	    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	    private String roleIdAsMember;
++	    
++	    @XmlElement(name="roleNameAsMember", namespace=NS_ROLE)
++	    @XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++	    private NameAndNamespaceDTO roleNameAsMember;
++	    
++	    @XmlElement(name="roleMemberAttributes", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(QualifierDTOToAttributeSetAdapter.class)
++		private Map<String,String> roleMemberAttributes;
++		
++	    @XmlTransient
++		private MemberType memberType;
++	    
++		@XmlTransient
++		private RoleResponsibilityContract roleResponsibility;
++		
++		public String getRoleResponsibilityId() {
++			return roleResponsibilityId;
++		}
++
++		public void setRoleResponsibilityId(String roleResponsibilityId) {
++			this.roleResponsibilityId = roleResponsibilityId;
++		}
++		
++		public String getResponsibilityId() {
++			return responsibilityId;
++		}
++
++		public void setResponsibilityId(String responsibilityId) {
++			this.responsibilityId = responsibilityId;
++		}
++
++		public NameAndNamespaceDTO getResponsibilityNameAndNamespace() {
++			return responsibilityNameAndNamespace;
++		}
++
++		public void setResponsibilityNameAndNamespace(NameAndNamespaceDTO responsibilityNameAndNamespace) {
++			this.responsibilityNameAndNamespace = responsibilityNameAndNamespace;
++		}
++
++		public String getResponsibilityNamespaceCode() {
++			return (responsibilityNameAndNamespace != null) ? responsibilityNameAndNamespace.getNamespaceCode() : null;
++		}
++		
++		public String getResponsibilityName() {
++			return (responsibilityNameAndNamespace != null) ? responsibilityNameAndNamespace.getName() : null;
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++
++		public void setRoleId(String roleId) {
++			this.roleId = roleId;
++		}
++
++		public NameAndNamespaceDTO getRoleNameAndNamespace() {
++			return roleNameAndNamespace;
++		}
++
++		public void setRoleNameAndNamespace(NameAndNamespaceDTO roleNameAndNamespace) {
++			this.roleNameAndNamespace = roleNameAndNamespace;
++		}
++
++		public String getRoleName() {
++			return (roleNameAndNamespace != null) ? roleNameAndNamespace.getName() : null;
++		}
++		
++		public String getRoleNamespaceCode() {
++			return (roleNameAndNamespace != null) ? roleNameAndNamespace.getNamespaceCode() : null;
++		}
++		
++		public String getRoleMemberId() {
++			return roleMemberId;
++		}
++
++		public void setRoleMemberId(String roleMemberId) {
++			this.roleMemberId = roleMemberId;
++		}
++		
++		public String getPrincipalId() {
++			return principalId;
++		}
++
++		public void setPrincipalId(String principalId) {
++			this.principalId = principalId;
++		}
++
++		public String getPrincipalName() {
++			return principalName;
++		}
++
++		public void setPrincipalName(String principalName) {
++			this.principalName = principalName;
++		}
++
++		public String getGroupId() {
++			return groupId;
++		}
++
++		public void setGroupId(String groupId) {
++			this.groupId = groupId;
++		}
++
++		public NameAndNamespaceDTO getGroupName() {
++			return groupName;
++		}
++
++		public void setGroupName(NameAndNamespaceDTO groupName) {
++			this.groupName = groupName;
++		}
++
++		public String getRoleIdAsMember() {
++			return roleIdAsMember;
++		}
++
++		public void setRoleIdAsMember(String roleIdAsMember) {
++			this.roleIdAsMember = roleIdAsMember;
++		}
++
++		public NameAndNamespaceDTO getRoleNameAsMember() {
++			return roleNameAsMember;
++		}
++
++		public void setRoleNameAsMember(NameAndNamespaceDTO roleNameAsMember) {
++			this.roleNameAsMember = roleNameAsMember;
++		}
++
++		public Map<String, String> getRoleMemberAttributes() {
++			return roleMemberAttributes;
++		}
++
++		public void setRoleMemberAttributes(Map<String, String> roleMemberAttributes) {
++			this.roleMemberAttributes = roleMemberAttributes;
++		}
++		
++		public MemberType getMemberType() {
++			if (memberType == null) {
++				boolean foundMemberInfo = false;
++				
++				if (StringUtils.isNotBlank(principalId) || StringUtils.isNotBlank(principalName)) {
++					this.memberType = MemberType.PRINCIPAL;
++					foundMemberInfo = true;
++				}
++				
++				if (StringUtils.isNotBlank(groupId) || groupName != null) {
++					if (foundMemberInfo) {
++						this.memberType = null;
++						throw new IllegalStateException(
++								"Cannot specify a role member by simultaneously providing member principal, member group, and/or member role information");
++					}
++					this.memberType = MemberType.GROUP;
++					foundMemberInfo = true;
++				}
++				
++				if (StringUtils.isNotBlank(roleIdAsMember) || roleNameAsMember != null) {
++					if (foundMemberInfo) {
++						this.memberType = null;
++						throw new IllegalStateException(
++								"Cannot specify a role member by simultaneously providing member principal, member group, and/or member role information");
++					}
++					this.memberType = MemberType.ROLE;
++					foundMemberInfo = true;
++				}
++			}
++			return this.memberType;
++		}
++
++		public String getMemberId() {
++			if (getMemberType() != null) {
++				switch (getMemberType()) {
++					case PRINCIPAL :
++						return principalId;
++					case GROUP :
++						return groupId;
++					case ROLE :
++						return roleIdAsMember;
++				}
++			}
++			return null;		
++		}
++		
++		public String getMemberName() {
++			if (getMemberType() != null) {
++				switch (getMemberType()) {
++					case PRINCIPAL :
++						return principalName;
++					case GROUP :
++						return (groupName != null) ? groupName.getName() : null;
++					case ROLE :
++						return (roleNameAsMember != null) ? roleNameAsMember.getName() : null;
++				}
++			}
++			return null;
++		}
++		
++		public String getMemberNamespaceCode() {
++			if (getMemberType() != null) {
++				switch (getMemberType()) {
++					case PRINCIPAL :
++						return principalName;
++					case GROUP :
++						return (groupName != null) ? groupName.getNamespaceCode() : null;
++					case ROLE :
++						return (roleNameAsMember != null) ? roleNameAsMember.getNamespaceCode() : null;
++				}
++			}
++			return null;
++		}
++		
++		public RoleResponsibilityContract getRoleResponsibility() {
++			return roleResponsibility;
++		}
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/QualifierDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/QualifierDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/QualifierDTO.java	(revision 0)
+@@ -0,0 +1,41 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Map;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.core.impl.xml.KeyValueDTO;
++
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="QualifierType", propOrder={"qualifications"})
++public class QualifierDTO {
++	@XmlElement(name="qualification", namespace=NS_ROLE)
++	private List<KeyValueDTO> qualifications;
++	
++	public QualifierDTO () {
++		qualifications = new ArrayList<KeyValueDTO>();
++	}
++	
++	public QualifierDTO(Map<String,String> attributes) {
++		this();
++		for (Map.Entry<String,String> attribute : attributes.entrySet()) {
++			qualifications.add(new KeyValueDTO(attribute.getKey(), attribute.getValue()));
++		}
++	}
++
++	public List<KeyValueDTO> getQualifications() {
++		return qualifications;
++	}
++
++	public void setQualifications(List<KeyValueDTO> qualifications) {
++		this.qualifications = qualifications;
++	}
++	
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleXmlDTO.java	(revision 0)
+@@ -0,0 +1,184 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
++
++import org.kuali.rice.kim.api.role.RoleContract;
++
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTO;
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTOToKimTypeIdAdapter;
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTOValidatingAdapter;
++import org.kuali.rice.core.impl.xml.StringTrimmingAdapter;
++
++@XmlRootElement(name="role", namespace=NS_ROLE)
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="RoleType", propOrder={
++		"roleId", "roleNameAndNamespace", "kimTypeId", "roleDescription", "active", "roleMembers"
++})
++public class RoleXmlDTO implements RoleContract, Serializable {
++	@XmlElement(name="id", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String id;
++	
++	@XmlElement(name="name", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++	private NameAndNamespaceDTO nameAndNamespace;
++	
++	@XmlElement(name="kimTypeName", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NameAndNamespaceDTOToKimTypeIdAdapter.class)
++	private String kimTypeId;
++	
++	@XmlElement(name="description", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(StringTrimmingAdapter.class)
++	private String description;
++	
++	@XmlElement(name="active", namespace=NS_ROLE)
++	private boolean active;
++	
++	@XmlElement(name="rolePermissions", namespace=NS_ROLE)
++	private RolePermissionsXmlDTO.WithinRole rolePermissions;
++	
++	@XmlElement(name="roleResponsibilities", namespace=NS_ROLE)
++	private RoleResponsibilitiesXmlDTO.WithinRole roleResponsibilities;
++	
++	@XmlElement(name="roleMembers", namespace=NS_ROLE)
++	private RoleMembersXmlDTO.WithinRole roleMembers;
++
++	@XmlTransient
++	private String objectId;
++	
++	@XmlTransient
++	private Long versionNumber;
++	
++	@XmlTransient
++	private boolean alreadyPersisted = false;
++	
++	public RoleXmlDTO() {
++		this.active = true;
++	}
++	
++	public RoleXmlDTO(RoleContract role, RoleMembersXmlDTO.WithinRole roleMembers) {
++		if (role == null) {
++			throw new IllegalArgumentException("role cannot be null");
++		}
++		
++		this.id = role.getId();
++		this.nameAndNamespace = new NameAndNamespaceDTO(role.getNamespaceCode(), role.getName());
++		this.kimTypeId = role.getKimTypeId();
++		this.description = role.getDescription();
++		this.active = role.isActive();
++		this.roleMembers = roleMembers;
++	}
++	
++	public String getId() {
++		return id;
++	}
++
++	public void setId(String id) {
++		this.id = id;
++	}
++
++	public NameAndNamespaceDTO getNameAndNamespace() {
++		return nameAndNamespace;
++	}
++
++	public void setNameAndNamespace(NameAndNamespaceDTO nameAndNamespace) {
++		this.nameAndNamespace = nameAndNamespace;
++	}
++
++	public String getKimTypeId() {
++		return kimTypeId;
++	}
++
++	public void setKimTypeId(String kimTypeId) {
++		this.kimTypeId = kimTypeId;
++	}
++
++	public String getDescription() {
++		return description;
++	}
++
++	public void setDescription(String description) {
++		this.description = description;
++	}
++
++	public boolean isActive() {
++		return active;
++	}
++
++	public void setActive(boolean active) {
++		this.active = active;
++	}
++
++	public RolePermissionsXmlDTO.WithinRole getRolePermissions() {
++		return rolePermissions;
++	}
++	
++	public void setRolePermissions(RolePermissionsXmlDTO.WithinRole rolePermissions) {
++		this.rolePermissions = rolePermissions;
++	}
++	
++	public RoleResponsibilitiesXmlDTO.WithinRole getRoleResponsibilities() {
++		return roleResponsibilities;
++	}
++	
++	public void setRoleResponsibilities(RoleResponsibilitiesXmlDTO.WithinRole roleResponsibilities) {
++		this.roleResponsibilities = roleResponsibilities;
++	}
++	
++	public RoleMembersXmlDTO.WithinRole getRoleMembers() {
++		return roleMembers;
++	}
++
++	public void setRoleMembers(RoleMembersXmlDTO.WithinRole roleMembers) {
++		this.roleMembers = roleMembers;
++	}
++	
++	public String getName() {
++		return (nameAndNamespace != null) ? nameAndNamespace.getName() : null;
++	}
++	
++	public String getNamespaceCode() {
++		return (nameAndNamespace != null) ? nameAndNamespace.getNamespaceCode() : null;
++	}
++	
++	public String getObjectId() {
++		return objectId;
++	}
++
++	public void setObjectId(String objectId) {
++		this.objectId = objectId;
++	}
++
++	public Long getVersionNumber() {
++		return versionNumber;
++	}
++
++	public void setVersionNumber(Long versionNumber) {
++		this.versionNumber = versionNumber;
++	}
++
++	/*
++	 * This method has been intentionally left as package-private so that only the KIM-XML-related code can get this property.
++	 */
++	boolean isAlreadyPersisted() {
++		return alreadyPersisted;
++	}
++
++	/*
++	 * This method has been intentionally left as package-private so that only the KIM-XML-related code can set this property.
++	 */
++	void setAlreadyPersisted(boolean alreadyPersisted) {
++		this.alreadyPersisted = alreadyPersisted;
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RoleResponsibilityXmlDTO.java	(revision 0)
+@@ -0,0 +1,208 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++import java.io.Serializable;
++import java.util.Collections;
++import java.util.List;
++
++import javax.xml.bind.Marshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
++
++import org.kuali.rice.kim.api.role.RoleResponsibilityContract;
++
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTO;
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTOValidatingAdapter;
++
++@XmlTransient
++public abstract class RoleResponsibilityXmlDTO implements RoleResponsibilityContract, Serializable {
++
++	@XmlElement(name="roleResponsibilityId", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String roleResponsibilityId;
++	
++	@XmlElement(name="responsibilityId", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String responsibilityId;
++	
++	@XmlElement(name="responsibilityName", namespace=NS_ROLE)
++	@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++	private NameAndNamespaceDTO responsibilityNameAndNamespace;
++	
++	@XmlElement(name="active", namespace=NS_ROLE)
++	private boolean active;
++	
++	@XmlElement(name="responsibilityActions", namespace=NS_ROLE)
++	private RoleResponsibilityActionsXmlDTO.WithinRoleResponsibility roleResponsibilityActions;
++	
++	@XmlTransient
++	private List<RoleResponsibilityActionXmlDTO.WithinRoleResponsibility> roleRspActions;
++	
++	@XmlTransient
++	private boolean alreadyPersisted = false;
++	
++	@XmlTransient
++	private Long versionNumber;
++	
++	public String getRoleResponsibilityId() {
++		return roleResponsibilityId;
++	}
++	
++	public void setRoleResponsibilityId(String roleResponsibilityId) {
++		this.roleResponsibilityId = roleResponsibilityId;
++	}
++	
++	public String getResponsibilityId() {
++		return responsibilityId;
++	}
++
++	public void setResponsibilityId(String responsibilityId) {
++		this.responsibilityId = responsibilityId;
++	}
++	
++	public NameAndNamespaceDTO getResponsibilityNameAndNamespace() {
++		return responsibilityNameAndNamespace;
++	}
++	
++	public void setResponsibilityNameAndNamespace(NameAndNamespaceDTO responsibilityNameAndNamespace) {
++		this.responsibilityNameAndNamespace = responsibilityNameAndNamespace;
++	}
++	
++	public boolean isActive() {
++		return active;
++	}
++	
++	public void setActive(boolean active) {
++		this.active = active;
++	}
++	
++	public Long getVersionNumber() {
++		return versionNumber;
++	}
++	
++	public void setVersionNumber(Long versionNumber) {
++		this.versionNumber = versionNumber;
++	}
++	
++	public RoleResponsibilityActionsXmlDTO.WithinRoleResponsibility getRoleResponsibilityActions() {
++		return roleResponsibilityActions;
++	}
++	
++	public void setRoleResponsibilityActions(RoleResponsibilityActionsXmlDTO.WithinRoleResponsibility roleResponsibilityActions) {
++		this.roleResponsibilityActions = roleResponsibilityActions;
++	}
++	
++	public List<RoleResponsibilityActionXmlDTO.WithinRoleResponsibility> getRoleRspActions() {
++		return roleRspActions;
++	}
++	
++	public RoleResponsibilityActionXmlDTO.WithinRoleResponsibility getRoleRspAction() {
++		return (roleRspActions != null && !roleRspActions.isEmpty()) ? roleRspActions.get(0) : null;
++	}
++	
++	public void setRoleRspAction(RoleResponsibilityActionXmlDTO.WithinRoleResponsibility roleRspAction) {
++		this.roleRspActions = (roleRspAction != null) ? Collections.singletonList(roleRspAction) : null;
++	}
++	
++	public String getResponsibilityNamespaceCode() {
++		return (responsibilityNameAndNamespace != null) ? responsibilityNameAndNamespace.getNamespaceCode() : null;
++	}
++	
++	public String getResponsibilityName() {
++		return (responsibilityNameAndNamespace != null) ? responsibilityNameAndNamespace.getName() : null;
++	}
++	
++	/*
++	 * This method has been intentionally left as package-private so that only the KIM-XML-related code can get this property.
++	 */
++	boolean isAlreadyPersisted() {
++		return alreadyPersisted;
++	}
++
++	/*
++	 * This method has been intentionally left as package-private so that only the KIM-XML-related code can set this property.
++	 */
++	void setAlreadyPersisted(boolean alreadyPersisted) {
++		this.alreadyPersisted = alreadyPersisted;
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibility", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="StandaloneRoleResponsibilityType", propOrder={
++			"roleResponsibilityId", "responsibilityId", "responsibilityNameAndNamespace", "roleId", "roleNameAndNamespace", "active", "roleResponsibilityActions"
++	})
++	public static class OutsideOfRole extends RoleResponsibilityXmlDTO {
++		
++		@XmlElement(name="roleId", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++		private String roleId;
++		
++		@XmlElement(name="roleName", namespace=NS_ROLE)
++		@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++		private NameAndNamespaceDTO roleNameAndNamespace;
++		
++		public String getRoleId() {
++			return roleId;
++		}
++		
++		public void setRoleId(String roleId) {
++			this.roleId = roleId;
++		}
++		
++		public NameAndNamespaceDTO getRoleNameAndNamespace() {
++			return roleNameAndNamespace;
++		}
++		
++		public void setRoleNameAndNamespace(NameAndNamespaceDTO roleNameAndNamespace) {
++			this.roleNameAndNamespace = roleNameAndNamespace;
++		}
++		
++		public String getRoleNamespaceCode() {
++			return (roleNameAndNamespace != null) ? roleNameAndNamespace.getNamespaceCode() : null;
++		}
++		
++		public String getRoleName() {
++			return (roleNameAndNamespace != null) ? roleNameAndNamespace.getName() : null;
++		}
++	}
++	
++	// =======================================================================================================
++	
++	@XmlRootElement(name="roleResponsibility", namespace=NS_ROLE)
++	@XmlAccessorType(XmlAccessType.FIELD)
++	@XmlType(name="RoleResponsibilityType", propOrder={
++			"roleResponsibilityId", "responsibilityId", "responsibilityNameAndNamespace", "active", "roleResponsibilityActions"
++	})
++	public static class WithinRole extends RoleResponsibilityXmlDTO {
++		
++		@XmlTransient
++		private String roleId;
++		
++		public WithinRole() {}
++		
++		public WithinRole(String roleId) {
++			this.roleId = roleId;
++		}
++		
++		public String getRoleId() {
++			return roleId;
++		}
++		
++		void beforeMarshal(Marshaller marshaller) {
++			
++		}
++		
++		void afterMarshal(Marshaller marshaller) {
++			
++		}
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionXmlUtil.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionXmlUtil.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/RolePermissionXmlUtil.java	(revision 0)
+@@ -0,0 +1,108 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import org.apache.commons.lang.StringUtils;
++import org.kuali.rice.kim.api.permission.Permission;
++import org.kuali.rice.kim.api.permission.PermissionService;
++import org.kuali.rice.kim.api.role.RoleService;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++
++public class RolePermissionXmlUtil {
++	
++	private static RoleService roleService;
++	private static PermissionService permissionService;
++	
++	static void validateAndPersistNewRolePermission(RolePermissionXmlDTO newRolePermission) {
++		if (newRolePermission == null) {
++			throw new IllegalArgumentException("Cannot persist a null role permission");
++		}
++		
++		validatePermissionIdentityForRolePerm(newRolePermission);
++		
++		validateRoleIdentityForRolePerm(newRolePermission);
++		
++		// TODO: We need to account for the possibility that the role permission already exists.
++		getRoleService().assignPermissionToRole(newRolePermission.getPermissionId(), newRolePermission.getRoleId());
++	}
++	
++	private RolePermissionXmlUtil() {}
++	
++	private static void validatePermissionIdentityForRolePerm(RolePermissionXmlDTO newRolePermission) {
++		// If the permission name and permission namespace were given, then retrieve the corresponding permission ID or use it for validation.
++		if (StringUtils.isNotBlank(newRolePermission.getPermissionName()) && StringUtils.isNotBlank(newRolePermission.getPermissionNamespaceCode())) {
++			// If a name + namespace combo is given, verify that the combo maps to an existing permission.
++			Permission existingPerm = getPermissionService().findPermByNamespaceCodeAndName(
++					newRolePermission.getPermissionNamespaceCode(), newRolePermission.getPermissionName());
++			if (existingPerm == null) {
++				throw new RuntimeException("Cannot have role assigned to permission with name \"" + newRolePermission.getPermissionName() + "\" and namespace \"" +
++						newRolePermission.getPermissionNamespaceCode() + "\" because such a permission does not exist");
++			}
++			String existingId = existingPerm.getId();
++			
++			// If the role perm defines its own permission ID, verify that it's the same as the one from the existing perm; otherwise, assign the role perm's permission ID.
++			if (StringUtils.isBlank(newRolePermission.getPermissionId())) {
++				newRolePermission.setPermissionId(existingId);
++			} else if (!newRolePermission.getPermissionId().equals(existingId)) {
++				throw new RuntimeException("Cannot have role assigned to permission with ID \"" + newRolePermission.getPermissionId() + "\", name \"" +
++						newRolePermission.getPermissionName() + "\", and namespace \"" + newRolePermission.getPermissionNamespaceCode() +
++								"\" because the existing permission with the same name and namespace has an ID of \"" + existingId + "\" instead");
++			}
++		} else if (StringUtils.isBlank(newRolePermission.getPermissionId())) {
++			// If no name + namespace combo was given, fail validation if no permission ID was given either.
++			throw new RuntimeException("Cannot create role permission without specifying a permission ID or permission name and namespace");
++		} else if (getPermissionService().getPermission(newRolePermission.getPermissionId()) == null) {
++			throw new RuntimeException("Cannot have role assigned to permission with ID \"" + newRolePermission.getPermissionId() +
++					"\" because such a permission does not exist");
++		}
++	}
++	
++	private static void validateRoleIdentityForRolePerm(RolePermissionXmlDTO newRolePermission) {
++		// If the "rolePermission" tag was not a descendant of the "role" tag, then validate or derive the role ID as needed.
++		if (newRolePermission instanceof RolePermissionXmlDTO.OutsideOfRole) {
++			RolePermissionXmlDTO.OutsideOfRole standaloneRolePerm = (RolePermissionXmlDTO.OutsideOfRole) newRolePermission;
++			// If the role name and role namespace were given, then retrieve the corresponding role ID or use it for validation.
++			if (StringUtils.isNotBlank(standaloneRolePerm.getRoleName()) && StringUtils.isNotBlank(standaloneRolePerm.getRoleNamespaceCode())) {
++				// If a name + namespace combo is given, verify that the combo maps to an existing role.
++				String existingId = getRoleService().getRoleIdByNamespaceCodeAndName(standaloneRolePerm.getRoleNamespaceCode(), standaloneRolePerm.getRoleName());
++				if (StringUtils.isBlank(existingId)) {
++					throw new RuntimeException("Cannot assign permission to role with name \"" + standaloneRolePerm.getRoleName() + "\" and namespace \"" +
++							standaloneRolePerm.getRoleNamespaceCode() + "\" because such a role does not exist");
++				}
++				
++				// If the role perm defines its own role ID, verify that it's the same as the one from the existing role; otherwise, assign the role's own role ID.
++				if (StringUtils.isBlank(standaloneRolePerm.getRoleId())) {
++					standaloneRolePerm.setRoleId(existingId);
++				} else if (!standaloneRolePerm.getRoleId().equals(existingId)) {
++					throw new RuntimeException("Cannot assign permission to role with ID \"" + standaloneRolePerm.getRoleId() + "\", name \"" +
++							standaloneRolePerm.getRoleName() + "\", and namespace \"" + standaloneRolePerm.getRoleNamespaceCode() +
++									"\" because the existing role with the same name and namespace has an ID of \"" + existingId + "\" instead");
++				}
++			} else if (StringUtils.isBlank(standaloneRolePerm.getRoleId())) {
++				// If no name + namespace combo was given, fail validation if no role ID was given either.
++				throw new RuntimeException("Cannot create role permission without specifying a role ID or role name and namespace");
++			} else if (getRoleService().getRole(standaloneRolePerm.getRoleId()) == null) {
++				throw new RuntimeException("Cannot assign permission to role with ID \"" + standaloneRolePerm.getRoleId() +
++						"\" because such a role does not exist");
++			}
++		}
++		
++		// Ensure that a role ID was explicitly specified or derived.
++		if (StringUtils.isBlank(newRolePermission.getRoleId())) {
++			throw new RuntimeException("Cannot create new role permission assignment without specifying a permission ID " +
++					"or the non-ID permission uniqueness fields");
++		}
++	}
++	
++	private static RoleService getRoleService() {
++		if (roleService == null) {
++			roleService = KimApiServiceLocator.getRoleService();
++		}
++		return roleService;
++	}
++	
++	private static PermissionService getPermissionService() {
++		if (permissionService == null) {
++			permissionService = KimApiServiceLocator.getPermissionService();
++		}
++		return permissionService;
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/QualifierDTOToAttributeSetAdapter.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/QualifierDTOToAttributeSetAdapter.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/role/xml/QualifierDTOToAttributeSetAdapter.java	(revision 0)
+@@ -0,0 +1,39 @@
++package org.kuali.rice.kim.impl.role.xml;
++
++import java.util.HashMap;
++import java.util.Map;
++
++import javax.xml.bind.UnmarshalException;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlAdapter;
++
++import org.apache.commons.lang.StringUtils;
++
++import org.kuali.rice.core.impl.xml.KeyValueDTO;
++
++public class QualifierDTOToAttributeSetAdapter extends XmlAdapter<QualifierDTO,Map<String,String>> {
++
++	@Override
++	public QualifierDTO marshal(Map<String,String> v) throws Exception {
++		return (v != null) ? new QualifierDTO(v) : null;
++	}
++
++	@Override
++	public Map<String,String> unmarshal(QualifierDTO v) throws Exception {
++		if (v != null) {
++			NormalizedStringAdapter normalizedStringAdapter = new NormalizedStringAdapter();
++			Map<String,String> attributes = new HashMap<String,String>();
++			for (KeyValueDTO keyValueDTO : v.getQualifications()) {
++				if (StringUtils.isBlank(keyValueDTO.getKey())) {
++					throw new UnmarshalException("Cannot create a qualification entry with a blank key");
++				} else if (attributes.containsKey(keyValueDTO.getKey())) {
++					throw new UnmarshalException("Cannot create a qualifier having more than one qualification entry with a key of \"" + keyValueDTO.getKey() + "\"");
++				}
++				attributes.put(keyValueDTO.getKey(), normalizedStringAdapter.unmarshal(keyValueDTO.getValue()));
++			}
++			return attributes;
++		}
++		return null;
++	}
++
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionXmlDTO.java	(revision 0)
+@@ -0,0 +1,166 @@
++package org.kuali.rice.kim.impl.permission.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_PERM;
++
++import java.io.Serializable;
++import java.util.Map;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlTransient;
++import javax.xml.bind.annotation.XmlType;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
++
++import org.kuali.rice.kim.api.common.template.TemplateContract;
++import org.kuali.rice.kim.api.permission.PermissionContract;
++
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTO;
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTOValidatingAdapter;
++import org.kuali.rice.core.impl.xml.StringTrimmingAdapter;
++
++/**
++ * 
++ */
++@XmlRootElement(name="permission", namespace=NS_PERM)
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="PermissionType", propOrder={
++		"id", "permissionNameAndNamespace", "template", "description", "active", "attributes"
++})
++public class PermissionXmlDTO implements PermissionContract, Serializable {
++	
++	@XmlElement(name="id", namespace=NS_PERM)
++	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
++	private String id;
++	
++	@XmlElement(name="name", namespace=NS_PERM)
++	@XmlJavaTypeAdapter(NameAndNamespaceDTOValidatingAdapter.class)
++	private NameAndNamespaceDTO permissionNameAndNamespace;
++	
++	@XmlElement(name="templateName", namespace=NS_PERM)
++	@XmlJavaTypeAdapter(NameAndNamespaceDTOToPermTemplateContractAdapter.class)
++	private TemplateContract template;
++	
++	@XmlElement(name="description", namespace=NS_PERM)
++	@XmlJavaTypeAdapter(StringTrimmingAdapter.class)
++	private String description;
++	
++	@XmlElement(name="active", namespace=NS_PERM)
++	private boolean active;
++	
++	@XmlElement(name="attributes", namespace=NS_PERM)
++	@XmlJavaTypeAdapter(PermissionDetailsDTOToAttributeSetAdapter.class)
++	private Map<String,String> attributes;
++	
++	@XmlTransient
++	private String objectId;
++	
++	@XmlTransient
++	private Long versionNumber;
++	
++	@XmlTransient
++	private boolean alreadyPersisted = false;
++	
++	public PermissionXmlDTO() {
++		this.active = true;
++	}
++	
++	public PermissionXmlDTO(PermissionContract permission) {
++		this.id = permission.getId();
++		this.permissionNameAndNamespace = new NameAndNamespaceDTO(permission.getNamespaceCode(), permission.getName());
++		this.template = permission.getTemplate();
++		this.description = permission.getDescription();
++		this.active = permission.isActive();
++		this.attributes = permission.getAttributes();
++		this.objectId = permission.getObjectId();
++		this.versionNumber = permission.getVersionNumber();
++	}
++
++	public String getId() {
++		return id;
++	}
++
++	public void setId(String id) {
++		this.id = id;
++	}
++	
++	public NameAndNamespaceDTO getPermissionNameAndNamespace() {
++		return permissionNameAndNamespace;
++	}
++
++	public void setPermissionNameAndNamespace(NameAndNamespaceDTO permissionNameAndNamespace) {
++		this.permissionNameAndNamespace = permissionNameAndNamespace;
++	}
++	
++	public String getName() {
++		return (this.permissionNameAndNamespace != null) ? this.permissionNameAndNamespace.getName() : null;
++	}
++	
++	public String getNamespaceCode() {
++		return (this.permissionNameAndNamespace != null) ? this.permissionNameAndNamespace.getNamespaceCode() : null;
++	}
++	
++	public TemplateContract getTemplate() {
++		return template;
++	}
++
++	public void setTemplate(TemplateContract template) {
++		this.template = template;
++	}
++
++	public String getDescription() {
++		return description;
++	}
++
++	public void setDescription(String description) {
++		this.description = description;
++	}
++
++	public boolean isActive() {
++		return active;
++	}
++
++	public void setActive(boolean active) {
++		this.active = active;
++	}
++
++	public Map<String, String> getAttributes() {
++		return attributes;
++	}
++
++	public void setAttributes(Map<String, String> attributes) {
++		this.attributes = attributes;
++	}
++
++	public String getObjectId() {
++		return objectId;
++	}
++
++	public void setObjectId(String objectId) {
++		this.objectId = objectId;
++	}
++
++	public Long getVersionNumber() {
++		return versionNumber;
++	}
++
++	public void setVersionNumber(Long versionNumber) {
++		this.versionNumber = versionNumber;
++	}
++
++	/*
++	 * This method has been intentionally left as package-private so that only the KIM-XML-related code can get this property.
++	 */
++	boolean isAlreadyPersisted() {
++		return alreadyPersisted;
++	}
++
++	/*
++	 * This method has been intentionally left as package-private so that only the KIM-XML-related code can set this property.
++	 */
++	void setAlreadyPersisted(boolean alreadyPersisted) {
++		this.alreadyPersisted = alreadyPersisted;
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionsXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionsXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionsXmlDTO.java	(revision 0)
+@@ -0,0 +1,67 @@
++package org.kuali.rice.kim.impl.permission.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_PERM;
++
++import java.io.Serializable;
++import java.util.List;
++
++import javax.xml.bind.Marshaller;
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.kim.api.permission.PermissionContract;
++
++import org.kuali.rice.core.impl.xml.RiceXmlExportList;
++import org.kuali.rice.core.impl.xml.RiceXmlImportList;
++import org.kuali.rice.core.impl.xml.RiceXmlListAdditionListener;
++import org.kuali.rice.core.impl.xml.RiceXmlListGetterListener;
++
++@XmlRootElement(name="permissions", namespace=NS_PERM)
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="", propOrder={"permissions"})
++public class PermissionsXmlDTO implements RiceXmlListAdditionListener<PermissionXmlDTO>,
++		RiceXmlListGetterListener<PermissionXmlDTO,Object>, Serializable {
++	
++	@XmlElement(name="permission", namespace=NS_PERM)
++	private List<PermissionXmlDTO> permissions;
++	
++	public PermissionsXmlDTO() {}
++	
++	public PermissionsXmlDTO(List<? extends Object> permissionsToExport) {
++		this.permissions = new RiceXmlExportList<PermissionXmlDTO,Object>(permissionsToExport, this);
++	}
++	
++	public List<PermissionXmlDTO> getPermissions() {
++		return permissions;
++	}
++
++	public void setPermissions(List<PermissionXmlDTO> permissions) {
++		this.permissions = permissions;
++	}
++
++	void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		permissions = new RiceXmlImportList<PermissionXmlDTO>(this);
++	}
++	
++	void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++		permissions = null;
++	}
++	
++	public void newElementAdded(PermissionXmlDTO item) {
++		if (!item.isAlreadyPersisted()) {
++			PermissionXmlUtil.validateAndPersistNewPermission(item);
++		}
++	}
++
++	void afterMarshal(Marshaller marshaller) {
++		permissions = null;
++	}
++	
++	public PermissionXmlDTO gettingNextElement(Object nextElement, int index) {
++		return new PermissionXmlDTO((PermissionContract) nextElement);
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDetailsDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDetailsDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDetailsDTO.java	(revision 0)
+@@ -0,0 +1,42 @@
++package org.kuali.rice.kim.impl.permission.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_PERM;
++
++import java.io.Serializable;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Map;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.core.impl.xml.KeyValueDTO;
++
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="PermissionDetailsType", propOrder={"permissionDetails"})
++public class PermissionDetailsDTO implements Serializable {
++	@XmlElement(name="permissionDetail", namespace=NS_PERM)
++	private List<KeyValueDTO> permissionDetails;
++	
++	public PermissionDetailsDTO() {
++		permissionDetails = new ArrayList<KeyValueDTO>();
++	}
++	
++	public PermissionDetailsDTO(Map<String,String> attributeSet) {
++		this();
++		for (Map.Entry<String,String> tempEntry : attributeSet.entrySet()) {
++			permissionDetails.add(new KeyValueDTO(tempEntry.getKey(), tempEntry.getValue()));
++		}
++	}
++
++	public List<KeyValueDTO> getPermissionDetails() {
++		return permissionDetails;
++	}
++
++	public void setPermissionDetails(List<KeyValueDTO> permissionDetails) {
++		this.permissionDetails = permissionDetails;
++	}
++	
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionXmlUtil.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionXmlUtil.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionXmlUtil.java	(revision 0)
+@@ -0,0 +1,97 @@
++package org.kuali.rice.kim.impl.permission.xml;
++
++import org.apache.commons.lang.StringUtils;
++import org.kuali.rice.kim.api.permission.Permission;
++import org.kuali.rice.kim.api.permission.PermissionService;
++import org.kuali.rice.kim.api.role.RoleService;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++
++public final class PermissionXmlUtil {
++	// Do not allow outside code to instantiate this class.
++	private PermissionXmlUtil() {}
++	
++	private static PermissionService permissionService;
++	private static RoleService roleService;
++	
++	static void validateAndPersistNewPermission(PermissionXmlDTO newPermission) {
++		if (newPermission == null) {
++			throw new IllegalArgumentException("Cannot persist a null permission");
++		}
++		
++		validatePermissionIdentity(newPermission);
++		
++		if (newPermission.getObjectId() == null) {
++			getPermissionService().createPermission(Permission.Builder.create(newPermission).build());
++		} else {
++			getPermissionService().updatePermission(Permission.Builder.create(newPermission).build());
++		}
++	}
++	
++	private static void validatePermissionIdentity(PermissionXmlDTO newPermission) {
++		// Ensure that the required identifiers have been set.
++		if (StringUtils.isBlank(newPermission.getName()) || StringUtils.isBlank(newPermission.getNamespaceCode())) {
++			throw new RuntimeException("Cannot create a permission with a blank name or namespace code");
++		} else if (newPermission.getTemplate() == null) {
++			throw new RuntimeException("Cannot create a permission without a valid permission template");
++		}
++		
++		// Attempt to find an existing permission, and retrieve its ID or use its ID for validation if one exists.
++		Permission permission = findMatchingPermission(newPermission.getName(), newPermission.getNamespaceCode());
++		if (permission != null) {
++			if (StringUtils.isBlank(newPermission.getId())) {
++				newPermission.setId(permission.getId());
++			} else if (!newPermission.getId().equals(permission.getId())) {
++				throw new RuntimeException("Cannot create new permission with ID \"" + newPermission.getId() + "\", namespace \"" +
++						newPermission.getNamespaceCode() + "\", and name \"" + newPermission.getName() +
++						"\" because a similar permission with ID \"" + permission.getId() + "\" already exists");
++			}
++		}
++	}
++	
++	/*
++	 * Search for an existing KIM permission that exactly matches the given perm name, perm namespace, template ID, and detail criteria.
++	 */
++	private static Permission findMatchingPermission(String permName, String permNamespace) { //, String templateId, Map<String,String> attributes) {
++		Permission matchingPerm = getPermissionService().findPermByNamespaceCodeAndName(permNamespace, permName);
++		if (matchingPerm != null) {
++			//Map<String,String> tempCriteria = new HashMap<String,String>();
++			//tempCriteria.put("name", permName);
++			//tempCriteria.put("namespaceCode", permNamespace);
++			//tempCriteria.put("templateId", templateId);
++		}
++		return matchingPerm;
++	}
++	
++	/*
++	 * Converts the given Map<String,String> into a "key1=value1,key2=value2,..." String for use by permission searches.
++	 */
++	/*private static String getDetailCriteriaString(Map<String,String> details) {
++		if (details == null || details.isEmpty()) { return ""; }
++		StringBuilder detailStr = new StringBuilder(100);
++		Iterator<Map.Entry<String,String>> detailIter = details.entrySet().iterator();
++		Map.Entry<String,String> tempDetail;
++		if (detailIter.hasNext()) {
++			tempDetail = detailIter.next();
++			detailStr.append(tempDetail.getKey()).append('=').append(tempDetail.getValue());
++		}
++		while (detailIter.hasNext()) {
++			tempDetail = detailIter.next();
++			detailStr.append(',').append(tempDetail.getKey()).append('=').append(tempDetail.getValue());
++		}
++		return detailStr.toString();
++	}*/
++	
++	private static PermissionService getPermissionService() {
++		if (permissionService == null) {
++			permissionService = KimApiServiceLocator.getPermissionService();
++		}
++		return permissionService;
++	}
++	
++	private static RoleService getRoleService() {
++		if (roleService == null) {
++			roleService = KimApiServiceLocator.getRoleService();
++		}
++		return roleService;
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/NameAndNamespaceDTOToPermTemplateContractAdapter.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/NameAndNamespaceDTOToPermTemplateContractAdapter.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/NameAndNamespaceDTOToPermTemplateContractAdapter.java	(revision 0)
+@@ -0,0 +1,40 @@
++package org.kuali.rice.kim.impl.permission.xml;
++
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlAdapter;
++
++import org.kuali.rice.kim.api.common.template.Template;
++import org.kuali.rice.kim.api.common.template.TemplateContract;
++import org.kuali.rice.kim.api.services.KimApiServiceLocator;
++
++import org.kuali.rice.core.impl.xml.NameAndNamespaceDTO;
++
++public class NameAndNamespaceDTOToPermTemplateContractAdapter extends XmlAdapter<NameAndNamespaceDTO,TemplateContract> {
++
++	@Override
++	public NameAndNamespaceDTO marshal(TemplateContract v) throws Exception {
++		if (v != null) {
++			Template template = KimApiServiceLocator.getPermissionService().getPermissionTemplate(v.getId());
++			if (template == null) {
++				throw new RuntimeException("Cannot find permission template with ID \"" + v.getId() + "\"");
++			}
++			return new NameAndNamespaceDTO(template.getNamespaceCode(), template.getName());
++		}
++		return null;
++	}
++
++	@Override
++	public TemplateContract unmarshal(NameAndNamespaceDTO v) throws Exception {
++		if (v != null) {
++			Template template = KimApiServiceLocator.getPermissionService().findPermTemplateByNamespaceCodeAndName(v.getNamespaceCode(),
++					new NormalizedStringAdapter().unmarshal(v.getName()));
++			if (template == null) {
++				throw new RuntimeException("Cannot find permission template with namespace \"" + v.getNamespaceCode() +
++						"\" and name \"" + new NormalizedStringAdapter().unmarshal(v.getName()) + "\"");
++			}
++			return template;
++		}
++		return null;
++	}
++
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDetailsDTOToAttributeSetAdapter.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDetailsDTOToAttributeSetAdapter.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDetailsDTOToAttributeSetAdapter.java	(revision 0)
+@@ -0,0 +1,39 @@
++package org.kuali.rice.kim.impl.permission.xml;
++
++import java.util.HashMap;
++import java.util.Map;
++
++import javax.xml.bind.UnmarshalException;
++import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
++import javax.xml.bind.annotation.adapters.XmlAdapter;
++
++import org.apache.commons.lang.StringUtils;
++
++import org.kuali.rice.core.impl.xml.KeyValueDTO;
++
++public class PermissionDetailsDTOToAttributeSetAdapter extends XmlAdapter<PermissionDetailsDTO,Map<String,String>> {
++
++	@Override
++	public PermissionDetailsDTO marshal(Map<String,String> v) throws Exception {
++		return (v != null) ? new PermissionDetailsDTO(v) : null;
++	}
++
++	@Override
++	public Map<String,String> unmarshal(PermissionDetailsDTO v) throws Exception {
++		if (v != null) {
++			NormalizedStringAdapter normalizedStringAdapter = new NormalizedStringAdapter();
++			Map<String,String> attributeSet = new HashMap<String,String>();
++			for (KeyValueDTO keyValueDTO : v.getPermissionDetails()) {
++				if (StringUtils.isBlank(keyValueDTO.getKey())) {
++					throw new UnmarshalException("Cannot create a permission detail entry with a blank key");
++				} else if (attributeSet.containsKey(keyValueDTO.getKey())) {
++					throw new UnmarshalException("Cannot create more than one permission detail entry with a key of \"" + keyValueDTO.getKey() + "\"");
++				}
++				attributeSet.put(keyValueDTO.getKey(), normalizedStringAdapter.unmarshal(keyValueDTO.getValue()));
++			}
++			return attributeSet;
++		}
++		return null;
++	}
++
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDataXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDataXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/permission/xml/PermissionDataXmlDTO.java	(revision 0)
+@@ -0,0 +1,35 @@
++package org.kuali.rice.kim.impl.permission.xml;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_PERM;
++
++import java.io.Serializable;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlType;
++
++@XmlRootElement(name="permissionData", namespace=NS_PERM)
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="", propOrder={"permissions"})
++public class PermissionDataXmlDTO implements Serializable {
++	
++	@XmlElement(name="permissions", namespace=NS_PERM)
++	private PermissionsXmlDTO permissions;
++	
++	public PermissionDataXmlDTO() {}
++	
++	public PermissionDataXmlDTO(PermissionsXmlDTO permissions) {
++		this.permissions = permissions;
++	}
++	
++	public PermissionsXmlDTO getPermissions() {
++		return permissions;
++	}
++
++	public void setPermissions(PermissionsXmlDTO permissions) {
++		this.permissions = permissions;
++	}
++
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/data/xml/DataXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/data/xml/DataXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/data/xml/DataXmlDTO.java	(revision 0)
+@@ -0,0 +1,64 @@
++package org.kuali.rice.kim.impl.data.xml;
++
++import java.io.Serializable;
++import java.util.List;
++
++import javax.xml.bind.Unmarshaller;
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlAnyElement;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlType;
++
++import org.w3c.dom.Element;
++
++import org.kuali.rice.core.impl.xml.RiceXmlImportList;
++import org.kuali.rice.core.impl.xml.RiceXmlListAdditionListener;
++import org.kuali.rice.kim.impl.user.xml.UsersXmlDTO;
++
++@XmlRootElement(name="data", namespace="ns:workflow")
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="", propOrder={"users", "otherData"})
++public class DataXmlDTO implements RiceXmlListAdditionListener<Element>, Serializable {
++	@XmlElement(name="users", namespace="ns:workflow/User")
++	private UsersXmlDTO users;
++	
++	@XmlAnyElement
++	private List<Element> otherData;
++	
++	public DataXmlDTO() {}
++	
++	public DataXmlDTO(UsersXmlDTO users, List<Element> otherData) {
++		this.users = users;
++		this.otherData = otherData;
++	}
++
++	public UsersXmlDTO getUsers() {
++		return users;
++	}
++
++	public void setUsers(UsersXmlDTO users) {
++		this.users = users;
++	}
++
++	public List<Element> getOtherData() {
++		return otherData;
++	}
++
++	public void setOtherData(List<Element> otherData) {
++		this.otherData = otherData;
++	}
++
++	void beforeUnmarshal(Unmarshaller unmarshaller, Object parent) {
++        this.otherData = new RiceXmlImportList<Element>(this);
++    }
++    
++    void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
++        this.otherData = null;
++    }
++	
++	public void newElementAdded(Element item) {
++		// Do nothing; just ignore any miscellaneous DOM elements without storing them.
++	}
++}
+Index: kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/user/xml/UsersXmlDTO.java
+===================================================================
+--- kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/user/xml/UsersXmlDTO.java	(revision 0)
++++ kim/kim-impl/src/main/java/org/kuali/rice/kim/impl/user/xml/UsersXmlDTO.java	(revision 0)
+@@ -0,0 +1,50 @@
++package org.kuali.rice.kim.impl.user.xml;
++
++import java.io.Serializable;
++
++import javax.xml.bind.annotation.XmlAccessType;
++import javax.xml.bind.annotation.XmlAccessorType;
++import javax.xml.bind.annotation.XmlElement;
++import javax.xml.bind.annotation.XmlRootElement;
++import javax.xml.bind.annotation.XmlType;
++
++import org.kuali.rice.kim.impl.permission.xml.PermissionDataXmlDTO;
++import org.kuali.rice.kim.impl.role.xml.RoleDataXmlDTO;
++
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_PERM;
++import static org.kuali.rice.kim.impl.xml.KimXmlConstants.NS_ROLE;
++
++@XmlRootElement(name="users", namespace="ns:workflow/User")
++@XmlAccessorType(XmlAccessType.FIELD)
++@XmlType(name="", propOrder={"permissionData", "roleData"})
++public class UsersXmlDTO implements Serializable {
++
++	@XmlElement(name="permissionData", namespace=NS_PERM)
++	private PermissionDataXmlDTO permissionData;
++
++	@XmlElement(name="roleData", namespace=NS_ROLE)
++	private RoleDataXmlDTO roleData;
++	
++	public UsersXmlDTO() {}
++	
++	public UsersXmlDTO(PermissionDataXmlDTO permissionData, RoleDataXmlDTO roleData) {
++		this.permissionData = permissionData;
++		this.roleData = roleData;
++	}
++
++	public PermissionDataXmlDTO getPermissionData() {
++		return permissionData;
++	}
++
++	public void setPermissionData(PermissionDataXmlDTO permissionData) {
++		this.permissionData = permissionData;
++	}
++	
++	public RoleDataXmlDTO getRoleData() {
++		return roleData;
++	}
++
++	public void setRoleData(RoleDataXmlDTO roleData) {
++		this.roleData = roleData;
++	}
++}
