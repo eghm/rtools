@@ -9,7 +9,7 @@ export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=512m"
 export TEST=""
 #export TEST_PARAMS2=""
 while [ -s ../iTests.txt ] 
-do
+
 	export TEST=$(tail -n 1 ../iTests.txt)
 #	export TEST_PARAM=$(tail -n 1 ../iTests.txt | cut -d : -f 2-)
 #    export TEST_PARAMS=${TEST_PARAM//:/ }
@@ -19,8 +19,8 @@ do
 
     export logname=$TEST-$DTS
 
-    touch ../logs/$9/$logname.test-compile.out 
-    ln -s ../logs/$9/$logname.test-compile.out $logname.test-compile.out
+    touch ../logs/$1/$logname.test-compile.out 
+    ln -s ../logs/$1/$logname.test-compile.out $logname.test-compile.out
     mvn -version  >> $logname.test-compile.out
 
     echo "mvn -Pitests verify -Ddts.log.filename=itests-log.log -Dit.test=$TEST $2 $3 $4 $5 $6 $7 $8 $9" >> $logname.out
