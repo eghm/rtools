@@ -1,4 +1,4 @@
-# rice.version remote.public.url remote.driver.saucelabs.version remote.driver.saucelabs.platform remote.driver.saucelabs.browser 
+# rice.version remote.public.url remote.driver.saucelabs.browser remote.driver.saucelabs.version remote.driver.saucelabs.platform  
 source ~/.bash_profile
 cd ~/$1
 
@@ -35,7 +35,7 @@ do
 	ln -s ../logs/$1/$logname.out $logname.out
 	mvn -version  >> $logname.out
 
-    echo "mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.driver.saucelabs=defined -Drice.version=$1 -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Dremote.public.url=$2 -Dremote.driver.saucelabs.version=$3 -Dremote.driver.saucelabs.platform=$4 -Dremote.driver.saucelabs.browser=$5 -Dremote.driver.saucelabs.user=$SAUCE_USER -Dremote.driver.saucelabs.key=$SAUCE_KEY    $TEST_PARAMS2" >> $logname.out
-    mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.driver.saucelabs=defined -Drice.version=$1 -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Dremote.public.url=$2 -Dremote.driver.saucelabs.version=$3 -Dremote.driver.saucelabs.platform=$4 -Dremote.driver.saucelabs.browser=$5 -Dremote.driver.saucelabs.user=$SAUCE_USER -Dremote.driver.saucelabs.key=$SAUCE_KEY    $TEST_PARAMS2 >> $logname.out
+    echo "mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.driver.saucelabs=defined -Drice.version=$1 -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Dremote.public.url=$2 -Dremote.driver.saucelabs.browser=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.user=$SAUCE_USER -Dremote.driver.saucelabs.key=$SAUCE_KEY $TEST_PARAMS2" >> $logname.out
+    mvn -f sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.driver.saucelabs=defined -Drice.version=$1 -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Dremote.public.url=$2 -Dremote.driver.saucelabs.browser=$3 -Dremote.driver.saucelabs.version=$4 -Dremote.driver.saucelabs.platform=$5 -Dremote.driver.saucelabs.user=$SAUCE_USER -Dremote.driver.saucelabs.key=$SAUCE_KEY $TEST_PARAMS2 >> $logname.out
 
 done
