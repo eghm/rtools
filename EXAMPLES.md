@@ -11,7 +11,20 @@ DEVELOPMENT:
     * deleteRevisionAndDBs.sh 35797 dbrootpass
 
 
-SMOKE TESTS: assumes a csv file will supply values, note order of sauce params is different from old smoke tests
+PARALLEL INTEGRATION TESTS:
+* start your databases
+    * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteDbStart.sh
+* push - iTestsAll.txt is a file of all the tests, one test per line
+    * pushList.sh ~/servers.txt iTestsAll.txt iTests.txt
+* verify push
+    * parallel --tag --nonall --sshloginfile ~/servers.txt  cat iTests.txt
+* execute
+    * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteItest.sh 35920 -DskipTests=true
+* retrieve logs
+    * remoteLogsFetch.sh 35920
+
+
+PARALLEL SMOKE TESTS: assumes a csv file will supply values, note order of sauce params is different from old smoke tests
 * create LegacyITsUsers.txt file from within a R_VERSION directory:
     * smokeTestUsersList.sh
 * setup saucelabs.csv
@@ -25,7 +38,8 @@ SMOKE TESTS: assumes a csv file will supply values, note order of sauce params i
 * execute
    * parallel --tag --nonall --sshloginfile servers.txt rtools/bin/remoteSmokeTest.sh 35920 env11.rice.kuali.org ie 8 windows_2003
 
-OLD SMOKE TESTS: pass everything on command line, but the the test might be overwritten by LegacyITUsers.txt is populated
+
+OLD PARALLEL SMOKE TESTS: pass everything on command line, but the the test might be overwritten by LegacyITUsers.txt is populated
 * create LegacyITsUsers.txt file from within a R_VERSION directory:
     * smokeTestUsersList.sh
 * Logged in locally as ec2-user, breakup the tests.txt list and push each server its own chunk. 
