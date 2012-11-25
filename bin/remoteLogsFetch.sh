@@ -1,5 +1,5 @@
-mkdir $1
 for line in $(cat servers.txt);
 do
-	scp $line:logs/$1/*.* $1/
+    mkdir -p $1/$line
+	scp $line:logs/$1/*.* $1/$line/
 done;
