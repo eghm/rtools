@@ -77,7 +77,7 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 ===================================================================
 --- sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
 +++ sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
-@@ -0,0 +1,202 @@
+@@ -0,0 +1,203 @@
 +/**
 + * Copyright 2005-2012 The Kuali Foundation
 + *
