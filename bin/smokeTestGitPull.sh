@@ -1,2 +1,0 @@
-cd ~/rtools
-git pull
