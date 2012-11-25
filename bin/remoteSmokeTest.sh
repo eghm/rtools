@@ -17,18 +17,18 @@ then
     mvn -f sampleapp/pom.xml compile test-compile >> SauceLabs.patch-compile-$DTS.out	
 fi
 
-while [ -s ../smokeTestList.txt ] 
+while [ -s ../smokeTestList.csv ] 
 do
-	export TEST=$(tail -n 1 ../smokeTestList.txt | cut -d , -f 1)
-	export TEST_USER=$(tail -n 1 ../smokeTestList.txt | cut -d , -f 2)
-	export SAUCE_USER=$(tail -n 1 ../smokeTestList.txt | cut -d , -f 3)
-	export SAUCE_KEY=$(tail -n 1 ../smokeTestList.txt | cut -d , -f 4)
+	export TEST=$(tail -n 1 ../smokeTestList.csv | cut -d , -f 1)
+	export TEST_USER=$(tail -n 1 ../smokeTestList.csv | cut -d , -f 2)
+	export SAUCE_USER=$(tail -n 1 ../smokeTestList.csv | cut -d , -f 3)
+	export SAUCE_KEY=$(tail -n 1 ../smokeTestList.csv | cut -d , -f 4)
 
-	export TEST_PARAM=$(tail -n 1 ../smokeTestList.txt | cut -d , -f 5-)
+	export TEST_PARAM=$(tail -n 1 ../smokeTestList.csv | cut -d , -f 5-)
     export TEST_PARAMS=${TEST_PARAM//:/ }
     export TEST_PARAMS2=${TEST_PARAMS//:/ }
-	sed '$d' ../smokeTestList.txt > ../smokeTestList.cut.txt
-	mv ../smokeTestList.cut.txt ../smokeTestList.txt
+	sed '$d' ../smokeTestList.csv > ../smokeTestList.cut.csv
+	mv ../smokeTestList.cut.csv ../smokeTestList.csv
 
     export logname=$TEST-$TEST_USER-$SAUCE_USER-$DTS
 	touch ../logs/$1/$logname.out 

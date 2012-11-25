@@ -14,17 +14,17 @@ fi
 export TEST=$7
 export TEST_USER=$8
 export TEST_PARAMS2=""
-while [ -s ../LegacyITsUsers.txt ] 
+while [ -s ../LegacyITsUsers.csv ] 
 do
-#if [ -s ../LegacyITsUsers.txt ] 
+#if [ -s ../LegacyITsUsers.csv ] 
 #then
-	export TEST=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 1)
-	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 2)
-	export TEST_PARAM=$(tail -n 1 ../LegacyITsUsers.txt | cut -d : -f 3-)
+	export TEST=$(tail -n 1 ../LegacyITsUsers.csv | cut -d : -f 1)
+	export TEST_USER=$(tail -n 1 ../LegacyITsUsers.csv | cut -d : -f 2)
+	export TEST_PARAM=$(tail -n 1 ../LegacyITsUsers.csv | cut -d : -f 3-)
     export TEST_PARAMS=${TEST_PARAM//:/ }
     export TEST_PARAMS2=${TEST_PARAMS//:/ }
-	sed '$d' ../LegacyITsUsers.txt > ../LegacyITsUsers.cut.txt
-	mv ../LegacyITsUsers.cut.txt ../LegacyITsUsers.txt
+	sed '$d' ../LegacyITsUsers.csv > ../LegacyITsUsers.cut.csv
+	mv ../LegacyITsUsers.cut.csv ../LegacyITsUsers.csv
 #fi # if changed to while loop the done needs to be at the end of the file
 
 export logname=$TEST-$TEST_USER-$4-$5-$6-$9-$DTS

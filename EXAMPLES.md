@@ -10,17 +10,33 @@ DEVELOPMENT:
 * delete 35797 and its databases
     * deleteRevisionAndDBs.sh 35797 dbrootpass
 
-SMOKE TESTS:
-* create the tests.txt file used in the next example, from within a R_VERSION directory, copy the output file LegacyITsUsers.txt from the output of:
+
+SMOKE TESTS: assumes a csv file will supply values, note order of sauce params is different from old smoke tests
+* create LegacyITsUsers.txt file from within a R_VERSION directory:
     * smokeTestUsersList.sh
-* Logged in locally as ec2-user, breakup the tests.txt list and push each server its own chunk.  tests.txt is a colon delimited file of SimpleTestNameIT:userToRunLoadTestAs:AdditionalParameters 
-    * /r/rtools/bin/smokeTestListPush.sh servers.txt tests.txt
+* setup saucelabs.csv
+   * 10,saucelabs_user,saucelabs_key
+* expand the saucelabs.csv by including each line the number of time indicated by the first csv.
+   * expand.sh saucelabs.csv
+* paste LegacyITsUsers.txt and saucelabs.txt.expanded two files together using:
+   * smokeTestList.sh > SauceSmokeTests.csv
+* push
+   * pushList.sh servers.txt SauceSmokeTests.csv smokeTestList.csv
+* execute
+   * parallel --tag --nonall --sshloginfile servers.txt rtools/bin/remoteSmokeTest.sh 35920 env11.rice.kuali.org ie 8 windows_2003
+
+OLD SMOKE TESTS: pass everything on command line, but the the test might be overwritten by LegacyITUsers.txt is populated
+* create LegacyITsUsers.txt file from within a R_VERSION directory:
+    * smokeTestUsersList.sh
+* Logged in locally as ec2-user, breakup the tests.txt list and push each server its own chunk. 
+   * pushList.sh servers.txt LegacyITsUsers.txt LegacyITsUsers.csv
 * Logged in locally as ec2_user, cat the LegacyITsUsers.txt that got pushed to each server
-    * parallel --tag --nonall --sshloginfile servers.txt  cat LegacyITsUsers.txt
-* Logged in locally as ec2-user, start the servers executing their LegacyITsUsers.txt, in this case, because LegacyITsUsers.txt is present and verified by the commands above, the it.test (LoginLogoutLegacyIT) is ignored as is the user (admin), but required to keep all the param numbers the same:
+    * parallel --tag --nonall --sshloginfile servers.txt  cat LegacyITsUsers.csv
+* Logged in locally as ec2-user, start the servers executing their LegacyITsUsers.txt, in this case, because LegacyITsUsers.txt is present and verified by the commands above, the it.test (LoginLogoutLegacyIT) is ignored as is the user (admin), but required to keep all the param numbers the same NOTE different (poor) order of saucelabs params:
     * parallel --tag --nonall --sshloginfile servers.txt rtools/bin/mvnSmokeTest.sh env11.rice.kuali.org saucelabsuser saucelabskey 12 Windows_2008 opera LoginLogoutLegacyIT admin 35558
 * Logged in as ec2-user, transfer a file to the servers
     * find 35797 -name 'IdentityPersonRoleWDIT.java' | parallel --sshloginfile ~/servers.txt --transfer wc
+
 
 SQLRest:
 * (re) installing sqlrest on ENV11 to work with ORACLE and bouncing tomcat, sqlrest gives an error :(
