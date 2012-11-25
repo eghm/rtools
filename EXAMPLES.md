@@ -12,7 +12,7 @@ DEVELOPMENT:
 
 SMOKE TESTS:
 * create the tests.txt file used in the next example, from within a R_VERSION directory, copy the output file LegacyITsUsers.txt from the output of:
-    * smokeTestList.sh
+    * smokeTestUsersList.sh
 * Logged in locally as ec2-user, breakup the tests.txt list and push each server its own chunk.  tests.txt is a colon delimited file of SimpleTestNameIT:userToRunLoadTestAs:AdditionalParameters 
     * /r/rtools/bin/smokeTestListPush.sh servers.txt tests.txt
 * Logged in locally as ec2_user, cat the LegacyITsUsers.txt that got pushed to each server

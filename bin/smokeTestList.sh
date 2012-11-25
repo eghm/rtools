@@ -1,20 +1,17 @@
-rm LegacyITsUsers.txt
-find sampleapp/ -name "*LegacyIT.java" > LegacyITs.out
-rev LegacyITs.out > LegacyITs.rev
-cut -d / -f 1 LegacyITs.rev > LegacyITs.cut1.rev
-cut -d . -f 2 LegacyITs.cut1.rev > LegacyITs.cut2.rev
-rm LegacyITs.out
-rm LegacyITs.rev
-rm LegacyITs.cut1.rev
-rev LegacyITs.cut2.rev > LegacyITs.cut2.txt
-rm LegacyITs.cut2.rev
-mv LegacyITs.cut2.txt LegacyITs.txt
-let "i=0";
-for line in $(cat LegacyITs.txt);
-do
-	# TODO i needs to be padded... to the length of the string length of wc -l LegacyITs.txt
-	echo `printf "$line:loadtester%03d" $i` >> LegacyITsUsers.txt;
-    let "i+=1";
-done; 
-rm LegacyITs.txt
-cat LegacyITsUsers.txt
+# rice version       remote.public.url remote.driver.saucelabs.user remote.driver.saucelabs.key remote.driver.saucelabs.version remote.driver.saucelabs.platform remote.driver.saucelabs.browser it.test remote.public.user rice.version 
+
+#USE LegacyITsUsers.txt with expanded list of saucelabs ids
+rm saucelabs.looped
+
+export SAUCE_NUM=$(wc -l saucelabs.txt.expanded | cut -c 1-9)
+export TEST_NUM=$(wc -l LegacyITsUsers.txt | cut -c 1-9)
+export SAUCE_LOOPS=$(($TEST_NUM/$SAUCE_NUM))
+export SAUCE_MOD=$(expr $TEST_NUM % $SAUCE_NUM)
+
+while [  $SAUCE_LOOPS -gt 0 ]; do
+    cat  saucelabs.txt.expanded >> saucelabs.looped;
+	let SAUCE_LOOPS-=1
+done
+head -n $SAUCE_MOD saucelabs.txt.expanded >> saucelabs.looped
+
+paste -d , LegacyITsUsers.txt saucelabs.looped
