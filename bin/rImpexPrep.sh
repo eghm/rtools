@@ -27,8 +27,8 @@ fi
 if [ ! -e db ]
 then
     echo "svn checkout of db and scripts directories need for impex to $R_HOME/$1"
-	log-command.sh rdev.svn.co.db svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/db $R_HOME/$1/db
-	log-command.sh rdev.svn.co.scripts svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/scripts/ddl $R_HOME/$1/scripts/ddl
+	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout -r $1 https://svn.kuali.org/repos/rice/trunk/db $R_HOME/$1/db
+	log-command.sh rdev.svn.co.scripts svn --trust-server-cert --non-interactive checkout -r $1 https://svn.kuali.org/repos/rice/trunk/scripts/ddl $R_HOME/$1/scripts/ddl
 fi
 
 # rice .gitignore + config/ide .svn/ .settings/ .DS_Store

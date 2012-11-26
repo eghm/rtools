@@ -57,7 +57,7 @@ then
     # this could probably be done better the db and scripts dirs are already present from the rMysqlDBs.sh 
 	rm -rf db
 	rm -rf scripts
-    log-command.sh rdev.svn.co svn checkout -r $1 https://svn.kuali.org/repos/rice/trunk/ .
+    log-command.sh rdev.svn.co svn --trust-server-cert --non-interactive checkout -r $1 https://svn.kuali.org/repos/rice/trunk/ .
     # what is up with these updates??? why are these directories missing?
     if [ ! -e krms ]
     then
