@@ -42,6 +42,11 @@ log-command.sh rdev.git.add git add -A
 echo "git pre impex commit"
 log-command.sh rdev.git.commit git commit -a -m "pre impex"
 
+# TODO impex-no-user-percent shouldn't be run the very first time after running once and getting a user created failure use mysql as root and execute:
+# use mysql;
+# grant all privileges on *.* to 'rice'@'localhost' identified by 'rice' with grant option;
+# flush privileges
+#
 # remove the % identified bys causing me problems
 echo "impex patching - removing % identified bys"
 log-command.sh rdev.impex.patch patch -p1 <../rtools/etc/impex-no-user-percent.patch
