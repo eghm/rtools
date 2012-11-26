@@ -61,15 +61,15 @@ then
     # what is up with these updates??? why are these directories missing?
     if [ ! -e krms ]
     then
-        log-command.sh rdev.svn.up.krms svn update krms -r $1
+        log-command.sh rdev.svn.up.krms svn --trust-server-cert --non-interactive update krms -r $1
     fi
     if [ ! -e it ]
     then
-        log-command.sh rdev.svn.up.it svn update it -r $1
+        log-command.sh rdev.svn.up.it svn --trust-server-cert --non-interactive update it -r $1
     fi
     if [ ! -e client-contrib ]
     then
-        log-command.sh rdev.svn.up.client-contrib svn update client-contrib -r $1
+        log-command.sh rdev.svn.up.client-contrib svn --trust-server-cert --non-interactive update client-contrib -r $1
     fi
 fi
 
