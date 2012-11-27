@@ -56,3 +56,5 @@ loadTestImpex.sh
 log-command.sh rdev.git.add git add -A
 echo "git applied pre impex patches commit"
 log-command.sh rdev.git.commit git commit -a -m "applied pre impex patches"
+
+echo -e "\nIf during impexing there is an error about a missing jar from nexus, checkout the whole project (not just the db directory this script does).\n"
