@@ -41,6 +41,7 @@ fi
 mkdir -p $R_HOME/$1/.rdev
 
 # we only checkout the db stuff, if there is a problem we avoid checking out everything.
+# however, if there was just a release the whole project needs to be checked out.
 rMysqlDBs.sh $1 $2 $RICE_DB_USER $RICE_DB_PASS
 
 cd $R_HOME/$1
@@ -115,7 +116,7 @@ echo "git applied rDev custom updates commit"
 log-command.sh rdev.svn.commit git commit -a -m "applied rDev custom updates"
 
 echo -e "\nStarting mvn-clean-install.sh this will take a while..."
-mvn-clean-install.sh
+mvn-clean-install.sh $5 $6 $7 $8 $9
 
 #mvnLinks.sh $1
 mkdir -p $R_HOME/logs/$1/rDev-$DTS
