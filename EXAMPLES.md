@@ -11,7 +11,14 @@ DEVELOPMENT:
     * deleteRevisionAndDBs.sh 35797 dbrootpass
 
 
+SYNC TO SERVERS:
+* 
+    * find 35797 -name 'IdentityPersonRoleWDIT.java' | parallel --sshloginfile ~/servers.txt --transfer wc
+
+
 PARALLEL INTEGRATION TESTS:
+* create list of integration tests
+    * find it -name '*Test.java' | grep -v Abstract | sed 's|/| |g' | awk '{print $NF}' > itestsj.txt ; cut -d . -f 1 itestsj.txt > iTestsAll.txt
 * start your databases
     * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteDbStart.sh
 * push - iTestsAll.txt is a file of all the tests, one test per line
