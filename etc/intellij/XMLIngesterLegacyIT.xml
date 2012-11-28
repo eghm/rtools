@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="XMLIngesterLegacyIT" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="XMLIngesterLegacyIT env1" type="JUnit" factoryName="JUnit">
     <module name="rice-sampleapp" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -7,7 +7,7 @@
     <option name="MAIN_CLASS_NAME" value="edu.samplu.admin.test.XMLIngesterLegacyIT" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
-    <option name="VM_PARAMETERS" value="-Dalt.config.location=$R_HOME$/RVERSION/RVERSION-common-test-config.xml -Dremote.public.url=env11.rice.kuali.org -Dtest.xmlingester.user.cnt=151 -Dtest.xmlingester.grp.id=2008 -Dremote.driver.dontTearDown=y  -Dtest.xmlingester.user.prefix= " />
+    <option name="VM_PARAMETERS" value="-Dalt.config.location=$R_HOME$/RVERSION/RVERSION-common-test-config.xml -Dremote.public.url=env1.rice.kuali.org -Dtest.xmlingester.user.cnt=176 -Dtest.xmlingester.grp.id=2008 -Dremote.driver.dontTearDown=y  -Dtest.xmlingester.user.prefix= " />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />

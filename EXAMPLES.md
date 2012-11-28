@@ -16,6 +16,8 @@ SYNC TO SERVERS:
     * cd $R_HOME; find 35797 -name 'IdentityPersonRoleWDIT.java' | parallel --sshloginfile ~/servers.txt --transfer wc
 * Recompile sampleapp tests
     * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteMvnTestCompile.sh 35962
+* mvn clean install
+    * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteMvnCleanInstall.sh 35962 -DskipTests=true
 
 
 PARALLEL INTEGRATION TESTS:
