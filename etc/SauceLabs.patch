@@ -77,7 +77,7 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 ===================================================================
 --- sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
 +++ sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
-@@ -0,0 +1,203 @@
+@@ -0,0 +1,204 @@
 +/**
 + * Copyright 2005-2012 The Kuali Foundation
 + *
@@ -278,6 +278,7 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 +                System.out.println("Registering session failed " + sessionId);
 +                client.jobFailed(sessionId);
 +            }
++            Thread.sleep(5000); // give the client message a chance to get processed on saucelabs side
 +        }
 +    }
 +}
