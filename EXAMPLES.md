@@ -12,8 +12,10 @@ DEVELOPMENT:
 
 
 SYNC TO SERVERS:
-* 
-    * find 35797 -name 'IdentityPersonRoleWDIT.java' | parallel --sshloginfile ~/servers.txt --transfer wc
+* Update a test file
+    * cd $R_HOME; find 35797 -name 'IdentityPersonRoleWDIT.java' | parallel --sshloginfile ~/servers.txt --transfer wc
+* Recompile sampleapp tests
+    * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteMvnTestCompile.sh 35962
 
 
 PARALLEL INTEGRATION TESTS:
@@ -29,7 +31,7 @@ PARALLEL INTEGRATION TESTS:
     * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteItest.sh 35920 -DskipTests=true
 * retrieve logs
     * remoteLogsFetch.sh 35920
-
+    * find 35920/201211242125/ -name '*-itest-*.out' -exec grep -L "Failures: 0, Errors: 0, Skipped: 0" {} \;
 
 PARALLEL SMOKE TESTS: assumes a csv file will supply values, note order of sauce params is different from old smoke tests
 * create LegacyITsUsers.txt file from within a R_VERSION directory:
@@ -40,10 +42,14 @@ PARALLEL SMOKE TESTS: assumes a csv file will supply values, note order of sauce
    * expand.sh saucelabs.csv
 * paste LegacyITsUsers.txt and saucelabs.txt.expanded two files together using:
    * smokeTestList.sh > SauceSmokeTests.csv
-* push
+* Bring up one instance and run LoginLogoutLegacyTest (sometimes windows instances Java fails, don't run all the tests when that is happening)
+   * grep LoginLogout SauceSmokeTests.csv > SauceSmokeTestLoginLogout.csv
+   * pushList.sh servers.txt SauceSmokeTestLoginLogout.csv smokeTestList.csv
+   * parallel --tag --nonall --sshloginfile servers.txt rtools/bin/remoteSmokeTest.sh 35962 env11.rice.kuali.org ie 8 windows_2003
+* Bring up the other servers and push out the tests
    * pushList.sh servers.txt SauceSmokeTests.csv smokeTestList.csv
 * execute
-   * parallel --tag --nonall --sshloginfile servers.txt rtools/bin/remoteSmokeTest.sh 35920 env11.rice.kuali.org ie 8 windows_2003
+   * parallel --tag --nonall --sshloginfile servers.txt rtools/bin/remoteSmokeTest.sh 35962 env11.rice.kuali.org ie 8 windows_2003
 
 
 OLD PARALLEL SMOKE TESTS: pass everything on command line, but the the test might be overwritten by LegacyITUsers.txt is populated
