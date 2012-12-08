@@ -28,12 +28,13 @@ PARALLEL INTEGRATION TESTS:
 * push - iTestsAll.txt is a file of all the tests, one test per line
     * pushList.sh ~/servers.txt iTestsAll.txt iTests.txt
 * verify push
-    * parallel --tag --nonall --sshloginfile ~/servers.txt  cat iTests.txt
+    * parallel --tag --nonall --sshloginfile ~/servers.txt cat iTests.txt
+    * parallel --tag --nonall --sshloginfile ~/servers.txt wc -l iTests.txt
 * execute
-    * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteItest.sh 35920 -DskipTests=true
+    * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteItest.sh 36141 -DskipTests=true
 * retrieve logs
-    * remoteLogsFetch.sh 35920
-    * find 35920/201211242125/ -name '*-itest-*.out' -exec grep -L "Failures: 0, Errors: 0, Skipped: 0" {} \;
+    * remoteLogsFetch.sh 36141
+    * find 36141/ -name '*-itest-*.out' -exec grep -L "Failures: 0, Errors: 0, Skipped: 0" {} \;
 
 PARALLEL SMOKE TESTS: assumes a csv file will supply values, note order of sauce params is different from old smoke tests
 * create LegacyITsUsers.txt file from within a R_VERSION directory:

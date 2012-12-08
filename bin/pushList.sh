@@ -4,7 +4,13 @@
 export SERVER_NUM=$(wc -l $1 | cut -c 1-9)
 export TEST_NUM=$(wc -l $2 | cut -c 1-9)
 export SPLIT_LINES=$(($TEST_NUM/$SERVER_NUM))
-echo "$SERVER_NUM servers, $TEST_NUM tests, splitting into $SPLIT_LINES"
+export SAUCE_MOD=$(expr $TEST_NUM % $SERVER_NUM)
+echo "SAUCE_MOD $SAUCE_MOD"
+if [ "$SAUCE_MOD" -gt 0 ]
+then
+	let "SPLIT_LINES+=1"
+fi
+echo "$SERVER_NUM servers, $TEST_NUM tests, splitting into files with $SPLIT_LINES lines"
 split -l $SPLIT_LINES $2 push-
 cp $1 $1.tmp
 for f in push-*;

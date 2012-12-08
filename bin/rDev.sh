@@ -104,8 +104,15 @@ rAppConfigStandaloneMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
 rSpyProperties.sh $1
 rLogin.sh
 rNoCacheFilter.sh
+# diabled to test new intellij updates
 rIntellijConfig.sh $1
-rDtsLogFiles.sh $1
+
+if [ -z "$NO_DTS_LOGS" ]
+then
+    echo "patching for dts logs"
+	rDtsLogFiles.sh $1
+fi
+
 rKradreload.sh
 
 echo "Creating intellijJunitAltConfigLocation.sh to be used after starting IntelliJ to set JUnit default to use -Dalt.config.location=$R_HOME/$1/$1-common-test-config.xml"
