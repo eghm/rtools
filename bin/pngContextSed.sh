@@ -10,7 +10,6 @@ then
 fi
 
 cd $1
-rm -f contents.txt
 for f in *.png;
 do
     echo "s|PNG|$f|g" > contents.sed
