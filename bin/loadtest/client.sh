@@ -30,8 +30,25 @@ then
     exit;
 fi
 
-export R_RELEASE="2.1.3"
-export R_DESC="Kitchen Sink Input Fields"
+# get the release and build from the given server
+wget http://$SERVER/portal.do -O portal.html
+grep "class=\"build\"" portal.html > version.xml
+# version_dirty.txt has a space before and after the build
+cut -f 3 -d : version.xml > version_dirty.txt
+export DIRTY_VERSION=$(cat version.txt)
+export R_VERSION=${DIRTY_VERSION/ /}
+echo $R_VERSION > version.txt
+rm version.xml
+rm version_dirty.txt
+# now get the release from version.txt
+cut -f 1 -d - version.txt > release.txt
+export R_RELEASE=$(cat release.txt)
+echo $R_RELEASE
+
+jmetername=$(basename "*.jmx")
+export JMETER_NAME="${jmetername%.*}"
+
+export R_DESC=$JMETER_NAME
 
 scp tomcat@$SERVER:dts.txt .
 export DTS=$(cat dts.txt)
@@ -58,6 +75,6 @@ contextSed.sh $(pwd)
 
 export WIKI_DTS=${DTS/\// }
 
-/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$R_RELEASE $R_DESC $R_UI JMeter Load Test $WIKI_DTS" --parent "Rice $R_RELEASE Load Testing" --file "contents.txt"
+/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$R_VERSION $R_DESC $R_UI JMeter Load Test $WIKI_DTS" --parent "Rice $R_RELEASE Load Testing" --file "contents.txt"
 
-find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$R_RELEASE $R_DESC $R_UI JMeter Load Test $WIKI_DTS" --file "{}" \;
+find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$R_VERSION $R_DESC $R_UI JMeter Load Test $WIKI_DTS" --file "{}" \;
