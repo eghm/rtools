@@ -12,7 +12,7 @@ fi
 cd $1
 for f in *.png;
 do
-    echo "s|PNG|$f|g" > contents.sed
-    sed -f contents.sed $R_HOME/rtools/etc/ConfluenceImage.tmpl  >> contents.txt
+    echo "s|PNG|$f|g" > wiki.sed
+    sed -f wiki.sed $R_HOME/rtools/etc/ConfluenceImage.tmpl  >> wiki.txt
 done;
-rm contents.sed
+rm wiki.sed

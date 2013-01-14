@@ -15,20 +15,15 @@ then
     exit;
 fi
 
-export SERVER="$1"
-export USER="$2"
-export PASS="$3"
-export R_UI="$4"
-if [ -z "$4" ]
-then
-    export R_UI="KRAD"
-fi
-
 if [ -z "$R_HOME" ]
 then
     echo "Required env var R_HOME not set."
     exit;
 fi
+
+export SERVER="$1"
+export USER="$2"
+export PASS="$3"
 
 # get the release and build from the given server
 wget http://$SERVER/portal.do -O portal.html
@@ -67,6 +62,7 @@ mv *.png $DTS/
 mv jmeter.log $DTS/
 mv jvm.txt $DTS/
 mv dts.txt $DTS/
+mv version.txt $DTS/
 mv *.jmx $DTS/
 
 cd $DTS
@@ -75,6 +71,6 @@ contextSed.sh $(pwd)
 
 export WIKI_DTS=${DTS/\// }
 
-/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$R_VERSION $R_DESC $R_UI JMeter Load Test $WIKI_DTS" --parent "Rice $R_RELEASE Load Testing" --file "contents.txt"
+/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$R_VERSION $R_DESC JMeter Load Test $WIKI_DTS" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
 
-find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$R_VERSION $R_DESC $R_UI JMeter Load Test $WIKI_DTS" --file "{}" \;
+find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$R_VERSION $R_DESC JMeter Load Test $WIKI_DTS" --file "{}" \;

@@ -1,6 +1,6 @@
 if [ -z "$1" ]
 then
-    echo "Required parameter, directory of to create contexts.txt for."
+    echo "Required parameter, directory of to create wiki.txt for."
     exit;
 fi
 if [ -z "$R_HOME" ]
@@ -10,20 +10,19 @@ then
 fi
 
 cd $1
-rm contents.txt
+rm wiki.txt
 
 # *.jmx but should only be one
 export JM_NUM=$(xml sel -T -t -v "//stringProp[@name='ThreadGroup.num_threads']" *.jmx)
 export JM_RAMP=$(xml sel -T -t -v "//stringProp[@name='ThreadGroup.ramp_time']" *.jmx)
-echo "$JM_NUM users ramped up in $JM_RAMP seconds." >> contents.txt
+echo "$JM_NUM users ramped up in $JM_RAMP seconds." >> wiki.txt
 
 for f in jvm.txt;
 do
-	echo "{code}" >> contents.txt
-    cat "$f" >> contents.txt
-	echo "{code}" >> contents.txt
+	echo "{code}" >> wiki.txt
+    cat "$f" >> wiki.txt
+	echo "{code}" >> wiki.txt
 done;
-
 
 pngContextSed.sh $1
 
