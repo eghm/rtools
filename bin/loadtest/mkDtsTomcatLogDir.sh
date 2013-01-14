@@ -1,12 +1,19 @@
-/usr/local/tomcat/bin/shutdown.sh
+$CATALINA_HOME/bin/shutdown.sh
+sleep 60
+export T_LOGS=$CATALINA_HOME/logs
+if [ -e $T_LOGS/catalina.pid ]
+then
+    echo "$T_LOGS/catalina.pid exists!  Tomcat didn't shutdown cleanly."
+    # TODO kill with threaddump
+    exit
+fi
+
 export DTS=$(date +%Y-%m-%d/%H-%M)
-export T_LOGS=/usr/local/tomcat/logs
 export DTS_LOGS=$T_LOGS/$DTS
 mkdir -p $DTS_LOGS
-sleep 60
 cd $T_LOGS ; mkdir -p bak ; mv *.out bak/ ; mv *.log bak/ ; mv *.txt bak/
 cd
-/usr/local/tomcat/bin/startup.sh
+$CATALINA_HOME/bin/startup.sh
 echo "DTS $DTS"
-echo "$DTS" > dts.txt
+echo "$DTS" > ~/dts.txt
 
