@@ -43,21 +43,20 @@ then
 fi
 
 
-export WIKI_DTS=${$DTS/\// }
-echo $WIKI_DTS
+wget -r -np -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS
 
-exit
-wget -r -np -nH --cut-dirs=2 -R index.html http://env11.rice.kuali.org/tomcat/logs/$DTS
-
-mv *.xml $DTS/
+mv *.jtl $DTS/
 mv *.png $DTS/
 mv jmeter.log $DTS/
 mv jvm.txt $DTS/
+mv dts.txt $DTS/
 mv *.jmx $DTS/
 
 cd $DTS
 
 contextSed.sh $(pwd)
+
+export WIKI_DTS=${DTS/\// }
 
 /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$R_RELEASE $R_DESC $R_UI JMeter Load Test $WIKI_DTS" --parent "Rice $R_RELEASE Load Testing" --file "contents.txt"
 
