@@ -30,7 +30,7 @@ wget http://$SERVER/portal.do -O portal.html
 grep "class=\"build\"" portal.html > version.xml
 # version_dirty.txt has a space before and after the build
 cut -f 3 -d : version.xml > version_dirty.txt
-export DIRTY_VERSION=$(cat version.txt)
+export DIRTY_VERSION=$(cat version_dirty.txt)
 export R_VERSION=${DIRTY_VERSION/ /}
 echo $R_VERSION > version.txt
 rm version.xml
