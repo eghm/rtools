@@ -45,8 +45,9 @@ export JMETER_NAME="${jmetername%.*}"
 
 export R_DESC=$JMETER_NAME
 
-scp tomcat@$SERVER:dts.txt .
-export DTS=$(cat dts.txt)
+# dts.txt doesn't exist since the loadtest log mv script deletes it.....
+#scp tomcat@$SERVER:dts.txt .
+#export DTS=$(cat dts.txt)
 
 if [ -z "$DTS" ]
 then
