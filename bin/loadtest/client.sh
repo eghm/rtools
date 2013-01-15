@@ -40,7 +40,7 @@ cut -f 1 -d - version.txt > release.txt
 export R_RELEASE=$(cat release.txt)
 echo $R_RELEASE
 
-# dts.txt doesn't exist since the loadtest log mv script deletes it.....
+# dts.txt doesn't exist since the loadtest log mv script (needs to be done before the wget of the logs) deletes it.....
 #scp tomcat@$SERVER:dts.txt .
 #export DTS=$(cat dts.txt)
 
