@@ -40,15 +40,6 @@ cut -f 1 -d - version.txt > release.txt
 export R_RELEASE=$(cat release.txt)
 echo $R_RELEASE
 
-# there should be only one jmx file, we'll use its name as part of the wiki page title
-for f in *.jmx;
-do
-    jmetername=$(basename "$f")
-    export JMETER_NAME="${jmetername%.*}"
-done
-
-export R_DESC=$JMETER_NAME
-
 # dts.txt doesn't exist since the loadtest log mv script deletes it.....
 #scp tomcat@$SERVER:dts.txt .
 #export DTS=$(cat dts.txt)
@@ -72,6 +63,15 @@ mv version.txt $DTS/
 mv *.jmx $DTS/
 
 cd $DTS
+
+# there should be only one jmx file, we'll use its name as part of the wiki page title
+for f in *.jmx;
+do
+    jmetername=$(basename "$f")
+    export JMETER_NAME="${jmetername%.*}"
+done
+
+export R_DESC=$JMETER_NAME
 
 contextSed.sh $(pwd)
 
