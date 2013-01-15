@@ -55,8 +55,9 @@ then
     exit;
 fi
 
-
 wget -r -np -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS
+
+sipsTiff2Png.sh $(pwd)
 
 mv *.jtl $DTS/
 mv *.png $DTS/
