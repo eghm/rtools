@@ -39,6 +39,7 @@ rm version_dirty.txt
 cut -f 1 -d - version.txt > release.txt
 export R_RELEASE=$(cat release.txt)
 echo $R_RELEASE
+rm release.txt
 
 # dts.txt doesn't exist since the loadtest log mv script (needs to be done before the wget of the logs) deletes it.....
 #scp tomcat@$SERVER:dts.txt .
@@ -53,13 +54,14 @@ fi
 wget -r -np -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS
 
 sipsTiff2Png.sh $(pwd)
+mkdir -p tiffs/$DTS
+mv *.tiff tiffs/$DTS/
 
 mv *.jtl $DTS/
 mv *.png $DTS/
-mv jmeter.log $DTS/
-mv jvm.txt $DTS/
-mv dts.txt $DTS/
-mv version.txt $DTS/
+mv *.log $DTS/
+mv *.txt $DTS/
+mv *.html $DTS/
 mv *.jmx $DTS/
 
 cd $DTS
@@ -70,13 +72,15 @@ do
     jmetername=$(basename "$f")
     export JMETER_NAME="${jmetername%.*}"
 done
-
 export R_DESC=$JMETER_NAME
+
+export JM_NUM=$(xml sel -T -t -v "//stringProp[@name='ThreadGroup.num_threads']" *.jmx)
+export JM_RAMP=$(xml sel -T -t -v "//stringProp[@name='ThreadGroup.ramp_time']" *.jmx)
 
 contextSed.sh $(pwd)
 
 export WIKI_DTS=${DTS/\// }
 
-/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$R_VERSION $R_DESC JMeter Load Test $WIKI_DTS" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
+/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$R_VERSION $R_DESC JMeter Load Test $JM_NUM in $JM_RAMP on $WIKI_DTS" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
 
-find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$R_VERSION $R_DESC JMeter Load Test $WIKI_DTS" --file "{}" \;
+find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$R_VERSION $R_DESC JMeter Load Test $JM_NUM in $JM_RAMP on $WIKI_DTS" --file "{}" \;
