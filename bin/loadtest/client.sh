@@ -43,7 +43,10 @@ rm release.txt
 
 # dts.txt doesn't exist since the loadtest log mv script (needs to be done before the wget of the logs) deletes it.....
 #scp tomcat@$SERVER:dts.txt .
-#export DTS=$(cat dts.txt)
+if [ -e dts.txt ]
+then
+    export DTS=$(cat dts.txt)
+fi
 
 if [ -z "$DTS" ]
 then
