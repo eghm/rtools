@@ -71,10 +71,10 @@ mv *.tiff tiffs/$DTS/
 /java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png ResponseTimesDistribution.png --input-jtl ResultsTable.jtl --plugin-type ResponseTimesDistribution --width 800 --height 600
 /java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png ResponseTimesPercentiles.png --input-jtl ResultsTable.jtl --plugin-type ResponseTimesPercentiles --width 800 --height 600
 /java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png ThroughputOverTime.png --input-jtl ResultsTable.jtl --plugin-type ThroughputOverTime --width 800 --height 600
-/java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png ThroughputVsThreads.png --input-jtl ResultsTable.jtl --plugin-type ThroughputVsThreads --width 800 --height 600
+#/java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png ThroughputVsThreads.png --input-jtl ResultsTable.jtl --plugin-type ThroughputVsThreads --width 800 --height 600
 /java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png TimesVsThreads.png --input-jtl ResultsTable.jtl --plugin-type TimesVsThreads --width 800 --height 600
 /java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png TransactionsPerSecond.png --input-jtl ResultsTable.jtl --plugin-type TransactionsPerSecond --width 800 --height 600
-/java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png PageDataExtractorOverTime.png --input-jtl ResultsTable.jtl --plugin-type PageDataExtractorOverTime --width 800 --height 600
+#/java/jmeter-2.8/lib/ext/JMeterPluginsCMD.sh --generate-png PageDataExtractorOverTime.png --input-jtl ResultsTable.jtl --plugin-type PageDataExtractorOverTime --width 800 --height 600
 
 
 mv *.jtl $DTS/
