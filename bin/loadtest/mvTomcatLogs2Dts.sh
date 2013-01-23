@@ -15,4 +15,6 @@ export DTS_LOGS=$T_LOGS/$DTS
 mv $T_LOGS/catalina.out $DTS_LOGS/ ; mv $T_LOGS/*.log $DTS_LOGS/ ; mv $T_LOGS/localhost*.txt $DTS_LOGS/ ; mv $T_LOGS/*.hprof $DTS_LOGS/
 # start tomcat backup for wget of logs
 $CATALINA_HOME/bin/startup.sh
+# wait for tomcat to be up
+sleep 120
 rm ~/dts.txt
