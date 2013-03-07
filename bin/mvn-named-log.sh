@@ -5,7 +5,7 @@ fi
 
 export rDir=${PWD##*/}
 export DTS=$(date +%Y%m%d%H%M)
-export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=512m"
+export M2_REPO=/java/m2/r
 
 if [ "$rDir" = "$R_HOME" ]
 then
@@ -18,11 +18,14 @@ then
     mkdir -p $R_HOME/logs/$rDir/
 fi
 
+export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=512m -XX:ErrorFile=$R_HOME/logs/$rDir/hs_err_$DTS.log"
+
 svndiff.sh
 
-touch $R_HOME/logs/$rDir/$1.$DTS.out 
-ln -s $R_HOME/logs/$rDir/$1.$DTS.out $1.$DTS.out
+touch $R_HOME/logs/$rDir/$1.$DTS.out
+ln -s $R_HOME/logs/$rDir/$1.$DTS.out $1.$DTS.out 
 mvn -version >> $1.$DTS.out
+echo "MAVEN_OPTS=$MAVEN_OPTS" >> $1.$DTS.out
 echo "tail -f $R_HOME/logs/$rDir/$1.$DTS.out to watch progress."
 echo "mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml" >> $1.$DTS.out
 mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $1.$DTS.out 2>&1

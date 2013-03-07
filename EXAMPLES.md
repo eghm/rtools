@@ -10,6 +10,31 @@ DEVELOPMENT:
 * delete 35797 and its databases
     * deleteRevisionAndDBs.sh 35797 dbrootpass
 
+LOCAL SMOKE TESTS, single threaded, against Saucelabs
+* Install SaucePatch () and compile the sampleapp tests
+* create targets.txt you want to run against (See Saucelabs Resources)
+    * windows_2012:ie:10
+    * etc.
+* Create lists of tests to run with users (admin for single threaded running of tests)
+    * rSmokeTestsUsersList.sh
+* Using the list from the previous command setup a target for each test:user
+    * rSmokeTestsTargetList.sh
+* Run
+    * rSmokeTest.sh env8.rice.kuali.org saucelabs_user saucelabs_key rVersion SmokeTestsTargetsUsers.txt
+
+LOCAL SMOKE TESTS, multi-threaded, against Saucelabs
+* Install SaucePatch () and compile the sampleapp tests
+* Create loadtest users (see IdentityPersonRoleWDIT) on the app you will be running the smoke tests against.
+    * mvn -f sampleapp/pom.xml -Pstests failsafe:integration-test -Dalt.config.location=/r/37569/37569-common-test-config.xml -Dremote.public.url=env7.rice.kuali.org -Dit.test=XMLIngesterNavIT -DXMLIngester.groupId=2008 -DXMLIngester.userIncludeDTSinPrefix=false -DXMLIngester.userCntBegin=0 -DXMLIngester.userCnt=600  -DXMLIngester.userPrefix=loadtester -Dremote.driver.dontTearDown=y
+* If needed create loadtester roles once the NPE is fixed :(
+    * mvn -f sampleapp/pom.xml -Pstests failsafe:integration-test -Dalt.config.location=/r/37551/37551-common-test-config.xml -Dremote.public.url=env7.rice.kuali.org -Dit.test=IdentityPersonRoleWDIT -Dtest.role.user.cnt=600 -Dtest.role.user.base=loadtester -Dremote.driver.dontTearDown=y 
+* Create target list (so used users are not duplicated)
+    * TODO
+* Create lists of tests to run with loadtest users
+    * TODO rSmokeTestsMultiUsersList.sh
+
+
+MULTISERVER TASKS:
 
 SYNC TO SERVERS:
 * Update a test file
@@ -18,7 +43,6 @@ SYNC TO SERVERS:
     * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteMvnTestCompile.sh 35962
 * mvn clean install
     * parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/remoteMvnCleanInstall.sh 35962 -DskipTests=true
-
 
 PARALLEL INTEGRATION TESTS:
 * create list of integration tests
@@ -54,7 +78,6 @@ PARALLEL SMOKE TESTS: assumes a csv file will supply values, note order of sauce
 * execute
    * parallel --tag --nonall --sshloginfile servers.txt rtools/bin/remoteSmokeTest.sh 35962 env11.rice.kuali.org ie 8 windows_2003
 
-
 OLD PARALLEL SMOKE TESTS: pass everything on command line, but the the test might be overwritten by LegacyITUsers.txt is populated
 * create LegacyITsUsers.txt file from within a R_VERSION directory:
     * smokeTestUsersList.sh
@@ -67,6 +90,8 @@ OLD PARALLEL SMOKE TESTS: pass everything on command line, but the the test migh
 * Logged in as ec2-user, transfer a file to the servers
     * find 35797 -name 'IdentityPersonRoleWDIT.java' | parallel --sshloginfile ~/servers.txt --transfer wc
 
+
+OTHER:
 
 SQLRest:
 * (re) installing sqlrest on ENV11 to work with ORACLE and bouncing tomcat, sqlrest gives an error :(

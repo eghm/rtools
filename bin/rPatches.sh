@@ -22,7 +22,9 @@ patch -p0 <../rtools/etc/CXFWSS4JInInterceptor.patch
 echo -e "\nApplying rtools/etc/SauceLabs.patch"
 patch -p0 <../rtools/etc/SauceLabs.patch
 
-echo -e "\nApplying rtools/etc/intellij/intellij-iml.patch"
-patch -p1 <../rtools/etc/intellij/intellij-iml.patch
+# disabled to see how the new iml files work
+#echo -e "\nApplying rtools/etc/intellij/intellij-iml.patch"
+#patch -p1 <../rtools/etc/intellij/intellij-iml.patch
+
 #patch -p0 <../rtools/etc/IncidentReportForm.patch 
 #patch -p0 <../rtools/etc/impl-testdoc-xml.patch
