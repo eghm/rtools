@@ -1,8 +1,8 @@
 Index: pom.xml
 ===================================================================
---- pom.xml	(revision 35528)
+--- pom.xml	(revision 37618)
 +++ pom.xml	(working copy)
-@@ -1940,6 +1940,46 @@
+@@ -1994,6 +1994,46 @@
          <version>${freemarker.version}</version>
        </dependency>
  
@@ -49,7 +49,7 @@ Index: pom.xml
      </dependencies>
    </dependencyManagement>
  
-@@ -1954,4 +1994,4 @@
+@@ -2008,4 +2048,4 @@
      <url>https://svn.kuali.org/repos/rice/trunk</url>
    </scm>
  
@@ -58,21 +58,40 @@ Index: pom.xml
 \ No newline at end of file
 Index: sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java
 ===================================================================
---- sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(revision 35559)
+--- sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(revision 37618)
 +++ sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(working copy)
-@@ -84,9 +84,9 @@
+@@ -124,9 +124,9 @@
      @After
      public void tearDown() throws Exception {
          try {
--//            if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
--//                SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY), System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
--//            }
-+            if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
-+                SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY), System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
-+            }
+-            //            if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
+-            //                SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY), System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
+-            //            }
++//            if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
++//                SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY), System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
++//            }
              if (System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) {
-                 getHTML(ITUtil.prettyHttp(System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) + "?test=" + this.toString() + "&user=" + user));
-             }
+                 getHTML(ITUtil.prettyHttp(System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) + "?test="
+                         + this.toString() + "&user=" + user));
+Index: sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
+===================================================================
+--- sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 37618)
++++ sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
+@@ -53,10 +53,10 @@
+         WebDriver driver = null;
+         if (System.getProperty(REMOTE_DRIVER_SAUCELABS_PROPERTY) == null) {
+             driver = ITUtil.getWebDriver();
+-//        } else {
+-//            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
+-//            saucelabs.setUp(className, testName);
+-//            driver = saucelabs.getDriver();
++        } else {
++            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
++            saucelabs.setUp(className, testName);
++            driver = saucelabs.getDriver();
+         }
+         driver.manage().timeouts().implicitlyWait(120, TimeUnit.SECONDS);
+         driver.get(url);
 Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 ===================================================================
 --- sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
@@ -282,40 +301,12 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 +        }
 +    }
 +}
-Index: sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
-===================================================================
---- sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 35559)
-+++ sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
-@@ -53,10 +53,10 @@
-         WebDriver driver = null;
-         if (System.getProperty(REMOTE_DRIVER_SAUCELABS_PROPERTY) == null) {
-             driver = ITUtil.getWebDriver();
--//        } else {
--//            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
--//            saucelabs.setUp(className, testName);
--//            driver = saucelabs.getDriver();
-+        } else {
-+            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
-+            saucelabs.setUp(className, testName);
-+            driver = saucelabs.getDriver();
-         }
-         driver.manage().timeouts().implicitlyWait(120, TimeUnit.SECONDS);
-         driver.get(url);
 Index: sampleapp/pom.xml
 ===================================================================
---- sampleapp/pom.xml	(revision 35528)
+--- sampleapp/pom.xml	(revision 37618)
 +++ sampleapp/pom.xml	(working copy)
-@@ -112,7 +112,7 @@
-       <id>stests</id>
-       <properties>
-         <maven.failsafe.skip>false</maven.failsafe.skip>
--        <maven.failsafe.includes>**/*IT.java</maven.failsafe.includes>
-+        <maven.failsafe.includes>**/*Suite.java</maven.failsafe.includes>
-         <maven.failsafe.excludes>**/XMLIngesterLegacyIT.java</maven.failsafe.excludes>
-       </properties>
-       <build>
-@@ -266,6 +266,24 @@
-       <artifactId>selenium-java</artifactId>
+@@ -346,6 +346,24 @@
+       <artifactId>jaxb-impl</artifactId>
      </dependency>
  
 +     <dependency>
