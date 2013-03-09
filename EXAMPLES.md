@@ -36,6 +36,11 @@ LOCAL SMOKE TESTS, multi-threaded, against Saucelabs
 
 MULTISERVER TASKS:
 
+PREREQUISITES
+* http://www.gnu.org/software/parallel/
+* create local account ec2-user and save the private key as .ssh/id_rsa
+* servers.txt with one ip address per line
+
 SYNC TO SERVERS:
 * Update a test file
     * cd $R_HOME; find 35797 -name 'IdentityPersonRoleWDIT.java' | parallel --sshloginfile ~/servers.txt --transfer wc
