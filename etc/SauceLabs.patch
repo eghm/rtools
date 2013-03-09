@@ -125,7 +125,6 @@ Index: sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 +import org.openqa.selenium.ie.InternetExplorerDriver;
 +import org.openqa.selenium.remote.DesiredCapabilities;
 +import org.openqa.selenium.remote.RemoteWebDriver;
-+import org.ow2.carol.jndi.intercept.operation.StringGetNameParserInterceptionContext;
 +
 +import java.io.BufferedWriter;
 +import java.io.File;
