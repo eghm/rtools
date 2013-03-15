@@ -1,0 +1,389 @@
+Index: pom.xml
+===================================================================
+--- pom.xml	(revision 37699)
++++ pom.xml	(working copy)
+@@ -147,6 +147,7 @@
+     <spring.security.version>3.1.0.RELEASE</spring.security.version>
+     <struts.version>1.3.10</struts.version>
+     <subethasmtp.version>3.1.6</subethasmtp.version>
++    <testng.version>6.1.1</testng.version>
+ 
+     <!-- Version 2.3.6 of cxf requires wss4j 1.5.11 or 1.5.12 and does not work with 1.6.0 -->
+     <wss4j.version>1.6.7</wss4j.version>
+@@ -1880,6 +1881,13 @@
+       </dependency>
+ 
+       <dependency>
++        <groupId>org.testng</groupId>
++        <artifactId>testng</artifactId>
++        <version>${testng.version}</version>
++        <scope>test</scope>
++      </dependency>
++
++      <dependency>
+         <groupId>org.ow2.jotm</groupId>
+         <artifactId>jotm-core</artifactId>
+         <version>${jotm.version}</version>
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SeleneseFailable.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/common/SeleneseFailable.java	(revision 0)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/SeleneseFailable.java	(revision 0)
+@@ -0,0 +1,28 @@
++/**
++ * Copyright 2005-2012 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.common;
++
++/**
++ * Possible way to help keep JUnit and NG separate, the idea being that
++ * framework specific Failures will be generalized and encapsulated behind
++ * the SeleneseFailable
++ *
++ * @author Kuali Rice Team (rice.collab@kuali.org)
++ */
++
++public interface SeleneseFailable {
++    void seFail(String string);
++}
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTBase.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTBase.java	(revision 0)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTBase.java	(revision 0)
+@@ -0,0 +1,50 @@
++/**
++ * Copyright 2005-2013 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.mainmenu.test;
++
++import edu.samplu.common.ITUtil;
++import edu.samplu.common.WebDriverLegacyITBase;
++
++/**
++ * @author Kuali Rice Team (rice.collab@kuali.org)
++ */
++public abstract class LoginLogoutSTBase extends WebDriverLegacyITBase {
++
++    @Override
++    public String getTestUrl() {
++        return ITUtil.PORTAL;
++    }
++
++    @Override
++    public String getUserName() {
++        return "admin";
++    }
++
++    public void testNavLogout() throws Exception {
++        navigate();
++        testLogout();
++    }
++
++    private void navigate() throws InterruptedException {
++        waitAndClickMainMenu();
++        waitForPageToLoad();
++    }
++
++    public void testLogout() throws Exception {
++        waitAndClickLogout();
++        passed();
++    }
++}
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutWDIT.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutWDIT.java	(revision 37699)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutWDIT.java	(working copy)
+@@ -1,39 +0,0 @@
+-/**
+- * Copyright 2005-2012 The Kuali Foundation
+- *
+- * Licensed under the Educational Community License, Version 2.0 (the "License");
+- * you may not use this file except in compliance with the License.
+- * You may obtain a copy of the License at
+- *
+- * http://www.opensource.org/licenses/ecl2.php
+- *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the License is distributed on an "AS IS" BASIS,
+- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- * See the License for the specific language governing permissions and
+- * limitations under the License.
+- */
+-package edu.samplu.mainmenu.test;
+-
+-import edu.samplu.common.ITUtil;
+-import edu.samplu.common.WebDriverLegacyITBase;
+-import org.junit.Test;
+-
+-public class LoginLogoutWDIT extends WebDriverLegacyITBase {
+-
+-    @Override
+-    public String getTestUrl() {
+-        return ITUtil.PORTAL;
+-    }
+-
+-    @Override
+-    public String getUserName() {
+-        return "admin";
+-    }
+-
+-    @Test
+-    public void testLogout() throws Exception {
+-        waitAndClickLogout();
+-        passed();
+-    }
+-}
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutBkMrkSTJUnitGen.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutBkMrkSTJUnitGen.java	(revision 0)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutBkMrkSTJUnitGen.java	(revision 0)
+@@ -0,0 +1,29 @@
++/**
++ * Copyright 2005-2013 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.mainmenu.test;
++
++import org.junit.Test;
++
++/**
++ * @author Kuali Rice Team (rice.collab@kuali.org)
++ */
++public class LoginLogoutBkMrkSTJUnitGen extends LoginLogoutSTJUnitBase {
++
++    @Test
++    public void testLogout() throws Exception {
++        super.testLogout();
++    }
++}
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTJUnitBase.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTJUnitBase.java	(revision 0)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTJUnitBase.java	(revision 0)
+@@ -0,0 +1,31 @@
++/**
++ * Copyright 2005-2013 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.mainmenu.test;
++
++import edu.samplu.common.SeleneseFailable;
++
++import static org.junit.Assert.fail;
++
++/**
++ * @author Kuali Rice Team (rice.collab@kuali.org)
++ */
++public class LoginLogoutSTJUnitBase extends LoginLogoutSTBase implements SeleneseFailable {
++
++    @Override
++    public void seFail(String string) {
++        fail(string);
++    }
++}
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutBkMrkSTNGGen.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutBkMrkSTNGGen.java	(revision 0)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutBkMrkSTNGGen.java	(revision 0)
+@@ -0,0 +1,32 @@
++/**
++ * Copyright 2005-2013 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.mainmenu.test;
++
++import org.testng.annotations.Parameters;
++import org.testng.annotations.Test;
++
++/**
++ * @author Kuali Rice Team (rice.collab@kuali.org)
++ */
++public class LoginLogoutBkMrkSTNGGen extends LoginLogoutSTNGBase {
++
++    @Test(groups = { "all", "fast", "default" }, description = "testLogout")
++    @Parameters( { "seleniumHost", "seleniumPort", "os", "browser", "version", "webSite" })
++    public void testLogout() throws Exception {
++        setUp();
++        super.testLogout();
++    }
++}
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutNavSTJUnitGen.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutNavSTJUnitGen.java	(revision 0)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutNavSTJUnitGen.java	(revision 0)
+@@ -0,0 +1,30 @@
++/**
++ * Copyright 2005-2013 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.mainmenu.test;
++
++import org.junit.Test;
++/**
++ * tests that user 'quickstart' can log in and log out
++ * 
++ * @author Kuali Rice Team (rice.collab@kuali.org)
++ */
++public class LoginLogoutNavSTJUnitGen extends LoginLogoutSTJUnitBase {
++
++    @Test
++    public void testNavLogout() throws Exception {
++        super.testNavLogout();
++    }
++}
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTNGBase.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTNGBase.java	(revision 0)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTNGBase.java	(revision 0)
+@@ -0,0 +1,31 @@
++/**
++ * Copyright 2005-2013 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.mainmenu.test;
++
++import edu.samplu.common.SeleneseFailable;
++
++import static org.testng.AssertJUnit.fail;
++
++/**
++ * @author Kuali Rice Team (rice.collab@kuali.org)
++ */
++public class LoginLogoutSTNGBase extends LoginLogoutSTBase implements SeleneseFailable{
++
++    @Override
++    public void seFail(String string) {
++        fail(string);
++    }
++}
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutNavSTNGGen.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutNavSTNGGen.java	(revision 0)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutNavSTNGGen.java	(revision 0)
+@@ -0,0 +1,32 @@
++/**
++ * Copyright 2005-2013 The Kuali Foundation
++ *
++ * Licensed under the Educational Community License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.opensource.org/licenses/ecl2.php
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package edu.samplu.mainmenu.test;
++
++import org.testng.annotations.Parameters;
++import org.testng.annotations.Test;
++
++/**
++ * @author Kuali Rice Team (rice.collab@kuali.org)
++ */
++public class LoginLogoutNavSTNGGen extends LoginLogoutSTNGBase {
++
++    @Test(groups = { "all", "fast", "default", "nav" }, description = "testNavLogout")
++    @Parameters( { "seleniumHost", "seleniumPort", "os", "browser", "version", "webSite" })
++    public void testNavLogout() throws Exception {
++        setUp();
++        super.testNavLogout();
++    }
++}
+Index: rice-middleware/sampleapp/pom.xml
+===================================================================
+--- rice-middleware/sampleapp/pom.xml	(revision 37699)
++++ rice-middleware/sampleapp/pom.xml	(working copy)
+@@ -279,6 +279,11 @@
+     </dependency>
+ 
+     <dependency>
++      <groupId>org.testng</groupId>
++      <artifactId>testng</artifactId>
++    </dependency>
++
++    <dependency>
+       <groupId>log4j</groupId>
+       <artifactId>log4j</artifactId>
+     </dependency>

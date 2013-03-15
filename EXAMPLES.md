@@ -37,6 +37,7 @@ LOCAL SMOKE TESTS, multi-threaded, against Saucelabs
 MULTISERVER TASKS:
 
 PREREQUISITES
+* rtools supporting servers
 * http://www.gnu.org/software/parallel/
 * create local account ec2-user and save the private key as .ssh/id_rsa
 * servers.txt with one ip address per line

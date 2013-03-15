@@ -1,7 +1,7 @@
-diff --git ksb/client-impl/src/main/java/org/kuali/rice/ksb/security/soap/CXFWSS4JInInterceptor.java ksb/client-impl/src/main/java/org/kuali/rice/ksb/security/soap/CXFWSS4JInInterceptor.java
+diff --git rice-middleware/ksb/client-impl/src/main/java/org/kuali/rice/ksb/security/soap/CXFWSS4JInInterceptor.java rice-middleware/ksb/client-impl/src/main/java/org/kuali/rice/ksb/security/soap/CXFWSS4JInInterceptor.java
 index f48b29a..09565db 100644
---- ksb/client-impl/src/main/java/org/kuali/rice/ksb/security/soap/CXFWSS4JInInterceptor.java
-+++ ksb/client-impl/src/main/java/org/kuali/rice/ksb/security/soap/CXFWSS4JInInterceptor.java
+--- rice-middleware/ksb/client-impl/src/main/java/org/kuali/rice/ksb/security/soap/CXFWSS4JInInterceptor.java
++++ rice-middleware/ksb/client-impl/src/main/java/org/kuali/rice/ksb/security/soap/CXFWSS4JInInterceptor.java
 @@ -76,8 +76,9 @@ public class CXFWSS4JInInterceptor extends WSS4JInInterceptor{
  		props.put("org.apache.ws.security.crypto.merlin.keystore.alias", ConfigContext.getCurrentContextConfig().getKeystoreAlias());
  		props.put("org.apache.ws.security.crypto.merlin.file", ConfigContext.getCurrentContextConfig().getKeystoreFile());
