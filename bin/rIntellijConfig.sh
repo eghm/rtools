@@ -27,7 +27,7 @@ sed -f .rdev/$1-intellij-standalone-config.sed ../rtools/etc/intellij/rice_stand
 #sed -f .rdev/$1-intellij-serviceregistry-config.sed ../rtools/etc/intellij/rice_serviceregistry__tomcat_6_.xml > config/ide/intellij/.idea/runConfigurations/rice_serviceregistry__tomcat_6_.xml
 #sed -f .rdev/$1-intellij-serviceregistry-config.sed ../rtools/etc/intellij/rice_serviceregistry__tomcat_7_.xml > config/ide/intellij/.idea/runConfigurations/rice_serviceregistry__tomcat_7_.xml
 
-sed -f .rdev/$1-intellij-rversion.sed ../rtools/etc/intellij/XMLIngesterLegacyIT.xml > config/ide/intellij/.idea/runConfigurations/XMLIngesterLegacyIT.xml
-sed -f .rdev/$1-intellij-rversion.sed ../rtools/etc/intellij/LoginLogoutLegacyIT-HUB.xml > config/ide/intellij/.idea/runConfigurations/LoginLogoutLegacyIT-HUB.xml
+sed -f .rdev/$1-intellij-rversion.sed ../rtools/etc/intellij/XMLIngesterNavIT.xml > config/ide/intellij/.idea/runConfigurations/XMLIngesterNavIT.xml
+sed -f .rdev/$1-intellij-rversion.sed ../rtools/etc/intellij/LoginLogoutWDIT.xml > config/ide/intellij/.idea/runConfigurations/LoginLogoutWDIT.xml
 sed -f .rdev/$1-intellij-rversion.sed ../rtools/etc/intellij/IdentityPersonRoleWDIT-env1.xml > config/ide/intellij/.idea/runConfigurations/IdentityPersonRoleWDIT-env1.xml
 

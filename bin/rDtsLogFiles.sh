@@ -1,3 +1,4 @@
+echo -e "\nInstalling NewLogFileForEachRunAppender."
 cd $R_HOME/$1
 mkdir -p .rdev
 echo "updating log4j.properties for new log file per run appender"

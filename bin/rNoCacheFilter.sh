@@ -1,11 +1,11 @@
+echo -e "\nInstalling NoCacheFilter"
 mkdir -p rice-middleware/core/impl/src/main/java/com/samaxes/filter/util
 cp ../rtools/etc/NoCacheFilter.java rice-middleware/core/impl/src/main/java/com/samaxes/filter/
 cp ../rtools/etc/HTTPCacheHeader.java rice-middleware/core/impl/src/main/java/com/samaxes/filter/util/
 
-
 if [ -f rice-middleware/web/src/main/webapp/WEB-INF/web.xml.orig ]
 then
-    echo rice-middleware/web/src/main/webapp/WEB-INF/web.xml.orig already exists, skipping
+    echo "rice-middleware/web/src/main/webapp/WEB-INF/web.xml.orig already exists, skipping."
 else
     mv rice-middleware/web/src/main/webapp/WEB-INF/web.xml  rice-middleware/web/src/main/webapp/WEB-INF/web.xml.orig
     echo "updating rice-middleware/web/src/main/webapp/WEB-INF/web.xml"

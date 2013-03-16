@@ -1,6 +1,7 @@
+echo -e "\np6spy.jar check."
 if [ -f rice-middleware/web/src/main/resources/spy.properties ]
 then
-    echo rice-middleware/web/src/main/resources/spy.properties already exists, skipping
+    echo "rice-middleware/web/src/main/resources/spy.properties already exists, skipping."
 else
 	if [ ! -e /java/drivers/p6spy.jar ]
 	then

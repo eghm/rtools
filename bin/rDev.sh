@@ -103,26 +103,27 @@ echo "running custom updates"
 
 # dev tweeks
 rPatches.sh
+echo -e "\nCreating MySQL config files"
 rCommonTestConfigMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
 rAppConfigSampleMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS 8080
 rAppConfigStandaloneMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
 rSpyProperties.sh $1
 rLogin.sh
 rNoCacheFilter.sh
-# diabled to test new intellij updates
-rIntellijConfig.sh $1
+echo "TODO TODO TODO TODO TODO update intellij configurations"
+#rIntellijConfig.sh $1
 
 if [ -z "$NO_DTS_LOGS" ]
 then
-    echo "patching for dts logs"
 	rDtsLogFiles.sh $1
 fi
 
 rKradreload.sh
 
-echo "Creating intellijJunitAltConfigLocation.sh to be used after starting IntelliJ to set JUnit default to use -Dalt.config.location=$R_HOME/$1/$1-common-test-config.xml"
+echo -e "\nCreating intellijJunitAltConfigLocation.sh to be used after starting IntelliJ to set JUnit default to use -Dalt.config.location=$R_HOME/$1/$1-common-test-config.xml"
 echo "xml ed -u \"/project/component/configuration[@type='JUnit']/option[@name='VM_PARAMETERS']/@value\" -v \"-Dalt.config.location=$R_HOME$/$1/$1-common-test-config.xml\" config/ide/intellij/.idea/workspace.xml" > intellijJunitAltConfigLocation.sh
 
+echo ""
 log-command.sh rdev.git.add git add -A 
 echo "git applied rDev custom updates commit"
 log-command.sh rdev.svn.commit git commit -a -m "applied rDev custom updates"

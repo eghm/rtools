@@ -1,6 +1,7 @@
+echo -e "\nInstalling Reloading DataDictionary, see https://wiki.kuali.org/display/KULRICE/Reloading+Data+Dictionary+Setup"
 if [ -f rice-middleware/web/pom.xml.orig ]
 then
-    echo rice-middleware/web/pom.xml.orig already exists, skipping
+    echo "rice-middleware/web/pom.xml.orig already exists, skipping."
 else
     echo "backing up rice-middleware/web/pom.xml to rice-middleware/web/pom.xml.orig"
     mv rice-middleware/web/pom.xml rice-middleware/web/pom.xml.orig
@@ -19,7 +20,7 @@ exit
 
 if [ -f rice-middleware/impl/src/main/resources/org/kuali/rice/kns/config/KNSSpringBeans.xml.orig ]
 then
-    echo rice-middleware/impl/src/main/resources/org/kuali/rice/kns/config/KNSSpringBeans.xml.orig already exists, skipping
+    echo "rice-middleware/impl/src/main/resources/org/kuali/rice/kns/config/KNSSpringBeans.xml.orig already exists, skipping."
 else
     echo "backing up rice-middleware/impl/src/main/resources/org/kuali/rice/kns/config/KNSSpringBeans.xml to rice-middleware/impl/src/main/resources/org/kuali/rice/kns/config/KNSSpringBeans.xml.orig"
     mv rice-middleware/impl/src/main/resources/org/kuali/rice/kns/config/KNSSpringBeans.xml rice-middleware/impl/src/main/resources/org/kuali/rice/kns/config/KNSSpringBeans.xml.orig
