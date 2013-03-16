@@ -1,6 +1,6 @@
 Index: pom.xml
 ===================================================================
---- pom.xml	(revision 37699)
+--- pom.xml	(revision 37725)
 +++ pom.xml	(working copy)
 @@ -147,6 +147,7 @@
      <spring.security.version>3.1.0.RELEASE</spring.security.version>
@@ -24,44 +24,11 @@ Index: pom.xml
          <groupId>org.ow2.jotm</groupId>
          <artifactId>jotm-core</artifactId>
          <version>${jotm.version}</version>
-Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SeleneseFailable.java
-===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/common/SeleneseFailable.java	(revision 0)
-+++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/SeleneseFailable.java	(revision 0)
-@@ -0,0 +1,28 @@
-+/**
-+ * Copyright 2005-2012 The Kuali Foundation
-+ *
-+ * Licensed under the Educational Community License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ * http://www.opensource.org/licenses/ecl2.php
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package edu.samplu.common;
-+
-+/**
-+ * Possible way to help keep JUnit and NG separate, the idea being that
-+ * framework specific Failures will be generalized and encapsulated behind
-+ * the SeleneseFailable
-+ *
-+ * @author Kuali Rice Team (rice.collab@kuali.org)
-+ */
-+
-+public interface SeleneseFailable {
-+    void seFail(String string);
-+}
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTBase.java
 ===================================================================
 --- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTBase.java	(revision 0)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTBase.java	(revision 0)
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,51 @@
 +/**
 + * Copyright 2005-2013 The Kuali Foundation
 + *
@@ -80,6 +47,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogou
 +package edu.samplu.mainmenu.test;
 +
 +import edu.samplu.common.ITUtil;
++import edu.samplu.common.SeleneseFailable;
 +import edu.samplu.common.WebDriverLegacyITBase;
 +
 +/**
@@ -97,24 +65,24 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogou
 +        return "admin";
 +    }
 +
-+    public void testNavLogout() throws Exception {
-+        navigate();
-+        testLogout();
++    public void testNavLogout(SeleneseFailable failable) throws Exception {
++        navigate(failable);
++        testLogout(failable);
 +    }
 +
-+    private void navigate() throws InterruptedException {
-+        waitAndClickMainMenu();
++    private void navigate(SeleneseFailable failable) throws InterruptedException {
++        waitAndClickMainMenu(failable);
 +        waitForPageToLoad();
 +    }
 +
-+    public void testLogout() throws Exception {
-+        waitAndClickLogout();
++    public void testLogout(SeleneseFailable failable) throws Exception {
++        waitAndClickLogout(failable);
 +        passed();
 +    }
 +}
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutWDIT.java
 ===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutWDIT.java	(revision 37699)
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutWDIT.java	(revision 37725)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutWDIT.java	(working copy)
 @@ -1,39 +0,0 @@
 -/**
@@ -187,7 +155,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogou
 +
 +    @Test
 +    public void testLogout() throws Exception {
-+        super.testLogout();
++        super.testLogout(this);
 +    }
 +}
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTJUnitBase.java
@@ -260,7 +228,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogou
 +    @Parameters( { "seleniumHost", "seleniumPort", "os", "browser", "version", "webSite" })
 +    public void testLogout() throws Exception {
 +        setUp();
-+        super.testLogout();
++        super.testLogout(this);
 +    }
 +}
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutNavSTJUnitGen.java
@@ -295,7 +263,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogou
 +
 +    @Test
 +    public void testNavLogout() throws Exception {
-+        super.testNavLogout();
++        super.testNavLogout(this);
 +    }
 +}
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogoutSTNGBase.java
@@ -368,12 +336,12 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/mainmenu/test/LoginLogou
 +    @Parameters( { "seleniumHost", "seleniumPort", "os", "browser", "version", "webSite" })
 +    public void testNavLogout() throws Exception {
 +        setUp();
-+        super.testNavLogout();
++        super.testNavLogout(this);
 +    }
 +}
 Index: rice-middleware/sampleapp/pom.xml
 ===================================================================
---- rice-middleware/sampleapp/pom.xml	(revision 37699)
+--- rice-middleware/sampleapp/pom.xml	(revision 37725)
 +++ rice-middleware/sampleapp/pom.xml	(working copy)
 @@ -279,6 +279,11 @@
      </dependency>
