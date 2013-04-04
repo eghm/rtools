@@ -24,11 +24,16 @@ then
 	exit
 fi
 
+if [ -z "$R_SVN" ]
+then
+    export R_SVN=https://svn.kuali.org/repos/rice/trunk
+fi
+
 if [ ! -e db ]
 then
     echo "svn checkout of db and scripts directories need for impex to $R_HOME/$1"
-	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout -r $1 https://svn.kuali.org/repos/rice/trunk/db $R_HOME/$1/db
-	log-command.sh rdev.svn.co.scripts svn --trust-server-cert --non-interactive checkout -r $1 https://svn.kuali.org/repos/rice/trunk/scripts/ddl $R_HOME/$1/scripts/ddl
+	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout -r $1 $R_SVN/db $R_HOME/$1/db
+	log-command.sh rdev.svn.co.scripts svn --trust-server-cert --non-interactive checkout -r $1 $R_SVN/scripts/ddl $R_HOME/$1/scripts/ddl
 fi
 
 # rice .gitignore + config/ide .svn/ .settings/ .DS_Store
@@ -51,7 +56,7 @@ log-command.sh rdev.git.commit git commit -a -m "pre impex"
 echo "impex patching - removing % identified bys"
 log-command.sh rdev.impex.patch patch -p1 <../rtools/etc/impex-no-user-percent.patch
 
-loadTestImpex.sh
+#loadTestImpex.sh
 
 log-command.sh rdev.git.add git add -A
 echo "git applied pre impex patches commit"

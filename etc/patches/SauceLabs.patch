@@ -1,28 +1,39 @@
-Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java
+Index: rice-middleware/sampleapp/pom.xml
 ===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(revision 37693)
-+++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverLegacyITBase.java	(working copy)
-@@ -120,9 +120,9 @@
-     @After
-     public void tearDown() throws Exception {
-         try {
--			//            if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
--			//                SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY), System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
--			//            }
-+            if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
-+                SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY), System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
-+            }
-             
-         	if (System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) {
-                 getHTML(ITUtil.prettyHttp(System.getProperty(REMOTE_PUBLIC_USERPOOL_PROPERTY) + "?test="
+--- rice-middleware/sampleapp/pom.xml	(revision 38083)
++++ rice-middleware/sampleapp/pom.xml	(working copy)
+@@ -316,6 +316,23 @@
+       <artifactId>jaxb-impl</artifactId>
+     </dependency>
+ 
++    <dependency>
++      <groupId>com.saucelabs</groupId>
++      <artifactId>sauce_junit</artifactId>
++      <version>[1.0.0,)</version>
++      <scope>test</scope>
++    </dependency>
+   </dependencies>
++
++  <repositories>
++    <repository>
++      <id>saucelabs-repository</id>
++      <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
++      <releases>
++      </releases>
++      <snapshots>
++      </snapshots>
++    </repository>
++  </repositories>
+ </project>
+ 
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
 ===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 37693)
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 38090)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
-@@ -56,10 +56,10 @@
+@@ -105,10 +105,10 @@
          WebDriver driver = null;
          if (System.getProperty(REMOTE_DRIVER_SAUCELABS_PROPERTY) == null) {
-             driver = ITUtil.getWebDriver();
+             driver = getWebDriver();
 -//        } else {
 -//            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
 -//            saucelabs.setUp(className, testName);
@@ -32,15 +43,30 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.jav
 +            saucelabs.setUp(className, testName);
 +            driver = saucelabs.getDriver();
          }
-         driver.manage().timeouts().implicitlyWait(120, TimeUnit.SECONDS);
-         driver.get(url);
+         driver.manage().timeouts().implicitlyWait(SETUP_URL_LOAD_WAIT_SECONDS, TimeUnit.SECONDS);
+ 
+@@ -133,10 +133,10 @@
+      */
+     public static void tearDown(boolean passed, String sessionId, String testParam, String userParam) throws Exception {
+ 
+-//        if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
+-//            SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY),
+-//                    System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
+-//        }
++        if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
++            SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY),
++                    System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
++        }
+ 
+         if (System.getProperty(WebDriverLegacyITBase.REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) {
+             ITUtil.getHTML(ITUtil.prettyHttp(System.getProperty(WebDriverLegacyITBase.REMOTE_PUBLIC_USERPOOL_PROPERTY) + "?test="
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 ===================================================================
 --- rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
-@@ -0,0 +1,204 @@
+@@ -0,0 +1,228 @@
 +/**
-+ * Copyright 2005-2012 The Kuali Foundation
++ * Copyright 2005-2013 The Kuali Foundation
 + *
 + * Licensed under the Educational Community License, Version 2.0 (the "License");
 + * you may not use this file except in compliance with the License.
@@ -67,7 +93,6 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +import org.openqa.selenium.ie.InternetExplorerDriver;
 +import org.openqa.selenium.remote.DesiredCapabilities;
 +import org.openqa.selenium.remote.RemoteWebDriver;
-+import org.ow2.carol.jndi.intercept.operation.StringGetNameParserInterceptionContext;
 +
 +import java.io.BufferedWriter;
 +import java.io.File;
@@ -87,12 +112,36 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 + */
 +public class SauceLabsWebDriverHelper implements SauceOnDemandSessionIdProvider {
 +
-+    public final static String SAUCE_PROPERTY = "remote.driver.saucelabs";
-+    public final static String SAUCE_PLATFORM_PROPERTY = "remote.driver.saucelabs.platform";
-+    public final static String SAUCE_BROWSER_PROPERTY = "remote.driver.saucelabs.browser";
-+    public final static String SAUCE_USER_PROPERTY = "remote.driver.saucelabs.user";
-+    public final static String SAUCE_KEY_PROPERTY = "remote.driver.saucelabs.key";
-+    public final static String SAUCE_VERSION_PROPERTY = "remote.driver.saucelabs.version";
++    /**
++     * remote.driver.saucelabs
++     */
++    public static final String SAUCE_PROPERTY = "remote.driver.saucelabs";
++
++    /**
++     * remote.driver.saucelabs.platform
++     */
++    public static final String SAUCE_PLATFORM_PROPERTY = "remote.driver.saucelabs.platform";
++
++    /**
++     * remote.driver.saucelabs.browser
++     */
++    public static final String SAUCE_BROWSER_PROPERTY = "remote.driver.saucelabs.browser";
++
++    /**
++     * remote.driver.saucelabs.user
++     */
++    public static final String SAUCE_USER_PROPERTY = "remote.driver.saucelabs.user";
++
++    /**
++     * remote.driver.saucelabs.key
++     */
++    public static final String SAUCE_KEY_PROPERTY = "remote.driver.saucelabs.key";
++
++    /**
++     * remote.driver.saucelabs.version
++     */
++    public static final String SAUCE_VERSION_PROPERTY = "remote.driver.saucelabs.version";
++
 +    /**
 +     * Constructs a {@link SauceOnDemandAuthentication} instance using the supplied user name/access key.  To use the authentication
 +     * supplied by environment variables or from an external file, use the no-arg {@link SauceOnDemandAuthentication} constructor.
@@ -165,55 +214,6 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +        }
 +    }
 +
-+    private String wgetnSaveResourceString(String className, TestName testName) {
-+        String dir = deriveResourceBaseNames(className, testName, "");
-+        dir = dir.substring(0, dir.length() -1);
-+        return "mkdir " + dir + "; cd " + dir + "; " +
-+                "wgetn https://saucelabs.com/rest/" + authentication.getUsername()+ "/jobs/" + sessionId + "/results/%04dscreenshot.jpg 0 50";
-+    }
-+
-+    private String curlSaveResourceString(String className, TestName testName, String resource) {
-+        return "curl -o " + deriveResourceBaseNames(className, testName, resource)
-+                + "-u " + authentication.getUsername() + ":" + authentication.getAccessKey()
-+                + " https://saucelabs.com/rest/" + authentication.getUsername()+ "/jobs/" + sessionId + "/results/" + resource;
-+    }
-+
-+    private String deriveResourceBaseNames(String className, TestName testName, String resource) {
-+        return className + "." + testName.getMethodName() + "-"
-+                + System.getProperty(SAUCE_PLATFORM_PROPERTY, Platform.UNIX.toString()) + "-"
-+                + System.getProperty(SAUCE_BROWSER_PROPERTY) + "-"
-+                + System.getProperty(SAUCE_VERSION_PROPERTY) + "-"
-+                + System.getProperty(System.getProperty(WebDriverLegacyITBase.REMOTE_PUBLIC_USER_PROPERTY), "admin") + "-"
-+                + System.getProperty("rice.version", "unknown_build") + "-"
-+                + ITUtil.DTS + "-"
-+                + resource;
-+    }
-+
-+    private void writeFile(String fileName, String content) throws IOException {
-+        File file = new File(fileName);
-+        if (!file.exists()) {
-+            file.createNewFile();
-+        }
-+        FileWriter fw = new FileWriter(file.getAbsoluteFile());
-+        BufferedWriter bw = new BufferedWriter(fw);
-+        bw.write(content);
-+        bw.flush();
-+        bw.close();
-+    }
-+
-+    @Override
-+    public String getSessionId() {
-+        return sessionId;
-+    }
-+
-+    /**
-+     * Returns the driver
-+     * @return WebDriver
-+     */
-+    public WebDriver getDriver() {
-+        return driver;
-+    }
-+
 +    /**
 +     * Do Suacelabs related teardown things.  Mostly flag the tests as passed or failed.
 +     * @param passed
@@ -242,32 +242,54 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +            Thread.sleep(5000); // give the client message a chance to get processed on saucelabs side
 +        }
 +    }
-+}
-Index: rice-middleware/sampleapp/pom.xml
-===================================================================
---- rice-middleware/sampleapp/pom.xml	(revision 37693)
-+++ rice-middleware/sampleapp/pom.xml	(working copy)
-@@ -308,6 +308,23 @@
-       <artifactId>jaxb-impl</artifactId>
-     </dependency>
- 
-+    <dependency>
-+      <groupId>com.saucelabs</groupId>
-+      <artifactId>sauce_junit</artifactId>
-+      <version>[1.0.0,)</version>
-+      <scope>test</scope>
-+    </dependency>
-   </dependencies>
 +
-+  <repositories>
-+    <repository>
-+      <id>saucelabs-repository</id>
-+      <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
-+      <releases>
-+      </releases>
-+      <snapshots>
-+      </snapshots>
-+    </repository>
-+  </repositories>
- </project>
- 
++
++    private String curlSaveResourceString(String className, TestName testName, String resource) {
++        return "curl -o " + deriveResourceBaseNames(className, testName, resource)
++                + "-u " + authentication.getUsername() + ":" + authentication.getAccessKey()
++                + " https://saucelabs.com/rest/" + authentication.getUsername()+ "/jobs/" + sessionId + "/results/" + resource;
++    }
++
++    private String deriveResourceBaseNames(String className, TestName testName, String resource) {
++        return className + "." + testName.getMethodName() + "-"
++                + System.getProperty(SAUCE_PLATFORM_PROPERTY, Platform.UNIX.toString()) + "-"
++                + System.getProperty(SAUCE_BROWSER_PROPERTY) + "-"
++                + System.getProperty(SAUCE_VERSION_PROPERTY) + "-"
++                + System.getProperty(System.getProperty(WebDriverLegacyITBase.REMOTE_PUBLIC_USER_PROPERTY), "admin") + "-"
++                + System.getProperty("rice.version", "unknown_build") + "-"
++                + ITUtil.DTS + "-"
++                + resource;
++    }
++
++    /**
++     * Returns the driver
++     * @return WebDriver
++     */
++    public WebDriver getDriver() {
++        return driver;
++    }
++
++    @Override
++    public String getSessionId() {
++        return sessionId;
++    }
++
++    private String wgetnSaveResourceString(String className, TestName testName) {
++        String dir = deriveResourceBaseNames(className, testName, "");
++        dir = dir.substring(0, dir.length() -1);
++        return "mkdir " + dir + "; cd " + dir + "; " +
++                "wgetn https://saucelabs.com/rest/" + authentication.getUsername()+ "/jobs/" + sessionId + "/results/%04dscreenshot.jpg 0 50";
++    }
++
++    private void writeFile(String fileName, String content) throws IOException {
++        File file = new File(fileName);
++        if (!file.exists()) {
++            file.createNewFile();
++        }
++        FileWriter fw = new FileWriter(file.getAbsoluteFile());
++        BufferedWriter bw = new BufferedWriter(fw);
++        bw.write(content);
++        bw.flush();
++        bw.close();
++    }
++}
