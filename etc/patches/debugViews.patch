@@ -1,10 +1,7 @@
-Index: ../../../rice-middleware/sampleapp/src/main/resources/edu/sampleu/demo/kitchensink/DebugViews.xml
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
+Index: rice-middleware/sampleapp/src/main/resources/edu/sampleu/demo/kitchensink/DebugViews.xml
 ===================================================================
---- ../../../rice-middleware/sampleapp/src/main/resources/edu/sampleu/demo/kitchensink/DebugViews.xml	(revision )
-+++ ../../../rice-middleware/sampleapp/src/main/resources/edu/sampleu/demo/kitchensink/DebugViews.xml	(revision )
+--- rice-middleware/sampleapp/src/main/resources/edu/sampleu/demo/kitchensink/DebugViews.xml	(revision 0)
++++ rice-middleware/sampleapp/src/main/resources/edu/sampleu/demo/kitchensink/DebugViews.xml	(revision 0)
 @@ -0,0 +1,84 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +<!--
@@ -90,13 +87,10 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +  </bean>
 +
 +</beans>
-Index: ../../../rice-middleware/sampleapp/src/main/resources/SampleAppModuleBeans.xml
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
+Index: rice-middleware/sampleapp/src/main/resources/SampleAppModuleBeans.xml
 ===================================================================
---- ../../../rice-middleware/sampleapp/src/main/resources/SampleAppModuleBeans.xml	(revision 38066)
-+++ ../../../rice-middleware/sampleapp/src/main/resources/SampleAppModuleBeans.xml	(revision )
+--- rice-middleware/sampleapp/src/main/resources/SampleAppModuleBeans.xml	(revision 38175)
++++ rice-middleware/sampleapp/src/main/resources/SampleAppModuleBeans.xml	(working copy)
 @@ -135,6 +135,7 @@
          <value>classpath:edu/sampleu/kim/api/identity/employment/EmploymentStatusLookupView.xml</value>
          <value>classpath:edu/sampleu/kim/api/identity/employment/EmploymentTypeInquiryView.xml</value>
@@ -105,20 +99,16 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
  
          <!-- KEW -->
          <value>classpath:edu/sampleu/kew/uif/RuleAttributeInquiry.xml</value>
-Index: ../../../rice-middleware/sampleapp/src/main/webapp/WEB-INF/tags/rice-portal/channel/krad/kradTestLinks2.tag
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
+Index: rice-middleware/sampleapp/src/main/webapp/WEB-INF/tags/rice-portal/channel/krad/kradTestLinks2.tag
 ===================================================================
---- ../../../rice-middleware/sampleapp/src/main/webapp/WEB-INF/tags/rice-portal/channel/krad/kradTestLinks2.tag	(revision 38064)
-+++ ../../../rice-middleware/sampleapp/src/main/webapp/WEB-INF/tags/rice-portal/channel/krad/kradTestLinks2.tag	(revision )
-@@ -45,6 +45,9 @@
-     <li><a class="portal_link" target="_blank" href="${ConfigProperties.application.url}/kr-krad/uicomponents?viewId=Demo-ReadOnlyTestView&methodToCall=start">ReadOnly fields Demo</a></li>
+--- rice-middleware/sampleapp/src/main/webapp/WEB-INF/tags/rice-portal/channel/krad/kradTestLinks2.tag	(revision 38175)
++++ rice-middleware/sampleapp/src/main/webapp/WEB-INF/tags/rice-portal/channel/krad/kradTestLinks2.tag	(working copy)
+@@ -46,6 +46,8 @@
      <li><a class="portal_link" target="_blank" href="${ConfigProperties.application.url}/kr-krad/uicomponents?viewId=Demo-CollectionTotaling&methodToCall=start"/>Collection Totaling</a></li>
      <li><a class="portal_link" target="_blank" href="${ConfigProperties.application.url}/kr-krad/uicomponents?viewId=Demo-CollectionGrouping&methodToCall=start"/>Collection Grouping and Totaling</a></li>
-+
+     <%--<li><a class="portal_link" target="_blank" href="${ConfigProperties.application.url}/kr-krad/collegeapp?viewId=Training-CollegeApplicationView&methodToCall=start"/>Training - Student College Application</a></li>--%>
 +    <li><a class="portal_link" target="_blank" href="${ConfigProperties.application.url}/kr-krad/uicomponents?viewId=DebugView1"/>DebugView1</a></li>
 +    <li><a class="portal_link" target="_blank" href="${ConfigProperties.application.url}/kr-krad/uicomponents?viewId=DebugView2"/>DebugView2</a></li>
-     <%--<li><a class="portal_link" target="_blank" href="${ConfigProperties.application.url}/kr-krad/collegeapp?viewId=Training-CollegeApplicationView&methodToCall=start"/>Training - Student College Application</a></li>--%>
    </ul>
     <%--<br/>--%>
+ 

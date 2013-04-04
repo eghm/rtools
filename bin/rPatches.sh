@@ -23,7 +23,7 @@ echo -e "\nApplying rtools/etc/patches/SauceLabs.patch"
 patch -p0 <../rtools/etc/patches/SauceLabs.patch
 
 echo -e "\nApplying rtools/etc/patches/debugViews.patch"
-patch -p3 <../rtools/etc/patches/debugViews.patch
+patch -p0 <../rtools/etc/patches/debugViews.patch
 
 # disabled to see how the new iml files work
 #echo -e "\nApplying rtools/etc/intellij/intellij-iml.patch"
