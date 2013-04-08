@@ -1,8 +1,8 @@
 Index: rice-middleware/sampleapp/pom.xml
 ===================================================================
---- rice-middleware/sampleapp/pom.xml	(revision 38083)
+--- rice-middleware/sampleapp/pom.xml	(revision 38268)
 +++ rice-middleware/sampleapp/pom.xml	(working copy)
-@@ -316,6 +316,23 @@
+@@ -316,6 +316,22 @@
        <artifactId>jaxb-impl</artifactId>
      </dependency>
  
@@ -13,7 +13,8 @@ Index: rice-middleware/sampleapp/pom.xml
 +      <scope>test</scope>
 +    </dependency>
    </dependencies>
-+
+-</project>
+ 
 +  <repositories>
 +    <repository>
 +      <id>saucelabs-repository</id>
@@ -23,14 +24,13 @@ Index: rice-middleware/sampleapp/pom.xml
 +      <snapshots>
 +      </snapshots>
 +    </repository>
-+  </repositories>
- </project>
- 
++  </repositories></project>
++
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
 ===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 38090)
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 38268)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
-@@ -105,10 +105,10 @@
+@@ -146,10 +146,10 @@
          WebDriver driver = null;
          if (System.getProperty(REMOTE_DRIVER_SAUCELABS_PROPERTY) == null) {
              driver = getWebDriver();
@@ -45,7 +45,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.jav
          }
          driver.manage().timeouts().implicitlyWait(SETUP_URL_LOAD_WAIT_SECONDS, TimeUnit.SECONDS);
  
-@@ -133,10 +133,10 @@
+@@ -174,10 +174,10 @@
       */
      public static void tearDown(boolean passed, String sessionId, String testParam, String userParam) throws Exception {
  
