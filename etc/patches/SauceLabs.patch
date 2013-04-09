@@ -1,6 +1,6 @@
 Index: rice-middleware/sampleapp/pom.xml
 ===================================================================
---- rice-middleware/sampleapp/pom.xml	(revision 38268)
+--- rice-middleware/sampleapp/pom.xml	(revision 38306)
 +++ rice-middleware/sampleapp/pom.xml	(working copy)
 @@ -316,6 +316,22 @@
        <artifactId>jaxb-impl</artifactId>
@@ -28,7 +28,7 @@ Index: rice-middleware/sampleapp/pom.xml
 +
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
 ===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 38268)
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 38306)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
 @@ -146,10 +146,10 @@
          WebDriver driver = null;
@@ -255,7 +255,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +                + System.getProperty(SAUCE_PLATFORM_PROPERTY, Platform.UNIX.toString()) + "-"
 +                + System.getProperty(SAUCE_BROWSER_PROPERTY) + "-"
 +                + System.getProperty(SAUCE_VERSION_PROPERTY) + "-"
-+                + System.getProperty(System.getProperty(WebDriverLegacyITBase.REMOTE_PUBLIC_USER_PROPERTY), "admin") + "-"
++                + System.getProperty(WebDriverLegacyITBase.REMOTE_PUBLIC_USER_PROPERTY, "admin") + "-"
 +                + System.getProperty("rice.version", "unknown_build") + "-"
 +                + ITUtil.DTS + "-"
 +                + resource;
