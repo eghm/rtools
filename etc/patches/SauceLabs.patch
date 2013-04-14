@@ -1,6 +1,6 @@
 Index: rice-middleware/sampleapp/pom.xml
 ===================================================================
---- rice-middleware/sampleapp/pom.xml	(revision 38306)
+--- rice-middleware/sampleapp/pom.xml	(revision 38456)
 +++ rice-middleware/sampleapp/pom.xml	(working copy)
 @@ -316,6 +316,22 @@
        <artifactId>jaxb-impl</artifactId>
@@ -28,9 +28,9 @@ Index: rice-middleware/sampleapp/pom.xml
 +
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
 ===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 38306)
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 38456)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
-@@ -146,10 +146,10 @@
+@@ -111,10 +111,10 @@
          WebDriver driver = null;
          if (System.getProperty(REMOTE_DRIVER_SAUCELABS_PROPERTY) == null) {
              driver = getWebDriver();
@@ -45,7 +45,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.jav
          }
          driver.manage().timeouts().implicitlyWait(SETUP_URL_LOAD_WAIT_SECONDS, TimeUnit.SECONDS);
  
-@@ -174,10 +174,10 @@
+@@ -139,10 +139,10 @@
       */
      public static void tearDown(boolean passed, String sessionId, String testParam, String userParam) throws Exception {
  
