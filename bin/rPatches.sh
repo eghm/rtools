@@ -25,6 +25,9 @@ patch -p0 <../rtools/etc/patches/SauceLabs.patch
 echo -e "\nApplying rtools/etc/patches/debugViews.patch"
 patch -p0 <../rtools/etc/patches/debugViews.patch
 
+echo -e "\nApplying rtools/etc/patches/jsdoctk.patch
+patch -p0 < ../rtools/etc/patches/jsdoctk.patch
+
 # disabled to see how the new iml files work
 #echo -e "\nApplying rtools/etc/intellij/intellij-iml.patch"
 #patch -p1 <../rtools/etc/intellij/intellij-iml.patch
