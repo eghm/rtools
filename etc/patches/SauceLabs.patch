@@ -1,6 +1,6 @@
 Index: rice-middleware/sampleapp/pom.xml
 ===================================================================
---- rice-middleware/sampleapp/pom.xml	(revision 38456)
+--- rice-middleware/sampleapp/pom.xml	(revision 38567)
 +++ rice-middleware/sampleapp/pom.xml	(working copy)
 @@ -316,6 +316,22 @@
        <artifactId>jaxb-impl</artifactId>
@@ -26,45 +26,11 @@ Index: rice-middleware/sampleapp/pom.xml
 +    </repository>
 +  </repositories></project>
 +
-Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
-===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 38456)
-+++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
-@@ -111,10 +111,10 @@
-         WebDriver driver = null;
-         if (System.getProperty(REMOTE_DRIVER_SAUCELABS_PROPERTY) == null) {
-             driver = getWebDriver();
--//        } else {
--//            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
--//            saucelabs.setUp(className, testName);
--//            driver = saucelabs.getDriver();
-+        } else {
-+            SauceLabsWebDriverHelper saucelabs = new SauceLabsWebDriverHelper();
-+            saucelabs.setUp(className, testName);
-+            driver = saucelabs.getDriver();
-         }
-         driver.manage().timeouts().implicitlyWait(SETUP_URL_LOAD_WAIT_SECONDS, TimeUnit.SECONDS);
- 
-@@ -139,10 +139,10 @@
-      */
-     public static void tearDown(boolean passed, String sessionId, String testParam, String userParam) throws Exception {
- 
--//        if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
--//            SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY),
--//                    System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
--//        }
-+        if (System.getProperty(SauceLabsWebDriverHelper.SAUCE_PROPERTY) != null) {
-+            SauceLabsWebDriverHelper.tearDown(passed, sessionId, System.getProperty(SauceLabsWebDriverHelper.SAUCE_USER_PROPERTY),
-+                    System.getProperty(SauceLabsWebDriverHelper.SAUCE_KEY_PROPERTY));
-+        }
- 
-         if (System.getProperty(WebDriverLegacyITBase.REMOTE_PUBLIC_USERPOOL_PROPERTY) != null) {
-             ITUtil.getHTML(ITUtil.prettyHttp(System.getProperty(WebDriverLegacyITBase.REMOTE_PUBLIC_USERPOOL_PROPERTY) + "?test="
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java
 ===================================================================
 --- rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
-@@ -0,0 +1,228 @@
+@@ -0,0 +1,227 @@
 +/**
 + * Copyright 2005-2013 The Kuali Foundation
 + *
@@ -87,7 +53,6 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +import com.saucelabs.junit.SauceOnDemandTestWatcher;
 +import com.saucelabs.saucerest.SauceREST;
 +import org.junit.Assert;
-+import org.junit.rules.TestName;
 +import org.openqa.selenium.Platform;
 +import org.openqa.selenium.WebDriver;
 +import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -158,7 +123,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +     * @param testName
 +     * @throws Exception
 +     */
-+    public void setUp(String className, TestName testName) throws Exception {
++    public void setUp(String className, String testName) throws Exception {
 +        if (System.getProperty(SAUCE_USER_PROPERTY) == null || System.getProperty(SAUCE_KEY_PROPERTY) == null) {
 +            Assert.fail("-D" + SAUCE_USER_PROPERTY + " and -D" + SAUCE_KEY_PROPERTY + " must be set to saucelabs user and access key.");
 +        }
@@ -194,7 +159,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +        capabilities.setCapability("platform", System.getProperty(SAUCE_PLATFORM_PROPERTY, Platform.UNIX.toString()).replaceAll("_", " "));
 +        capabilities.setCapability("idle-timeout", 180);
 +        capabilities.setCapability("max-duration", 480);
-+        capabilities.setCapability("name",  className + "." + testName.getMethodName() + "-" + ITUtil.DTS);
++        capabilities.setCapability("name",  className + "." + testName + "-" + ITUtil.DTS);
 +        this.driver = new RemoteWebDriver(
 +                new URL("http://" + authentication.getUsername() + ":" + authentication.getAccessKey() + "@ondemand.saucelabs.com:80/wd/hub"),
 +                capabilities);
@@ -244,14 +209,14 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +    }
 +
 +
-+    private String curlSaveResourceString(String className, TestName testName, String resource) {
++    private String curlSaveResourceString(String className, String testName, String resource) {
 +        return "curl -o " + deriveResourceBaseNames(className, testName, resource)
 +                + "-u " + authentication.getUsername() + ":" + authentication.getAccessKey()
 +                + " https://saucelabs.com/rest/" + authentication.getUsername()+ "/jobs/" + sessionId + "/results/" + resource;
 +    }
 +
-+    private String deriveResourceBaseNames(String className, TestName testName, String resource) {
-+        return className + "." + testName.getMethodName() + "-"
++    private String deriveResourceBaseNames(String className, String testName, String resource) {
++        return className + "." + testName + "-"
 +                + System.getProperty(SAUCE_PLATFORM_PROPERTY, Platform.UNIX.toString()) + "-"
 +                + System.getProperty(SAUCE_BROWSER_PROPERTY) + "-"
 +                + System.getProperty(SAUCE_VERSION_PROPERTY) + "-"
@@ -274,7 +239,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +        return sessionId;
 +    }
 +
-+    private String wgetnSaveResourceString(String className, TestName testName) {
++    private String wgetnSaveResourceString(String className, String testName) {
 +        String dir = deriveResourceBaseNames(className, testName, "");
 +        dir = dir.substring(0, dir.length() -1);
 +        return "mkdir " + dir + "; cd " + dir + "; " +
