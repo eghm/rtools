@@ -31,8 +31,8 @@ cd db/impex/master/
 mvn -version >> ../../../impex.$DTS.out
 
 echo -e "\nImpexing $1. tail -f $R_HOME/logs/$rDir/impex.$DTS.out to follow progress."
-echo "mvn install -Pdb,mysql -Dimpex.url=jdbc:mysql://localhost:3306/$1 -Dimpex.database=$1 -Dimpex.username=$3 -Dimpex.password=$4 -Dimpex.dba.password=$2 $5 $6 $7 $8 $9"  >> ../../../impex.$DTS.out
-mvn install -Pdb,mysql -Dimpex.url=jdbc:mysql://localhost:3306/$1 -Dimpex.database=$1 -Dimpex.username=$3 -Dimpex.password=$4 -Dimpex.dba.password=$2 $5 $6 $7 $8 $9 >> ../../../impex.$DTS.out 2>&1
+echo "mvn install -U -Pdb,mysql -Dimpex.url=jdbc:mysql://localhost:3306/$1 -Dimpex.database=$1 -Dimpex.username=$3 -Dimpex.password=$4 -Dimpex.dba.password=$2 $5 $6 $7 $8 $9"  >> ../../../impex.$DTS.out
+mvn install -U -Pdb,mysql -Dimpex.url=jdbc:mysql://localhost:3306/$1 -Dimpex.database=$1 -Dimpex.username=$3 -Dimpex.password=$4 -Dimpex.dba.password=$2 $5 $6 $7 $8 $9 >> ../../../impex.$DTS.out 2>&1
 cd ../../..
 tail -n 15 impex.$DTS.out
 
