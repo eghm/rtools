@@ -27,6 +27,14 @@ export PASS="$3"
 
 # get the release and build from the given server
 wget http://$SERVER/portal.do -O portal.html
+if [ -s portal.html]
+then
+    echo "Sampleapp portal detected"
+else
+    echo "Sampleapp portal 404 tring KRAD sampleapp"
+    wget http://$SERVER/kr-krad/kradsampleapp?viewId=KradSampleAppHome -O portal.html
+fi
+
 grep "class=\"build\"" portal.html > version.xml
 # version_dirty.txt has a space before and after the build
 cut -f 3 -d : version.xml > version_dirty.txt
