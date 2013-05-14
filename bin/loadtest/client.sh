@@ -63,6 +63,7 @@ then
 fi
 
 wget -r -np -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS
+wget http://env11.rice.kuali.org/tomcat/logs/env.jsp -O env.html
 
 sipsTiff2Png.sh $(pwd)
 mkdir -p tiffs/$DTS
@@ -86,9 +87,11 @@ mv *.tiff tiffs/$DTS/
 
 
 mv *.jtl $DTS/
+mv *.pdf $DTS/
 mv *.png $DTS/
 mv *.log $DTS/
 mv *.txt $DTS/
+mv *.out $DTS/
 mv *.html $DTS/
 mv *.jmx $DTS/
 
@@ -104,11 +107,13 @@ export R_DESC=$JMETER_NAME
 
 export JM_NUM=$(xml sel -T -t -v "//stringProp[@name='ThreadGroup.num_threads']" *.jmx)
 export JM_RAMP=$(xml sel -T -t -v "//stringProp[@name='ThreadGroup.ramp_time']" *.jmx)
+export JM_LOOP=$(xml sel -T -t -v "//stringProp[@name='LoopController.loops']" *.jmx)
 
 contextSed.sh $(pwd)
 
 export WIKI_DTS=${DTS/\// }
+export WIKI_TITLE="$R_VERSION $R_DESC JMeter Load Test $JM_NUM x $JM_LOOP in $JM_RAMP seconds on $WIKI_DTS"
 
-/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$R_VERSION $R_DESC JMeter Load Test $JM_NUM in $JM_RAMP on $WIKI_DTS" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
+/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --file "wiki.txt"
 
-find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$R_VERSION $R_DESC JMeter Load Test $JM_NUM in $JM_RAMP on $WIKI_DTS" --file "{}" \;
+find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$WIKI_TITLE" --file "{}" \;
