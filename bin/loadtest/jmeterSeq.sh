@@ -1,7 +1,7 @@
 # $1 server, $2 jmeter test name without the .jmx $3 wiki username $4 wiki passtoken
-if [ ! -e "$1".jmx ] 
+if [ ! -e "$2".jmx ] 
 then
-	echo "$1.jmx doesn't exist, exiting."
+	echo "$2.jmx doesn't exist, exiting."
 	exit
 fi
 
