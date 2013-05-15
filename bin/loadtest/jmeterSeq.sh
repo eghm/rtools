@@ -1,4 +1,9 @@
 # $1 server, $2 jmeter test name without the .jmx $3 wiki username $4 wiki passtoken
+if [ ! -e "$1".jmx ] 
+then
+	echo "$1.jmx doesn't exist, exiting."
+	exit
+fi
 
 parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/loadtest/mkDtsTomcatLogDir.sh
 scp tomcat@env11.rice.kuali.org:dts.txt .
