@@ -8,7 +8,7 @@ then
     exit
 fi
 
-cd $T_LOGS ; mkdir -p bak ; mv *.out bak/ ; mv *.log bak/ ; mv *.txt bak/
+cd $T_LOGS ; mkdir -p bak ; mv *.out bak/ ; mv *.log bak/ ; mv *.txt bak/ ; mv *.hprof bak/ ; mv *.hprof.* /bak
 cd
 $CATALINA_HOME/bin/startup.sh
 sleep 120
