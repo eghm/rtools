@@ -18,3 +18,4 @@ $CATALINA_HOME/bin/startup.sh
 # wait for tomcat to be up
 sleep 120
 rm ~/dts.txt
+rm ~/CATALINA_OPTS_DEFAULT.txt
