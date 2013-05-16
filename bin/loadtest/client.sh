@@ -94,6 +94,7 @@ mv *.txt $DTS/
 mv *.out $DTS/
 mv *.html $DTS/
 mv *.jmx $DTS/
+mv *.hprof $DTS/
 
 cd $DTS
 
