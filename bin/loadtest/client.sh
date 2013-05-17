@@ -27,7 +27,7 @@ export PASS="$3"
 
 # get the release and build from the given server
 wget http://$SERVER/portal.do -O portal.html
-if [ -s portal.html]
+if [ -s portal.html ]
 then
     echo "Sampleapp portal detected"
 else
