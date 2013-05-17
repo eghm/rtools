@@ -25,5 +25,5 @@ do
 	echo "{code}" >> wiki.txt
 done;
 
-pngContextSed.sh $1
+$R_HOME/rtools/bin/loadtest/pngContextSed.sh $1
 

@@ -111,7 +111,7 @@ export JM_NUM=$(xml sel -T -t -v "//stringProp[@name='ThreadGroup.num_threads']"
 export JM_RAMP=$(xml sel -T -t -v "//stringProp[@name='ThreadGroup.ramp_time']" *.jmx)
 export JM_LOOP=$(xml sel -T -t -v "//stringProp[@name='LoopController.loops']" *.jmx)
 
-contextSed.sh $(pwd)
+$R_HOME/rtools/bin/loadtest/contextSed.sh $(pwd)
 
 export WIKI_DTS=${DTS/\// }
 export WIKI_TITLE="$R_VERSION $R_DESC JMeter Load Test $JM_NUM x $JM_LOOP in $JM_RAMP seconds on $WIKI_DTS"
