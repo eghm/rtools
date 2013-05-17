@@ -5,7 +5,7 @@ then
 	exit
 fi
 
-parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/loadtest/mkDtsTomcatLogDir.sh
+parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/loadtest/mkDtsTomcatLogDir.sh $5
 scp tomcat@env11.rice.kuali.org:dts.txt .
 /java/jmeter-2.8/bin/jmeter.sh -n -t $2.jmx
 sleep 120
