@@ -30,21 +30,22 @@ wget http://$SERVER/portal.do -O portal.html
 if [ -s portal.html ]
 then
     echo "Sampleapp portal detected"
+    grep "class=\"build\"" portal.html > version.xml
+    # version_dirty.txt has a space before and after the build
+    cut -f 3 -d : version.xml > version_dirty.txt
+    export DIRTY_VERSION=$(cat version_dirty.txt)
+    export R_VERSION=${DIRTY_VERSION/ /}
+    echo $R_VERSION > version.txt
+    rm version.xml
+    rm version_dirty.txt
+    # now get the release from version.txt
+    cut -f 1 -d - version.txt > release.txt
 else
     echo "Sampleapp portal 404 tring KRAD sampleapp"
     wget http://$SERVER/kr-krad/kradsampleapp?viewId=KradSampleAppHome -O portal.html
+    echo "2.3.0" > release.txt
 fi
 
-grep "class=\"build\"" portal.html > version.xml
-# version_dirty.txt has a space before and after the build
-cut -f 3 -d : version.xml > version_dirty.txt
-export DIRTY_VERSION=$(cat version_dirty.txt)
-export R_VERSION=${DIRTY_VERSION/ /}
-echo $R_VERSION > version.txt
-rm version.xml
-rm version_dirty.txt
-# now get the release from version.txt
-cut -f 1 -d - version.txt > release.txt
 export R_RELEASE=$(cat release.txt)
 echo $R_RELEASE
 rm release.txt
