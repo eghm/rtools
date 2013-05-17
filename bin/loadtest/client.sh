@@ -64,6 +64,7 @@ fi
 
 wget -r -np -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS
 wget http://env11.rice.kuali.org/tomcat/logs/env.jsp -O env.html
+echo "TODO parse the JAVA_OPTS and CATALINA_OPTS out of env.html (attached) and put into jvm.txt for inclusion in the wiki page." > jvm.txe
 
 sipsTiff2Png.sh $(pwd)
 mkdir -p tiffs/$DTS
