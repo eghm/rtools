@@ -1,4 +1,4 @@
-# $1 server, $2 jmeter test name without the .jmx $3 wiki username $4 wiki passtoken
+# $1 server, $2 jmeter test name without the .jmx $3 wiki username $4 wiki passtoken $5 java agent line to be appended to CATALINA_OPTS
 if [ ! -e "$2".jmx ] 
 then
 	echo "$2.jmx doesn't exist, exiting."
