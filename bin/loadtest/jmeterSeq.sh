@@ -6,7 +6,8 @@ then
 fi
 
 parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/loadtest/mkDtsTomcatLogDir.sh $5
-scp tomcat@env11.rice.kuali.org:dts.txt .
+scp tomcat@$1:dts.txt .
+wget http://$1/tomcat/logs/env.jsp -O env.html
 /java/jmeter-2.8/bin/jmeter.sh -n -t $2.jmx
 sleep 120
 parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/loadtest/mvTomcatLogs2Dts.sh
