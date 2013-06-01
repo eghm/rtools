@@ -11,6 +11,6 @@ wget http://$1/tomcat/logs/env.jsp -O env.html
 $JMETER_HOME/bin/jmeter.sh -n -t $2.jmx -Jthreads=$3 -Jloops=$4 -Jrampseconds=$5
 sleep 120
 parallel --tag --nonall --sshloginfile ~/servers.txt rtools/bin/loadtest/mvTomcatLogs2Dts.sh
-$R_HOME/rtools/bin/loadtest/client.sh $1 $6 $7
+$R_HOME/rtools/bin/loadtest/client2.sh $1 $6 $7 $3 $4 $5
 
 
