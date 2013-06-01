@@ -1,6 +1,6 @@
 # $1 optional line to be appended to CATALINA_OPTS_DEFAULT.txt and set as CATALINA_OPTS for the startup.sh call
 $CATALINA_HOME/bin/shutdown.sh
-sleep 60
+sleep 90
 export T_LOGS=$CATALINA_HOME/logs
 if [ -e $T_LOGS/catalina.pid ]
 then
@@ -28,4 +28,4 @@ fi
 echo "$CATALINA_OPTS" > CATALINA_OPTS.txt
 
 $CATALINA_HOME/bin/startup.sh
-sleep 120
+sleep 250

@@ -1,5 +1,5 @@
 $CATALINA_HOME/bin/shutdown.sh
-sleep 60
+sleep 90
 export T_LOGS=$CATALINA_HOME/logs
 if [ -e $T_LOGS/catalina.pid ]
 then
@@ -17,6 +17,6 @@ mv $T_LOGS/catalina.out $DTS_LOGS/ ; mv $T_LOGS/*.log $DTS_LOGS/ ; mv $T_LOGS/lo
 # start tomcat backup for wget of logs
 $CATALINA_HOME/bin/startup.sh
 # wait for tomcat to be up
-sleep 120
+sleep 250
 rm ~/dts.txt
 rm ~/CATALINA_OPTS_DEFAULT.txt
