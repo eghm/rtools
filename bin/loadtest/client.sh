@@ -64,6 +64,12 @@ then
 fi
 
 wget -r -np -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS
+if [ -e "$DTS" ]
+then
+    echo "$DTS directory does not exist!  Tomcat probably down!  Exiting"
+    exit;
+fi
+
 echo "TODO parse the JAVA_OPTS and CATALINA_OPTS out of env.html (attached) and put into jvm.txt for inclusion in the wiki page." > jvm.txt
 
 sipsTiff2Png.sh $(pwd)
