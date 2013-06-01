@@ -3,9 +3,10 @@ sleep 60
 export T_LOGS=$CATALINA_HOME/logs
 if [ -e $T_LOGS/catalina.pid ]
 then
-    echo "$T_LOGS/catalina.pid exists!  Tomcat didn't shutdown cleanly."
-    # TODO kill with threaddump
-    exit
+    C_PID=$(cat $T_LOGS/catalina.pid)
+    echo "$T_LOGS/catalina.pid exists!  Tomcat didn't shutdown cleanly.  Killing $C_PID"
+    kill -9 $C_PID
+    rm $T_LOGS/catalina.pid
 fi
 
 export DTS=$(cat ~/dts.txt)
