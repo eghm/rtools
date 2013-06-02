@@ -32,9 +32,9 @@ export JM_RAMP="$6"
 
 #$R_HOME/rtools/bin/loadtest/contextSed2.sh $(pwd) $JM_NUM $JM_LOOP $JM_RAMP
 #cd $1
-rm wiki.txt
+#rm wiki.txt
 
-echo "$JM_NUM users x $JM_LOOP ramped up in $JM_RAMP seconds." >> wiki.txt
+cat testparms.txt > wiki.txt
 
 # *.jmx but should only be one
 for f in jvm.txt;

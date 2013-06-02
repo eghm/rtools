@@ -1,4 +1,4 @@
-# $1 SERVER
+# $1 SERVER $2 USER $3 PASS $4 JM_NUM $5 JM_LOOP $6 JM_RAMP
 # RUN JMETER and have test and outputs in the directory this is run from
 if [ -z "$1" ]
 then
@@ -29,6 +29,7 @@ then
 fi
 
 export SERVER="$1"
+echo "$4 users x $5 ramped up in $6 seconds." > testparams.txt
 
 # get the release and build from the given server
 wget http://$SERVER/portal.do -O portal.html
