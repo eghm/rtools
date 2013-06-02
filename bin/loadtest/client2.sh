@@ -77,7 +77,7 @@ then
     exit;
 fi
 
-echo "TODO parse the JAVA_OPTS and CATALINA_OPTS out of env.html (attached) and put into jvm.txt for inclusion in the wiki page." > jvm.txt
+echo "TODO parse the JAVA_OPTS and CATALINA_OPTS out of env.html (attached) and put into jvm.txt for inclusion in the wiki page." >> jvm.txt
 
 sipsTiff2Png.sh $(pwd)
 mkdir -p tiffs/$DTS
@@ -124,12 +124,30 @@ export JM_NUM=$4
 export JM_LOOP=$5
 export JM_RAMP=$6
 
-$R_HOME/rtools/bin/loadtest/contextSed2.sh $(pwd)
+#$R_HOME/rtools/bin/loadtest/contextSed2.sh $(pwd) $JM_NUM $JM_LOOP $JM_RAMP
+#cd $1
+#rm wiki.txt
+
+# *.jmx but should only be one
+export JM_NUM=$2
+export JM_RAMP=$3
+export JM_LOOP=$4
+echo "$JM_NUM users x $JM_LOOP ramped up in $JM_RAMP seconds." >> wiki.txt
+
+for f in jvm.txt;
+do
+	echo "{code}" >> wiki.txt
+    cat "$f" >> wiki.txt
+	echo "{code}" >> wiki.txt
+done;
+
+$R_HOME/rtools/bin/loadtest/pngContextSed.sh $(pwd)
+
 
 export WIKI_DTS=${DTS/\// }
 export WIKI_TITLE="$R_VERSION $R_DESC JMeter Load Test $JM_NUM x $JM_LOOP in $JM_RAMP seconds on $WIKI_DTS"
 
-echo /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
+#echo /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
 /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
 
 find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$WIKI_TITLE" --file "{}" \;
