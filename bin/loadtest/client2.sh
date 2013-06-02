@@ -68,7 +68,7 @@ then
     exit;
 fi
 
-wget -r -np -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS
+wget -r --no-parent -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS/
 if [ ! -d "$DTS" ]
 then
     echo "$DTS directory does not exist!  Tomcat probably down!  Exiting"
