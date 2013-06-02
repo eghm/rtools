@@ -81,8 +81,8 @@ echo "TODO parse the JAVA_OPTS and CATALINA_OPTS out of env.html (attached) and 
 $JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png ResponseTimesOverTime.png --input-jtl ResultsTable.jtl --plugin-type ResponseTimesOverTime --width 800 --height 600
 $JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png ThreadsStateOverTime.png --input-jtl ResultsTable.jtl --plugin-type ThreadsStateOverTime --width 800 --height 600
 $JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png BytesThroughputOverTime.png --input-jtl ResultsTable.jtl --plugin-type BytesThroughputOverTime --width 800 --height 600
-$JMETER_HOME/ext/JMeterPluginsCMD.sh --generate-png HitsPerSecond.png --input-jtl ResultsTable.jtl --plugin-type HitsPerSecond --width 800 --height 600
-$JMETER_HOMElib/ext/JMeterPluginsCMD.sh --generate-png LatenciesOverTime.png --input-jtl ResultsTable.jtl --plugin-type LatenciesOverTime --width 800 --height 600
+$JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png HitsPerSecond.png --input-jtl ResultsTable.jtl --plugin-type HitsPerSecond --width 800 --height 600
+$JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png LatenciesOverTime.png --input-jtl ResultsTable.jtl --plugin-type LatenciesOverTime --width 800 --height 600
 $JMETER_HOME/ext/JMeterPluginsCMD.sh --generate-png PerfMon.png --input-jtl ResultsTable.jtl --plugin-type PerfMon --width 800 --height 600
 $JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png ResponseCodesPerSecond.png --input-jtl ResultsTable.jtl --plugin-type ResponseCodesPerSecond --width 800 --height 600
 $JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png ResponseTimesDistribution.png --input-jtl ResultsTable.jtl --plugin-type ResponseTimesDistribution --width 800 --height 600
