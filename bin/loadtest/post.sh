@@ -1,4 +1,4 @@
-# $1 SERVER $2 USER $3 PASS
+# $1 USER $2 PASS
 
 if [ -e dts.txt ]
 then
@@ -8,6 +8,12 @@ fi
 if [ -z "$DTS" ]
 then
     echo "Required variable, DTS"
+    exit;
+fi
+
+if [ -z "$CONFLUENCE_HOME" ]
+then
+    echo "Required variable, CONFLUENCE_HOME"
     exit;
 fi
 
@@ -23,9 +29,8 @@ do
 done
 export R_DESC=$JMETER_NAME
 
-export SERVER="$1"
-export USER="$2"
-export PASS="$3"
+export USER="$1"
+export PASS="$2"
 
 export TESTPARAMS=$(cat testparams.txt)
 echo "$TESTPARAMS" > wiki.txt
@@ -45,7 +50,7 @@ export WIKI_TITLE="$R_VERSION $R_DESC JMeter Load Test $TESTPARAMS on $WIKI_DTS"
 
 export R_RELEASE=$(cat release.txt)
 
-#echo /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
-/java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
+#echo $CONFLUENCE_HOME/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
+$CONFLUENCE_HOME/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
 
-find ./ -name '*.*' -exec /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$WIKI_TITLE" --file "{}" \;
+find ./ -name '*.*' -exec $CONFLUENCE_HOME/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addAttachment --space "KULRICE" --title "$WIKI_TITLE" --file "{}" \;
