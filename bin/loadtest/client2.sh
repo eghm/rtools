@@ -126,7 +126,7 @@ export JM_RAMP=$6
 
 #$R_HOME/rtools/bin/loadtest/contextSed2.sh $(pwd) $JM_NUM $JM_LOOP $JM_RAMP
 #cd $1
-#rm wiki.txt
+rm wiki.txt
 
 # *.jmx but should only be one
 export JM_NUM=$2
