@@ -1,4 +1,4 @@
-# $1 SERVER $2 USER $3 PASS $4 JM_NUM $5 JM_LOOP $6 JM_RAMP
+# $1 SERVER $2 USER $3 PASS
 
 if [ -e dts.txt ]
 then
@@ -26,15 +26,9 @@ export R_DESC=$JMETER_NAME
 export SERVER="$1"
 export USER="$2"
 export PASS="$3"
-export JM_NUM="$4"
-export JM_LOOP="$5"
-export JM_RAMP="$6"
 
-#$R_HOME/rtools/bin/loadtest/contextSed2.sh $(pwd) $JM_NUM $JM_LOOP $JM_RAMP
-#cd $1
-#rm wiki.txt
-
-cat testparms.txt > wiki.txt
+export TESTPARAMS=$(cat testparams.txt)
+echo "$TESTPARAMS" > wiki.txt
 
 # *.jmx but should only be one
 for f in jvm.txt;
@@ -47,7 +41,7 @@ done;
 $R_HOME/rtools/bin/loadtest/pngContextSed.sh $(pwd)
 
 export WIKI_DTS=${DTS/\// }
-export WIKI_TITLE="$R_VERSION $R_DESC JMeter Load Test $JM_NUM x $JM_LOOP in $JM_RAMP seconds on $WIKI_DTS"
+export WIKI_TITLE="$R_VERSION $R_DESC JMeter Load Test $TESTPARAMS on $WIKI_DTS"
 
 export R_RELEASE=$(cat release.txt)
 

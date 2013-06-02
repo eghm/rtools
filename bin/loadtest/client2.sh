@@ -29,7 +29,7 @@ then
 fi
 
 export SERVER="$1"
-echo "$4 users x $5 ramped up in $6 seconds." > testparams.txt
+echo "$4 users x $5 ramped up in $6 seconds" > testparams.txt
 
 # get the release and build from the given server
 wget http://$SERVER/portal.do -O portal.html
