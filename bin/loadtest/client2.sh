@@ -53,7 +53,6 @@ fi
 
 export R_RELEASE=$(cat release.txt)
 echo $R_RELEASE
-rm release.txt
 
 # dts.txt doesn't exist since the loadtest log mv script (needs to be done before the wget of the logs) deletes it.....
 #scp tomcat@$SERVER:dts.txt .

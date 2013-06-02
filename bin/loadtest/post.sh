@@ -49,6 +49,8 @@ $R_HOME/rtools/bin/loadtest/pngContextSed.sh $(pwd)
 export WIKI_DTS=${DTS/\// }
 export WIKI_TITLE="$R_VERSION $R_DESC JMeter Load Test $JM_NUM x $JM_LOOP in $JM_RAMP seconds on $WIKI_DTS"
 
+export R_RELEASE=$(cat release.txt)
+
 #echo /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
 /java/confluence-cli-3.1.0/confluence.sh -s https://wiki.kuali.org/ -u $USER -p $PASS --action addPage --space "KULRICE" --title "$WIKI_TITLE" --parent "Rice $R_RELEASE Load Testing" --file "wiki.txt"
 
