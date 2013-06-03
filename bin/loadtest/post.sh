@@ -17,12 +17,17 @@ then
     exit;
 fi
 
-if [ -f *.tiff ]
-then
-    sipsTiff2Png.sh $(pwd)
-    mkdir -p ../../tiffs/$DTS
-    mv *.tiff ../../tiffs/$DTS/
-fi
+
+for file in ./*.tiff
+do
+    if [ -f "${file}" ];
+	then
+        sipsTiff2Png.sh $(pwd)
+        mkdir -p ../../tiffs/$DTS
+        mv *.tiff ../../tiffs/$DTS/
+        break
+    fi
+done;
 
 # there should be only one jmx file, we'll use its name as part of the wiki page title
 for f in *.jmx;
@@ -35,7 +40,7 @@ export R_DESC=$JMETER_NAME
 export USER="$1"
 export PASS="$2"
 
-if [ ! -f testparams.txt ]
+if [ ! -f testparams.txt ];
 then
 	echo "no testparams.txt file found.  exiting"
 	exit;
