@@ -44,7 +44,8 @@ if [ ! -f testparams.txt ]
 then
 	echo "no testparams.txt file found.  exiting"
 	exit;
-if
+fi
+	
 export TESTPARAMS=$(cat testparams.txt)
 echo "$TESTPARAMS" > wiki.txt
 
