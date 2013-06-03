@@ -84,7 +84,7 @@ then
     exit;
 fi
 
-$R_HOME/bin/loadtesting/jmeterGraphs.sh
+$R_HOME/bin/loadtesting/jmeterGraphs.sh $(pwd)
 
 mv *.jtl $DTS/
 mv *.pdf $DTS/

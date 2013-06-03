@@ -1,3 +1,11 @@
+if [ -z "$1" ]
+then
+    echo "Required arguemnet location of the jtl files missing."
+    exit;
+fi
+
+cd $1
+
 if [ -z "$JMETER_HOME" ]
 then
     echo "Required env var JMETER_HOME not set."
