@@ -84,8 +84,6 @@ then
     exit;
 fi
 
-echo "TODO parse the JAVA_OPTS and CATALINA_OPTS out of env.html (attached) and put into jvm.txt for inclusion in the wiki page." >> jvm.txt
-
 $R_HOME/bin/loadtesting/jmeterGraphs.sh
 
 mv *.jtl $DTS/

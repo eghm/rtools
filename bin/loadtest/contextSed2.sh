@@ -21,6 +21,7 @@ echo "$JM_NUM users x $JM_LOOP ramped up in $JM_RAMP seconds." >> wiki.txt
 for f in jvm.txt;
 do
 	echo "{code}" >> wiki.txt
+    echo "TODO parse the JAVA_OPTS and CATALINA_OPTS out of env.html (attached) and put into jvm.txt for inclusion in the wiki page." >> wiki.txt
     cat "$f" >> wiki.txt
 	echo "{code}" >> wiki.txt
 done;
