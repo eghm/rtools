@@ -17,9 +17,12 @@ then
     exit;
 fi
 
-sipsTiff2Png.sh $(pwd)
-mkdir -p ../../tiffs/$DTS
-mv *.tiff ../../tiffs/$DTS/
+if [ -f *.tiff ]
+then
+    sipsTiff2Png.sh $(pwd)
+    mkdir -p ../../tiffs/$DTS
+    mv *.tiff ../../tiffs/$DTS/
+fi
 
 # there should be only one jmx file, we'll use its name as part of the wiki page title
 for f in *.jmx;
@@ -32,6 +35,11 @@ export R_DESC=$JMETER_NAME
 export USER="$1"
 export PASS="$2"
 
+if [ ! -f testparams.txt ]
+then
+	echo "no testparams.txt file found.  exiting"
+	exit;
+if
 export TESTPARAMS=$(cat testparams.txt)
 echo "$TESTPARAMS" > wiki.txt
 
