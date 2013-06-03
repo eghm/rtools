@@ -17,7 +17,6 @@ then
     exit;
 fi
 
-
 for file in ./*.tiff;
 do
     if [ -f "${file}" ]
@@ -34,7 +33,8 @@ for f in *.jmx;
 do
     jmetername=$(basename "$f")
     export JMETER_NAME="${jmetername%.*}"
-done
+done;
+
 export R_DESC=$JMETER_NAME
 
 export USER="$1"
