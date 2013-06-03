@@ -18,9 +18,9 @@ then
 fi
 
 
-for file in ./*.tiff
+for file in ./*.tiff;
 do
-    if [ -f "${file}" ];
+    if [ -f "${file}" ]
 	then
         sipsTiff2Png.sh $(pwd)
         mkdir -p ../../tiffs/$DTS
@@ -40,7 +40,7 @@ export R_DESC=$JMETER_NAME
 export USER="$1"
 export PASS="$2"
 
-if [ ! -f testparams.txt ];
+if [ ! -f testparams.txt ]
 then
 	echo "no testparams.txt file found.  exiting"
 	exit;
