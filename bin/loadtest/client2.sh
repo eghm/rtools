@@ -34,6 +34,12 @@ then
     echo "$2 users x $3 ramped up in $4 seconds" > testparams.txt
 fi
 
+if [ ! -e testparams.txt ]
+then
+    echo "testparams.txt does not exist.  Exiting."
+    exit;
+fi
+
 # get the release and build from the given server
 wget http://$SERVER/portal.do -O portal.html
 if [ -s portal.html ]
@@ -98,4 +104,4 @@ mv *.hprof $DTS/
 
 cd $DTS
 
-echo run post.sh once screen shots have been copied to the DTSdirectory.
+echo "run post.sh once screen shots have been copied to the DTS ( $DTS ) directory."
