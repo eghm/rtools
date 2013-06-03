@@ -13,7 +13,7 @@ then
     exit;
 fi
 
-if [ ! -e testparams.txt]
+if [ ! -e testparams.txt ]
 then
     if [ -z "$4" ]
     then
@@ -55,7 +55,7 @@ else
     echo "2.3.0" > release.txt
 fi
 
-if [ !- e portal.html ]
+if [ ! -e portal.html ]
 then
     echo "portal.html does not exist!  Tomcat probably down or Dumping Memory!  Exiting"
     exit
@@ -98,4 +98,4 @@ mv *.hprof $DTS/
 
 cd $DTS
 
-echo run post.sh once screen shots have been copied to this directory.
+echo run post.sh once screen shots have been copied to the DTSdirectory.
