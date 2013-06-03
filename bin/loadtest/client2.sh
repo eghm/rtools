@@ -9,25 +9,25 @@ export SERVER="$1"
 
 if [ -z "$R_HOME" ]
 then
-    echo "Required env var R_HOME not set."
+    echo -e \n"Required env var R_HOME not set."
     exit;
 fi
 
 if [ ! -e testparams.txt ]
 then
+    if [ -z "$2" ]
+    then
+        echo -e "\nRequired parameter, threads (users) missing"
+        exit;
+    fi
+    if [ -z "$3" ]
+    then
+        echo -e "\nRequired parameter, loops missing"
+        exit;
+    fi
     if [ -z "$4" ]
     then
-        echo "Required parameter, threads (users) missing"
-        exit;
-    fi
-    if [ -z "$5" ]
-    then
-        echo "Required parameter, loops missing"
-        exit;
-    fi
-    if [ -z "$6" ]
-    then
-        echo "Required parameter, rampseconds missing"
+        echo -e "\nRequired parameter, rampseconds missing"
         exit;
     fi
 
@@ -36,7 +36,7 @@ fi
 
 if [ ! -e testparams.txt ]
 then
-    echo "testparams.txt does not exist.  Exiting."
+    echo -e "\ntestparams.txt does not exist.  Exiting."
     exit;
 fi
 
@@ -63,7 +63,7 @@ fi
 
 if [ ! -e portal.html ]
 then
-    echo "portal.html does not exist!  Tomcat probably down or Dumping Memory!  Exiting"
+    echo -e "\nportal.html does not exist!  Tomcat probably down or Dumping Memory!  Exiting"
     exit
 fi
 
@@ -79,14 +79,14 @@ fi
 
 if [ -z "$DTS" ]
 then
-    echo "Required variable, DTS"
+    echo -e "\nRequired variable, DTS"
     exit;
 fi
 
 wget -r --no-parent -nH --cut-dirs=2 -R index.html http://$SERVER/tomcat/logs/$DTS/
 if [ ! -d "$DTS" ]
 then
-    echo "$DTS directory does not exist!  Tomcat probably down or Dumping Memory!  Exiting"
+    echo -e "\n$DTS directory does not exist!  Tomcat probably down or Dumping Memory!  Exiting"
     exit;
 fi
 
