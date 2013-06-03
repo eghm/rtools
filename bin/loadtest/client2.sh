@@ -13,7 +13,7 @@ then
     exit;
 fi
 
-if [ ! -f testparams.txt]
+if [ ! -e testparams.txt]
 then
     if [ -z "$4" ]
     then
