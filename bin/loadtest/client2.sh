@@ -41,6 +41,7 @@ then
 fi
 
 # get the release and build from the given server
+# TODO it would probably be better if we got this when we get the env.jsp
 wget http://$SERVER/portal.do -O portal.html
 if [ -s portal.html ]
 then
@@ -90,7 +91,7 @@ then
     exit;
 fi
 
-$R_HOME/rtools/bin/loadtesting/jmeterGraphs.sh $(pwd)
+$R_HOME/rtools/bin/loadtest/jmeterGraphs.sh $(pwd)
 
 mv *.jtl $DTS/
 mv *.pdf $DTS/
