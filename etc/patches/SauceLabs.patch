@@ -20,7 +20,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 ===================================================================
 --- rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
-@@ -0,0 +1,242 @@
+@@ -0,0 +1,251 @@
 +/**
 + * Copyright 2005-2013 The Kuali Foundation
 + *
@@ -168,11 +168,14 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +
 +        // TODO it would be better to do these at tear down, passing state could then be included in names, but requires more parameters
 +        try {
-+            String resources = curlSaveResourceString(className, testName, "selenium-server.log") + "\n"
++            String dir = determineSaveDir(className, testName);
++            String resources = "mkdir " + dir + "; cd " + dir + "; " + "\n"
++                    + curlSaveResourceString(className, testName, "selenium-server.log") + "\n"
 +                    + curlSaveResourceString(className, testName, "video.flv") + "\n"
-+                    + wgetnSaveResourceString(className, testName);
++                    + wgetnSaveResourceString(className, testName) + "\n"
++                    + "cd ../\n";
 +            System.out.println(resources);
-+            writeFile("SauceLabsResources.sh", resources);
++            writeFile("SauceLabsResources" + dir + ".sh", resources);
 +        } catch (Exception e) {
 +            System.out.println("Exception while writing SauceLabsResources.sh " + e.getMessage());
 +            System.out.println(curlSaveResourceString(className, testName, "selenium-server.log"));
@@ -243,10 +246,16 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +    }
 +
 +    private String wgetnSaveResourceString(String className, String testName) {
++        String dir = determineSaveDir(className, testName);
++        // http://www.jwz.org/hacks/wgetn
++        return "wgetn https://saucelabs.com/rest/" + authentication.getUsername()+ "/jobs/"
++                + sessionId + "/results/%04dscreenshot.jpg 0 50";
++    }
++
++    private String determineSaveDir(String className, String testName) {
 +        String dir = deriveResourceBaseNames(className, testName, "");
 +        dir = dir.substring(0, dir.length() -1);
-+        return "mkdir " + dir + "; cd " + dir + "; " + "wgetn https://saucelabs.com/rest/" +
-+                authentication.getUsername()+ "/jobs/" + sessionId + "/results/%04dscreenshot.jpg 0 50";
++        return dir;
 +    }
 +
 +    private void writeFile(String fileName, String content) throws IOException {
