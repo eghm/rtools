@@ -20,7 +20,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 ===================================================================
 --- rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDriverHelper.java	(revision 0)
-@@ -0,0 +1,236 @@
+@@ -0,0 +1,242 @@
 +/**
 + * Copyright 2005-2013 The Kuali Foundation
 + *
@@ -66,6 +66,11 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 + *
 + */
 +public class SauceLabsWebDriverHelper implements SauceOnDemandSessionIdProvider {
++
++    /**
++     * remote.driver.saucelabs.pop.disable
++     */
++    public static final String SAUCE_POPUP_PROPERTY = "remote.driver.saucelabs.pop.disable";
 +
 +    /**
 +     * remote.driver.saucelabs
@@ -154,6 +159,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +        capabilities.setCapability("idle-timeout", 180);
 +        capabilities.setCapability("max-duration", 480);
 +        capabilities.setCapability("name",  className + "." + testName + "-" + ITUtil.DTS);
++        capabilities.setCapability("disable-popup-handler", System.getProperty(SAUCE_POPUP_PROPERTY, "false"));
 +
 +        this.driver = new RemoteWebDriver(
 +                new URL("http://" + authentication.getUsername() + ":" + authentication.getAccessKey() + "@ondemand.saucelabs.com:80/wd/hub"),
@@ -259,7 +265,7 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +}
 Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java
 ===================================================================
---- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 39655)
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(revision 39677)
 +++ rice-middleware/sampleapp/src/it/java/edu/samplu/common/WebDriverUtil.java	(working copy)
 @@ -134,10 +134,10 @@
          WebDriver driver = null;
