@@ -214,8 +214,8 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +
 +    private String curlSaveResourceString(String className, String testName, String resource) {
 +        return "curl -o " + deriveResourceBaseNames(className, testName, resource)
-+                + "-u " + authentication.getUsername() + ":" + authentication.getAccessKey()
-+                + " https://saucelabs.com/rest/" + authentication.getUsername()+ "/jobs/" + sessionId + "/results/" + resource;
++                + " -u " + authentication.getUsername() + ":" + authentication.getAccessKey()
++                + " http://saucelabs.com/rest/" + authentication.getUsername()+ "/jobs/" + sessionId + "/results/" + resource;
 +    }
 +
 +    private String deriveResourceBaseNames(String className, String testName, String resource) {
