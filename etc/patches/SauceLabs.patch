@@ -169,10 +169,10 @@ Index: rice-middleware/sampleapp/src/it/java/edu/samplu/common/SauceLabsWebDrive
 +        // TODO it would be better to do these at tear down, passing state could then be included in names, but requires more parameters
 +        try {
 +            String dir = determineSaveDir(className, testName);
-+            String resources = "mkdir " + dir + "; cd " + dir + "; " + "\n"
-+                    + curlSaveResourceString(className, testName, "selenium-server.log") + "\n"
-+                    + curlSaveResourceString(className, testName, "video.flv") + "\n"
-+                    + wgetnSaveResourceString(className, testName) + "\n"
++            String resources = "mkdir " + dir + " ; cd " + dir + " ; \n"
++                    + curlSaveResourceString(className, testName, "selenium-server.log") + " ; \n"
++                    + curlSaveResourceString(className, testName, "video.flv") + " ; \n"
++                    + wgetnSaveResourceString(className, testName) + " ; \n"
 +                    + "cd ../\n";
 +            System.out.println(resources);
 +            writeFile("SauceLabsResources" + dir + ".sh", resources);
