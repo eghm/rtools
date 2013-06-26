@@ -106,6 +106,7 @@ rPatches.sh
 echo -e "\nCreating MySQL config files"
 rCommonTestConfigMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
 rAppConfigSampleMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS 8080
+rAppConfigKradSampleMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS 8080
 rAppConfigStandaloneMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
 rSpyProperties.sh $1
 rLogin.sh
