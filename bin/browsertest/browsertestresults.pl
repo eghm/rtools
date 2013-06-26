@@ -19,7 +19,8 @@ my @tests;
 foreach my $importfile (@filelist) {
     #print "processing $importfile\n";
     `rm $importfile.results`;
-    my @testSessionIds = `grep sessionId $importfile`;
+    #print "grep \" sessionId is \" $importfile";
+    my @testSessionIds = `grep " sessionId is " $importfile`;
     foreach my $testline (@testSessionIds) {
         #print "\t$testline\n";
 
