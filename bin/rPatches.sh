@@ -34,3 +34,6 @@ patch -p0 < ../rtools/etc/patches/jsdoctk.patch
 
 #patch -p0 <../rtools/etc/IncidentReportForm.patch 
 #patch -p0 <../rtools/etc/impl-testdoc-xml.patch
+
+echo -e "\nApplying freemarker delay setttings to rice-framework/krad-web/src/main/webapp/WEB-INF/krad-base-servlet.xml"
+patch -p0 < ../rtools/etc/patches/FreemarkerUpdateDelay.patch
