@@ -25,8 +25,8 @@ do
     ln -s ../logs/$4/$logname.out $logname.out
     mvn -version  >> $logname.out
     echo "MAVEN_OPTS=$MAVEN_OPTS" >> $logname.out
-    echo "mvn -f rice-middleware/sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$SAUCE_VERSION -Dremote.driver.saucelabs.platform=$SAUCE_OS -Dremote.driver.saucelabs.browser=$SAUCE_BROWSER -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Drice.version=$4 -Dremote.jgrowl.enabled=false $6 $7 $8 $9" >> $logname.out
-    ( mvn -f rice-middleware/sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$SAUCE_VERSION -Dremote.driver.saucelabs.platform=$SAUCE_OS -Dremote.driver.saucelabs.browser=$SAUCE_BROWSER -Dremote.public.user=$5 -Drice.version=$4 -Dremote.jgrowl.enabled=false $6 $7 $8 $9 >> $logname.out 2>&1 && touch /tmp/$logname )
+    echo "mvn -f rice-middleware/sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$SAUCE_VERSION -Dremote.driver.saucelabs.platform=$SAUCE_OS -Dremote.driver.saucelabs.browser=$SAUCE_BROWSER -Dit.test=$TEST -Dremote.public.user=$TEST_USER -Drice.version=$4 -Dremote.jgrowl.enabled=true -Dremote.driver.highlight=true $6 $7 $8 $9" >> $logname.out
+    ( mvn -f rice-middleware/sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.driver.saucelabs -Dremote.driver.saucelabs.user=$2 -Dremote.driver.saucelabs.key=$3 -Dremote.driver.saucelabs.version=$SAUCE_VERSION -Dremote.driver.saucelabs.platform=$SAUCE_OS -Dremote.driver.saucelabs.browser=$SAUCE_BROWSER -Dremote.public.user=$5 -Drice.version=$4 -Dremote.jgrowl.enabled=true -Dremote.driver.highlight=true $6 $7 $8 $9 >> $logname.out 2>&1 && touch /tmp/$logname )
 
     while [ ! -e /tmp/$logname ]
     do
