@@ -1,4 +1,6 @@
 #!/usr/local/wu/bin/perl
+# From the directory with all the smoke test logs:
+# perl browsertestresults.pl -f=$(pwd) > results.txt
 use Getopt::Long;
 use Tie::File;
 use Date::Manip
