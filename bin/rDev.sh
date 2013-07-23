@@ -114,10 +114,10 @@ rNoCacheFilter.sh
 echo "TODO TODO TODO TODO TODO update intellij configurations"
 #rIntellijConfig.sh $1
 
-if [ -z "$NO_DTS_LOGS" ]
-then
-	rDtsLogFiles.sh $1
-fi
+#if [ -z "$NO_DTS_LOGS" ]
+#then
+#	rDtsLogFiles.sh $1
+#fi
 
 rKradreload.sh
 
