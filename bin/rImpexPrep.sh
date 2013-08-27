@@ -33,8 +33,6 @@ if [ ! -e db ]
 then
     echo "svn checkout of db and scripts directories need for impex to $R_HOME/$1"
 	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout -r $1 $R_SVN $R_HOME/$1
-#	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout -r $1 $R_SVN/db $R_HOME/$1/db
-#	log-command.sh rdev.svn.co.scripts svn --trust-server-cert --non-interactive checkout -r $1 $R_SVN/scripts/ddl $R_HOME/$1/scripts/ddl
 fi
 
 # rice .gitignore + config/ide .svn/ .settings/ .DS_Store

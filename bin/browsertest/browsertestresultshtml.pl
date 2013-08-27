@@ -149,7 +149,7 @@ foreach my $testenv (@filelist) {
 $header .= "<tr><td>" . $headerspace . "</td>";
 foreach my $testenv (@testenvs) {
 	#print "$testenv\n";
-    if ($testenv =~ m|.*OS.X|) {
+    if ($testenv =~ m|.*OS\sX|) {
         $header .= "<td style=\"text-align:center;vertical-align:middle\"><img src=\"$imgDir/mac.png\"><br/>";	
         ($testenv =~ m|.*OS\sX\s(\d\d.\d)\s|);
     	$header .= "$1<br/>";	
@@ -169,7 +169,7 @@ foreach my $testenv (@testenvs) {
 		$header .= opera($testenv);
         $header .= safari($testenv);
 
-    } elsif ($testenv =~ m|.*Windows.\d|) {
+    } elsif ($testenv =~ m|.*Windows\s|) {
         $header .= "<td style=\"text-align:center;vertical-align:middle;\"><img src=\"$imgDir/windows.png\"><br/>";
         if ($testenv =~ m|.*Windows\s(\d*)\s.*|) {
             $header .= "$1</br>";	
@@ -211,11 +211,11 @@ foreach my $test (@tests) {
         $testDir = substr($testDir, 0, length($testDir) - 1);
 #        print "\t\t$testDir\n";
         if ($result =~ m|^.* passed$|s) {
-            $testsresult .= "<td style=\"text-align: center;\"><a href=\"$testDir/$testDir-video.flv\">S</a></td>";
+            $testsresult .= "<td style=\"text-align: center; background-color: 00FF00\"><a href=\"$testDir/$testDir-video.flv\">S</a></td>";
         } elsif ($result =~ m|^.* failed$|s)  {
-            $testsresult .= "<td style=\"text-align: center;\"><a href=\"$testDir/$testDir-video.flv\">F</a></td>";
+            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\"><a href=\"$testDir/$testDir-video.flv\">F</a></td>";
         } else {
-            $testsresult .= "<td style=\"text-align: center;\">-</td>";
+            $testsresult .= "<td style=\"text-align: center; background-color: FFFF00\">E</td>";
         }
     } 
     print "<tr>$testsresult</tr>\n";

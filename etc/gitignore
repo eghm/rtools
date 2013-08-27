@@ -5,3 +5,5 @@ config/ide/
 .settings/
 .gitignore
 .DS_Store
+rice-framework/krad-web/src/main/webapp/krad/min
+velocity.log

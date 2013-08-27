@@ -37,11 +37,11 @@ cd $R_HOME
 mkdir -p $R_HOME/logs/$1
 mkdir -p $R_HOME/$1
 
-if [ "$(ls -A $R_HOME/$1)" ]
-then
-     echo "$R_HOME/$1 should be emtpy but is not.  Hangning file pointer possible, exiting."
-     exit
-fi
+#if [ "$(ls -A $R_HOME/$1)" ]
+#then
+#     echo "$R_HOME/$1 should be emtpy but is not.  Hangning file pointer possible, exiting."
+#     exit
+#fi
 
 mkdir -p $R_HOME/$1/.rdev
 
@@ -81,7 +81,7 @@ fi
 
 if [ ! -e config ]
 then
-    echo "core directory should exist was svn skipped or have an error?"
+    echo "config directory should exist was svn skipped or have an error?"
 	exit
 fi
 
