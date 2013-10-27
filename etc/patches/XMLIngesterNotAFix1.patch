@@ -1,0 +1,70 @@
+Index: rice-middleware/sampleapp/src/it/java/edu/samplu/admin/test/XMLIngesterAbstractSmokeTestBase.java
+===================================================================
+--- rice-middleware/sampleapp/src/it/java/edu/samplu/admin/test/XMLIngesterAbstractSmokeTestBase.java	(revision 38355)
++++ rice-middleware/sampleapp/src/it/java/edu/samplu/admin/test/XMLIngesterAbstractSmokeTestBase.java	(working copy)
+@@ -21,7 +21,11 @@
+ import edu.samplu.common.ITUtil;
+ import freemarker.cache.ClassTemplateLoader;
+ import freemarker.template.Configuration;
++import org.apache.commons.io.FileUtils;
++import org.junit.Before;
+ import org.openqa.selenium.By;
++import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
++import org.testng.annotations.BeforeMethod;
+ 
+ import java.io.File;
+ import java.io.IOException;
+@@ -93,6 +97,8 @@
+     }
+ 
+     @Override
++    @Before
++    @BeforeMethod
+     public void setUp() throws Exception {
+         super.setUp();
+         // generated load users and group resources
+@@ -123,15 +129,9 @@
+      *
+      */
+     protected void testIngestion(Failable failable) throws Exception {
++        selectFrameIframePortlet();
+         List<File> fileUploadList = buildFileUploadList();
+-        int cnt = 0;
+ 
+-        for(File file : fileUploadList) {
+-            String path = file.getAbsolutePath().toString();
+-            driver.findElement(By.name("file[" + cnt + "]")).sendKeys(path);
+-            cnt++;
+-        }
+-
+         waitAndClickByXpath("//*[@id='imageField']");
+ 
+         // confirm all files were uploaded successfully
+@@ -152,10 +152,23 @@
+             systemPropertiesOverride(props, "XMLIngester");
+ 
+             // build files and add to array
+-            fileUploadList.add(
+-                    writeTemplateToFile(newTempFile("loadtest-users.xml"), cfg.getTemplate(TMPL_USER_CONTENT), props));
+-            fileUploadList.add(
+-                    writeTemplateToFile(newTempFile("loadtest-group.xml"), cfg.getTemplate(TMPL_GROUP_CONTENT), props));
++            String output = FreeMarkerTemplateUtils.processTemplateIntoString(cfg.getTemplate(TMPL_USER_CONTENT), props);
++            File uploadFile = newTempFile("loadtest-users.xml");
++            FileUtils.writeStringToFile(uploadFile, output);
++            fileUploadList.add(uploadFile);
++
++            String output2 = FreeMarkerTemplateUtils.processTemplateIntoString(cfg.getTemplate(TMPL_GROUP_CONTENT), props);
++            File uploadFile2 = newTempFile("loadtest-group.xml");
++            FileUtils.writeStringToFile(uploadFile2, output2);
++            fileUploadList.add(uploadFile2);
++
++            int cnt = 0;
++
++            for(File file : fileUploadList) {
++                String path = file.getAbsolutePath().toString();
++                driver.findElement(By.name("file[" + cnt + "]")).sendKeys(path);
++                cnt++;
++            }
+         } catch( Exception e) {
+             throw new Exception("Unable to generate files for upload", e);
+         }

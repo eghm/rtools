@@ -19,3 +19,4 @@ else
 <\/filter-mapping>\
 <filter-mapping>/' rice-middleware/web/src/main/webapp/WEB-INF/web.xml.orig > rice-middleware/web/src/main/webapp/WEB-INF/web.xml
 fi
+

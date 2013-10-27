@@ -26,6 +26,7 @@ fi
 
 if [ -z "$R_SVN" ]
 then
+#    export R_SVN=https://svn.kuali.org/repos/rice/branches/rice-2.3
     export R_SVN=https://svn.kuali.org/repos/rice/trunk
 fi
 
@@ -33,6 +34,7 @@ if [ ! -e db ]
 then
     echo "svn checkout of db and scripts directories need for impex to $R_HOME/$1"
 	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout -r $1 $R_SVN $R_HOME/$1
+#	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout $R_SVN $R_HOME/$1
 fi
 
 # rice .gitignore + config/ide .svn/ .settings/ .DS_Store
@@ -53,7 +55,7 @@ log-command.sh rdev.git.commit git commit -a -m "pre impex"
 #
 # remove the % identified bys causing me problems
 echo "impex patching - removing % identified bys"
-log-command.sh rdev.impex.patch patch -p1 <../rtools/etc/impex-no-user-percent.patch
+log-command.sh rdev.impex.patch patch -p1 <../rtools/etc/patches/impex-no-user-percent.patch
 
 #loadTestImpex.sh
 

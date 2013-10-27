@@ -111,13 +111,12 @@ rAppConfigStandaloneMysql.sh $1 $RICE_DB_USER $RICE_DB_PASS
 rSpyProperties.sh $1
 rLogin.sh
 rNoCacheFilter.sh
-echo "TODO TODO TODO TODO TODO update intellij configurations"
-#rIntellijConfig.sh $1
+rIntellijConfig.sh $1
 
-#if [ -z "$NO_DTS_LOGS" ]
-#then
-#	rDtsLogFiles.sh $1
-#fi
+if [ -z "$NO_DTS_LOGS" ]
+then
+	rDtsLogFiles.sh $1
+fi
 
 rKradreload.sh
 

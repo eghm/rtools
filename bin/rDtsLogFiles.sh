@@ -8,6 +8,7 @@ echo "s|R_HOME|$R_HOME|g" >> .rdev/$1-log4j.sed
 # the log4j.properties we are going to use for all log4j.properties
 sed -f .rdev/$1-log4j.sed ../rtools/etc/log4j.properties  > $1-log4j.properties
 
+
 # replace existing log4j.properties with the one we just created TODO rm and link?
 find ./ -name 'log4j.properties' -exec cp $1-log4j.properties {} \;
 # and replace the rice-testharness default log4.properties too

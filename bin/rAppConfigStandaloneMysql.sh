@@ -4,7 +4,7 @@
 #else
     echo "creating $1-standalone-config.xml from rice-middleware/standalone/src/main/resources/org/kuali/rice/standalone/config/standalone-config.xml use it via -Dalt.config.location=$R_HOME/$1/$1-standalone-config.xml"
 	echo "s|03/19/2007 01:59 PM|$1|g" > .rdev/$1-standalone-config.sed
-    echo "s|<config>|<config><param name=\"useQuartzDatabase\">false</param>|g" >> .rdev/$1-standalone-config.sed
+    echo "s|<config>|<config><param name=\"useQuartzDatabase\">false</param><param name=\"rice.krad.dev.mode\">true</param><param name=\"rice.kr.additionalSpringFiles\">classpath:org/kuali/rice/krad/devtools/datadictionary/ReloadingDataDictionarySpringBeans.xml</param>|g" >> .rdev/$1-standalone-config.sed
     echo "s|RICE094DEV|$2|g" >> .rdev/$1-standalone-config.sed
     echo "s|<!-- Fill in Password Here! -->|$3|g" >> .rdev/$1-standalone-config.sed
     echo "s|jdbc:oracle:thin:@esdbk02.uits.indiana.edu:1521:KUALI|jdbc:mysql://localhost/$1wip|g" >> .rdev/$1-standalone-config.sed
