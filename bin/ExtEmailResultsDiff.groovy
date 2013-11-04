@@ -1,6 +1,15 @@
 /**
  * Not the most elegant code, probably a better idea to implement as a Jelly script for Jenkins ext-email plugin than
  * to clean this up.
+ *
+ * Created for the Jenkins ext-email template (see Jenkins job rice-integration-test-publisher-results):
+ * 
+ * Total Tests: ${TEST_COUNTS}  Failed Tests: ${TEST_COUNTS,var="fail"} Skipped:  ${TEST_COUNTS,var="skip"}
+ *
+ * $DEFAULT_CONTENT
+ *
+ * ${FAILED_TESTS}
+ *
  */
 def String firstResults = new File(args[0]).text
 def String secondResults = new File(args[1]).text
@@ -15,7 +24,7 @@ def secondTests = new String[secondCount]
 def secondErrors = new String[secondCount]
 def secondTraces = new String[secondCount]
 
-
+// to view the results is from $DEFAULT_CONTENT
 def header = secondResults.substring(secondResults.indexOf("Total Tests:"), secondResults.indexOf("to view the results.") + 20)
 
 def i = 0;
@@ -58,7 +67,7 @@ while (secondResults.contains("FAILED:")) {
     if (secondResults.contains("FAILED:")) {
         testTrace = secondResults.substring(secondResults.indexOf("Stack Trace:") + 12, secondResults.indexOf("FAILED:")).trim()
         secondResults = secondResults.substring(secondResults.indexOf("FAILED:"), secondResults.length())
-    } else {
+    } else { // end of file contents
         testTrace = secondResults.substring(secondResults.indexOf("Stack Trace:") + 12, secondResults.length()).trim()
         secondResults = ""
     }
