@@ -33,7 +33,12 @@ if (firstResults.contains("FAILED:")) {
 }
 while (firstResults.contains("FAILED:")) {
     def String testName = firstResults.substring(firstResults.indexOf("FAILED:") + 9, firstResults.indexOf("Error Message:")).trim()
+    testName = testName.replace("\n", "")
+    testName = testName.replace("=", "")
+
     def String testError = firstResults.substring(firstResults.indexOf("Error Message:") + 14, firstResults.indexOf("Stack Trace:")).trim()
+    testError = testError.replace("\n", "")
+	testError = testError.replaceAll(/@.*id=/, "@object-instance[id=") // remove instance ids
 
     firstResults = firstResults.substring(firstResults.indexOf("FAILED:") + 9, firstResults.length())
 
@@ -60,7 +65,12 @@ if (secondResults.contains("FAILED:")) {
 
 while (secondResults.contains("FAILED:")) {
     def String testName = secondResults.substring(secondResults.indexOf("FAILED:") + 9, secondResults.indexOf("Error Message:")).trim()
+    testName = testName.replace("\n", "")
+    testName = testName.replace("=", "")
+
     def String testError = secondResults.substring(secondResults.indexOf("Error Message:") + 14, secondResults.indexOf("Stack Trace:")).trim()
+    testError = testError.replace("\n", "")
+	testError = testError.replaceAll(/@.*id/, "@object-instance[id") // remove instance ids
 
     secondResults = secondResults.substring(secondResults.indexOf("FAILED:") + 9, secondResults.length())
 
