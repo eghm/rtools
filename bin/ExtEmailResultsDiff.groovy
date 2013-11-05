@@ -46,17 +46,18 @@ while (firstResults.contains("FAILED:")) {
         firstResults = ""
     }
 
-
     firstTests[i] = testName
     firstErrors[i] = testError
     firstTraces[i] = testTrace
     i++
 }
 
+
 i = 0
 if (secondResults.contains("FAILED:")) {
     secondResults = secondResults.substring(secondResults.indexOf("FAILED:"), secondResults.length())
 }
+
 while (secondResults.contains("FAILED:")) {
     def String testName = secondResults.substring(secondResults.indexOf("FAILED:") + 9, secondResults.indexOf("Error Message:")).trim()
     def String testError = secondResults.substring(secondResults.indexOf("Error Message:") + 14, secondResults.indexOf("Stack Trace:")).trim()
@@ -72,10 +73,15 @@ while (secondResults.contains("FAILED:")) {
         secondResults = ""
     }
 
+	if (testName.indexOf("QuickStartTest") > -1) { // QuickStartTest Error and Trace have a full build log in it, way too much text
+	    testError = testError.substring(0, 58)
+        testTrace = testTrace.substring(0, 80)
+	}
 
     secondTests[i] = testName
     secondErrors[i] = testError
     secondTraces[i] = testTrace
+
     i++
 }
 
@@ -98,12 +104,22 @@ for (i = 0; i < secondCount; i++) {
 }
 
 println("\nTotal New Failures: " + newCount + "\n")
+
+println(header + "\n\nNew Failure Tests:")
+for (i = 0; i < secondCount; i++) {
+    if (!secondTests[i].equals("")) {
+        println("\t " + secondTests[i])
+    }
+}
+
+/*
 println(header + "\n\nNew Failure Summary:")
 for (i = 0; i < secondCount; i++) {
     if (!secondTests[i].equals("")) {
         println("Failed: " + secondTests[i] + " Error Message: " + secondErrors[i])
     }
 }
+*/
 
 println("\n\nNew Failures Grouped by Error Message:")
 def List seenErrors = new LinkedList()
