@@ -27,7 +27,7 @@ def secondTraces = new String[secondCount]
 // to view the results is from $DEFAULT_CONTENT
 def header = secondResults.substring(secondResults.indexOf("Total Tests:"), secondResults.indexOf("to view the results.") + 20)
 
-def i = 0;
+def i = 0
 if (firstResults.contains("FAILED:")) {
     firstResults = firstResults.substring(firstResults.indexOf("FAILED:"), firstResults.length())
 }
@@ -38,7 +38,9 @@ while (firstResults.contains("FAILED:")) {
 
     def String testError = firstResults.substring(firstResults.indexOf("Error Message:") + 14, firstResults.indexOf("Stack Trace:")).trim()
     testError = testError.replace("\n", "")
-	testError = testError.replaceAll(/@.*id=/, "@object-instance[id=") // remove instance ids
+	testError = testError.replaceAll(/@.*id=/, "object-instance[id=") // remove instance ids
+	testError = testError.replaceAll(/@.*\)/, "object-instance[id=") // remove instance ids
+	testError = testError.replaceAll(/objectId=.*,/, "objectId=object-id") // remove objectIds
 
     firstResults = firstResults.substring(firstResults.indexOf("FAILED:") + 9, firstResults.length())
 
@@ -50,6 +52,11 @@ while (firstResults.contains("FAILED:")) {
         testTrace = firstResults.substring(firstResults.indexOf("Stack Trace:") + 12, firstResults.length()).trim()
         firstResults = ""
     }
+
+	if (testName.indexOf("QuickStartTest") > -1) { // QuickStartTest Error and Trace have a full build log in it, way too much text
+	    testError = testError.substring(0, 58)
+        testTrace = testTrace.substring(0, 80)
+	}
 
     firstTests[i] = testName
     firstErrors[i] = testError
@@ -70,7 +77,9 @@ while (secondResults.contains("FAILED:")) {
 
     def String testError = secondResults.substring(secondResults.indexOf("Error Message:") + 14, secondResults.indexOf("Stack Trace:")).trim()
     testError = testError.replace("\n", "")
-	testError = testError.replaceAll(/@.*id/, "@object-instance[id") // remove instance ids
+	testError = testError.replaceAll(/@.*id/, "object-instance[id") // remove instance ids
+	testError = testError.replaceAll(/@.*\)/, "object-instance[id=") // remove instance ids
+	testError = testError.replaceAll(/objectId=.*,/, "objectId=object-id") // remove objectIds
 
     secondResults = secondResults.substring(secondResults.indexOf("FAILED:") + 9, secondResults.length())
 
@@ -113,9 +122,14 @@ for (i = 0; i < secondCount; i++) {
     }
 }
 
-println("\nTotal New Failures: " + newCount + "\n")
+println("\nTotal New Failures: " + newCount + "\n\n" + header)
 
-println(header + "\n\nNew Failure Tests:")
+
+if (newCount == 0) {
+    System.exit(0)
+}
+
+println("\n\nNew Failure Tests:")
 for (i = 0; i < secondCount; i++) {
     if (!secondTests[i].equals("")) {
         println("\t " + secondTests[i])
