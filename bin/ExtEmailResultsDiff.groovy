@@ -28,19 +28,27 @@ def secondTraces = new String[secondCount]
 def header = secondResults.substring(secondResults.indexOf("Total Tests:"), secondResults.indexOf("to view the results.") + 20)
 
 def i = 0
+firstResults = firstResults.replaceAll(/=09/, "\t") // convert ascii 09 from email to tab
+firstResults = firstResults.replaceAll(/=C2=A0/, " ") // convert ascii CS A0 from email to space
+firstResults = firstResults.replaceAll(/=\n/, "")
 if (firstResults.contains("FAILED:")) {
     firstResults = firstResults.substring(firstResults.indexOf("FAILED:"), firstResults.length())
 }
 while (firstResults.contains("FAILED:")) {
     def String testName = firstResults.substring(firstResults.indexOf("FAILED:") + 9, firstResults.indexOf("Error Message:")).trim()
-    testName = testName.replace("\n", "")
-    testName = testName.replace("=", "")
 
     def String testError = firstResults.substring(firstResults.indexOf("Error Message:") + 14, firstResults.indexOf("Stack Trace:")).trim()
-    testError = testError.replace("\n", "")
 	testError = testError.replaceAll(/@.*id=/, "object-instance[id=") // remove instance ids
-	testError = testError.replaceAll(/@.*\)/, "object-instance[id=") // remove instance ids
+	testError = testError.replaceAll(/@.*\)/, "object-instance") // remove instance ids
 	testError = testError.replaceAll(/objectId=.*,/, "objectId=object-id") // remove objectIds
+	if (testError.contains("Command duration or timeout")) { // Selenium timeouts are often a bit different and the Errors are long, so cut 'em
+		testError = testError.substring(0, testError.indexOf("Command duration or timeout")).trim()
+	}
+	if (testError.startsWith("Incident report")) {
+		testError = testError.substring(0, testError.indexOf("at ")).trim()
+	} else if (testError.contains("Incident report")) {
+		testError = testError.substring(0, testError.indexOf("Incident report")).trim()	
+	}
 
     firstResults = firstResults.substring(firstResults.indexOf("FAILED:") + 9, firstResults.length())
 
@@ -52,6 +60,7 @@ while (firstResults.contains("FAILED:")) {
         testTrace = firstResults.substring(firstResults.indexOf("Stack Trace:") + 12, firstResults.length()).trim()
         firstResults = ""
     }
+	testTrace.replace("\n\n\n","\n")
 
 	if (testName.indexOf("QuickStartTest") > -1) { // QuickStartTest Error and Trace have a full build log in it, way too much text
 	    testError = testError.substring(0, 58)
@@ -66,20 +75,27 @@ while (firstResults.contains("FAILED:")) {
 
 
 i = 0
+secondResults = secondResults.replaceAll(/=09/, "\t") // convert ascii 09 from email to tab
+secondResults = secondResults.replaceAll(/=C2=A0/, " ") // convert ascii CS A0 from email to space
+secondResults = secondResults.replaceAll(/=\n/, "")
 if (secondResults.contains("FAILED:")) {
     secondResults = secondResults.substring(secondResults.indexOf("FAILED:"), secondResults.length())
 }
-
 while (secondResults.contains("FAILED:")) {
     def String testName = secondResults.substring(secondResults.indexOf("FAILED:") + 9, secondResults.indexOf("Error Message:")).trim()
-    testName = testName.replace("\n", "")
-    testName = testName.replace("=", "")
 
     def String testError = secondResults.substring(secondResults.indexOf("Error Message:") + 14, secondResults.indexOf("Stack Trace:")).trim()
-    testError = testError.replace("\n", "")
 	testError = testError.replaceAll(/@.*id/, "object-instance[id") // remove instance ids
-	testError = testError.replaceAll(/@.*\)/, "object-instance[id=") // remove instance ids
+	testError = testError.replaceAll(/@.*\)/, "object-instance") // remove instance ids
 	testError = testError.replaceAll(/objectId=.*,/, "objectId=object-id") // remove objectIds
+	if (testError.contains("Command duration or timeout")) { // Selenium timeouts are often a bit different and the Errors are long, so cut 'em
+		testError = testError.substring(0, testError.indexOf("Command duration or timeout")).trim()
+	}
+	if (testError.startsWith("Incident report")) {
+		testError = testError.substring(0, testError.indexOf("at ")).trim()
+	} else if (testError.contains("Incident report")){
+		testError = testError.substring(0, testError.indexOf("Incident report")).trim()	
+	}
 
     secondResults = secondResults.substring(secondResults.indexOf("FAILED:") + 9, secondResults.length())
 
@@ -91,6 +107,7 @@ while (secondResults.contains("FAILED:")) {
         testTrace = secondResults.substring(secondResults.indexOf("Stack Trace:") + 12, secondResults.length()).trim()
         secondResults = ""
     }
+	testTrace.replace("\n\n\n","")
 
 	if (testName.indexOf("QuickStartTest") > -1) { // QuickStartTest Error and Trace have a full build log in it, way too much text
 	    testError = testError.substring(0, 58)
