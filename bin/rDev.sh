@@ -129,7 +129,7 @@ echo "git applied rDev custom updates commit"
 log-command.sh rdev.svn.commit git commit -a -m "applied rDev custom updates"
 
 echo -e "\nStarting mvn-clean-install.sh this will take a while..."
-mvn-clean-install.sh $5 $6 $7 $8 $9
+mvn-clean-install.sh $5 $6 $7 $8 $9 -T 4
 
 #mvnLinks.sh $1
 mkdir -p $R_HOME/logs/$1/rDev-$DTS
