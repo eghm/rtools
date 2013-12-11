@@ -5,23 +5,57 @@
 def String results = new File(args[0]).text
 
 def String failedTests = results.substring(results.indexOf("New Failure Tests:") + 18, results.indexOf("New Failures Grouped by Error Message:") -1).trim()
-def String test;
+//def String testDetails = results.substring(results.indexOf("New Failures Details:") + 21, results.length()).trim()
+def String test
+//def String detail
 def String jiraContents
 def String fullContents
-def Map jiraTests = ["NO JIRA FOUND":[]]
+def Map jiraTests = ["NO JIRAS FOUND":[]]
 
 while (failedTests.contains("\n")) {
-	test = failedTests.substring(0, failedTests.indexOf("\n")).trim()
+	test = failedTests.substring(0, failedTests.indexOf("\n")).trim()	
 	failedTests = failedTests.substring(test.length(), failedTests.length()).trim()
+	
+//	detail = testDetails.substring(testDetails.indexOf("Test: " + test) + test.length() + 5, testDetails.indexOf("\n\n"))
+//	detail = detail.substring(detail.indexOf("Error Message: ") + 15, testDetails.indexOf("\n")).trim()
+//	testDetails = testDetails.substring(testDetails.indexOf("\n\n"), testDetails.length())
     
-    def url = "https://jira.kuali.org/rest/api/2/search?jql=text~\"" + test + "\"+AND+(status=open+OR+status=\"In+Progress\")&fields=id,summary"
+    def url = "https://jira.kuali.org/rest/api/2/search?jql=text~\"" + test + "\"+AND+(status=open+OR+status=\"In+Progress\"+OR+status=Reopened)&fields=id,summary"
 
 	try {
         jiraContents = new URL(url).getText()
 
-        if (!jiraContents.contains("\"key\":\"")) {
-            System.out.println("\n" + test + " NO JIRA FOUND")
-            jiraTests.get("NO JIRA FOUND").add(test)
+        if (!jiraContents.contains("\"key\":\"")) { // didn't find with long name
+
+            // Try short name
+            def testCopy = test
+            def testMethod = testCopy.substring(testCopy.lastIndexOf(".") + 1, testCopy.length())
+            testCopy = testCopy.substring(0, testCopy.lastIndexOf("."))
+            def testClass = testCopy.substring(testCopy.lastIndexOf(".") + 1, testCopy.length())
+            url = "https://jira.kuali.org/rest/api/2/search?jql=text~\"" + testClass + "." + testMethod + "\"+AND+(status=open+OR+status=\"In+Progress\")&fields=id,summary"
+            jiraContents = new URL(url).getText()
+
+//            if (!jiraContents.contains("\"key\":\"")) { // didn't find with short name either
+//                if (detail.length() > 80) {
+//                    detail = detail.substring(0, 79)
+//                }
+//                detail = detail.replace("\t", " ")
+//                detail = detail.replaceAll(":", "") // jira gives parsing errors if colons are in it even though they get escaped...
+////                detail = detail.replace(" ", "%20")
+////                detail = detail.replace("/", "%2F")
+//                url = "https://jira.kuali.org/rest/api/2/search?jql=text~\"" + URLEncoder.encode(detail) + "\"+AND+(status=open+OR+status=\"In+Progress\")&fields=id,summary"
+//			    try {
+//                    jiraContents = new URL(url).getText()			
+//			    } catch (MalformedURLException mue) {
+//			        System.err.println(url + " " + mue.getMessage())
+//			        System.exit(1)
+//			    }
+
+                if (!jiraContents.contains("\"key\":\"")) { // didn't find with error either
+                    System.out.println("\n" + test + " NO JIRA FOUND")
+                    jiraTests.get("NO JIRAS FOUND").add(test)
+                }
+//            }
         } else {
             System.out.println("\n" + test)
         }

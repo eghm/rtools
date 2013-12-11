@@ -35,7 +35,7 @@ if (firstResults.contains("FAILED:")) {
     firstResults = firstResults.substring(firstResults.indexOf("FAILED:"), firstResults.length())
 }
 while (firstResults.contains("FAILED:")) {
-    def String testName = firstResults.substring(firstResults.indexOf("FAILED:") + 9, firstResults.indexOf("Error Message:")).trim()
+    def String testName = firstResults.substring(firstResults.indexOf("FAILED:") + 8, firstResults.indexOf("Error Message:")).trim()
 
     def String testError = firstResults.substring(firstResults.indexOf("Error Message:") + 14, firstResults.indexOf("Stack Trace:")).trim()
 	testError = testError.replaceAll(/@.*id=/, "object-instance[id=") // remove instance ids
@@ -44,7 +44,7 @@ while (firstResults.contains("FAILED:")) {
 	if (testError.contains("Command duration or timeout")) { // Selenium timeouts are often a bit different and the Errors are long, so cut 'em
 		testError = testError.substring(0, testError.indexOf("Command duration or timeout")).trim()
 	}
-	if (testError.startsWith("Incident report")) {
+	if (testError.startsWith("Incident report") && testError.contains("at ")) {
 		testError = testError.substring(0, testError.indexOf("at ")).trim()
 	} else if (testError.contains("Incident report")) {
 		testError = testError.substring(0, testError.indexOf("Incident report")).trim()	
@@ -82,7 +82,7 @@ if (secondResults.contains("FAILED:")) {
     secondResults = secondResults.substring(secondResults.indexOf("FAILED:"), secondResults.length())
 }
 while (secondResults.contains("FAILED:")) {
-    def String testName = secondResults.substring(secondResults.indexOf("FAILED:") + 9, secondResults.indexOf("Error Message:")).trim()
+    def String testName = secondResults.substring(secondResults.indexOf("FAILED:") + 8, secondResults.indexOf("Error Message:")).trim()
 
     def String testError = secondResults.substring(secondResults.indexOf("Error Message:") + 14, secondResults.indexOf("Stack Trace:")).trim()
 	testError = testError.replaceAll(/@.*id/, "object-instance[id") // remove instance ids
@@ -91,7 +91,7 @@ while (secondResults.contains("FAILED:")) {
 	if (testError.contains("Command duration or timeout")) { // Selenium timeouts are often a bit different and the Errors are long, so cut 'em
 		testError = testError.substring(0, testError.indexOf("Command duration or timeout")).trim()
 	}
-	if (testError.startsWith("Incident report")) {
+	if (testError.startsWith("Incident report") && testError.contains("at ")) {
 		testError = testError.substring(0, testError.indexOf("at ")).trim()
 	} else if (testError.contains("Incident report")){
 		testError = testError.substring(0, testError.indexOf("Incident report")).trim()	
