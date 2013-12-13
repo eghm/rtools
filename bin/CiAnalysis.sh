@@ -1,5 +1,21 @@
 # Directory to put results in, CAS username, CAS password
 
+# http://code.google.com/p/fdupes/
+export FDUPES=$(fdupes -v)
+if [ -z "$FDUPES" ]
+then
+  echo "fdupes not installed, http://code.google.com/p/fdupes/"
+  exit
+fi
+
+export GROOVY=$(groovy -v)
+if [ -z "$GROOVY" ]
+then
+  echo "groovy not installed"
+  exit
+fi
+
+
 #JenkinsResults.sh $2 $3 $1
 
 cd $R_HOME/rtools/bin
