@@ -53,11 +53,18 @@ while (firstResults.contains("FAILED:")) {
     firstResults = firstResults.substring(firstResults.indexOf("FAILED:") + 9, firstResults.length())
 
     def String testTrace
+    if (firstResults.contains("Strandard Output: ")) { // NOT Ext Email format
+      testTrace = firstResults.substring(firstResults.indexOf("Stack Trace:") + 12, firstResults.indexOf("Standard Output: ")).trim()
+    }
     if (firstResults.contains("FAILED:")) {
-        testTrace = firstResults.substring(firstResults.indexOf("Stack Trace:") + 12, firstResults.indexOf("FAILED:")).trim()
+        if (testTrace == null) {
+            testTrace = firstResults.substring(firstResults.indexOf("Stack Trace:") + 12, firstResults.indexOf("FAILED:")).trim()
+        }
         firstResults = firstResults.substring(firstResults.indexOf("FAILED:"), firstResults.length())
     } else {
-        testTrace = firstResults.substring(firstResults.indexOf("Stack Trace:") + 12, firstResults.length()).trim()
+        if (testTrace == null) {
+            testTrace = firstResults.substring(firstResults.indexOf("Stack Trace:") + 12, firstResults.length()).trim()
+        }
         firstResults = ""
     }
 	testTrace.replace("\n\n\n","\n")
@@ -100,11 +107,19 @@ while (secondResults.contains("FAILED:")) {
     secondResults = secondResults.substring(secondResults.indexOf("FAILED:") + 9, secondResults.length())
 
     def String testTrace
+    if (secondResults.contains("Strandard Output: ")) { // NOT Ext Email format
+      testTrace = secondResults.substring(secondResults.indexOf("Stack Trace:") + 12, secondResults.indexOf("Standard Output: ")).trim()
+    }
+
     if (secondResults.contains("FAILED:")) {
-        testTrace = secondResults.substring(secondResults.indexOf("Stack Trace:") + 12, secondResults.indexOf("FAILED:")).trim()
+        if (testTrace == null) {
+            testTrace = secondResults.substring(secondResults.indexOf("Stack Trace:") + 12, secondResults.indexOf("FAILED:")).trim()            
+        }
         secondResults = secondResults.substring(secondResults.indexOf("FAILED:"), secondResults.length())
     } else { // end of file contents
-        testTrace = secondResults.substring(secondResults.indexOf("Stack Trace:") + 12, secondResults.length()).trim()
+        if (testTrace == null) {
+            testTrace = secondResults.substring(secondResults.indexOf("Stack Trace:") + 12, secondResults.length()).trim()
+        }
         secondResults = ""
     }
 	testTrace.replace("\n\n\n","")

@@ -49,9 +49,8 @@ public class CiJsonObj {
                     message = message.replaceAll("&amp;", "&"); // don't replace ampersand first to preserve remaining &gt; and &lt; as they appear in jenkins
 
                     println("FAILED: ${c.className}.${c.name}\n\nError Message:\n${message}")
-                    if (c.errorStackTrace != null) {
-                        println("\nStack Trace: ${c.errorStackTrace}")
-                    }
+                    println("\nStack Trace: ${c.errorStackTrace}")
+                    println("\nStandard Output: ${c.stdout}")
                     println("\n\n")
                 }
             }

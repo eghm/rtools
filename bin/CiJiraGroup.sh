@@ -19,6 +19,12 @@ do
 done
 
 # http://code.google.com/p/fdupes/
+export FDUPES=$(fdupes -v)
+if [ -z "$FDUPES" ]
+then
+  echo "fdupes not installed, http://code.google.com/p/fdupes/"
+  exit
+fi
 fdupes -rf $1 | grep JiraFiles.txt > $1/JiraGroups/JiraFilesDups.txt
 
 for line in $(cat $1/JiraGroups/JiraFilesDups.txt)

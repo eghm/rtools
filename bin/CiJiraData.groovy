@@ -50,7 +50,16 @@ System.exit(1)
     if (testError.equals("")) {
         testError = "NOT DETECTED"
     }
-    testDetail = testDetail.substring(testDetail.indexOf("Stack Trace:") + 12, testDetail.length()).trim()
+    def aftStepsChunk = testDetail.substring(testDetail.indexOf("Standard Output: "), testDetail.length());
+    def aftSteps = "";
+    while (aftStepsChunk.contains("AFT Step:")) {
+        aftStepsChunk = aftStepsChunk.substring(aftStepsChunk.indexOf("AFT Step:"), aftStepsChunk.length())
+        aftSteps = aftSteps + aftStepsChunk.substring(0, aftStepsChunk.indexOf("\n") + 1)
+        aftStepsChunk = aftStepsChunk.substring(aftStepsChunk.indexOf("\n"), aftStepsChunk.length())
+    }
+
+    testDetail = testDetail.substring(testDetail.indexOf("Stack Trace:") + 12, testDetail.indexOf("Standard Output:")).trim()
+//    testDetail = testDetail.substring(testDetail.indexOf("Stack Trace:") + 12, testDetail.length()).trim()
 //    println(test + " " + testDetail)
     
 
@@ -70,7 +79,7 @@ System.exit(1)
     // use long name in description
     def description = ""
 
-    def jira = "Abbreviated test name: " + testShort + "\nFull test name: " + test + "\nTest results url: " + testResultsUrl + "\nError Message: " + testError + "\n\nTest Details: " + testDetail
+    def jira = aftSteps + "\n\nAbbreviated test name: " + testShort + "\nFull test name: " + test + "\nTest results url: " + testResultsUrl + "\nError Message: " + testError + "\n\nTest Details: " + testDetail
     
     if (!testError.contains("KULRICE")) { // TODO These should be here, why wasn't the Jira found during by test name?
         def outputFile = fileDir + job + "-" + buildNumber + "-" + testShort + ".jira"

@@ -16,7 +16,7 @@ then
 fi
 
 
-#JenkinsResults.sh $2 $3 $1
+JenkinsResults.sh $2 $3 $1
 
 cd $R_HOME/rtools/bin
 
