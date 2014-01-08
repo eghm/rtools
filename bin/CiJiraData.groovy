@@ -58,8 +58,10 @@ System.exit(1)
         aftStepsChunk = aftStepsChunk.substring(aftStepsChunk.indexOf("\n"), aftStepsChunk.length())
     }
 
-	def lastUrl = testDetail.substring("Last AFT URL: ") + 14, testDetail.length()
-	lastUrl = lastUrl.substring(0, lastUrl.indexOf("\n"))
+    def lastUrl = "No Last AFT given"
+    if (testDetail.indexOf("Last AFT URL: ") > -1) {
+        lastUrl = testDetail.substring(testDetail.indexOf("Last AFT URL: ") + 14, testDetail.length())
+    }
 
     testDetail = testDetail.substring(testDetail.indexOf("Stack Trace:") + 12, testDetail.indexOf("Standard Output:")).trim()
 //    testDetail = testDetail.substring(testDetail.indexOf("Stack Trace:") + 12, testDetail.length()).trim()
@@ -82,7 +84,7 @@ System.exit(1)
     // use long name in description
     def description = ""
 
-    def jira = aftSteps + "Last AFT URL: " + lastUrl + "\n\nAbbreviated test name: " + testShort + "\nFull test name: " + test + "\nTest results url: " + testResultsUrl + "\nError Message: " + testError +  "\n\nTest Details: " + testDetail
+    def jira = aftSteps + "Last AFT URL: " + lastUrl + "\n\nAbbreviated test name: " + testShort + "\nFull test name: " + test + "\nTest results url: " + testResultsUrl + "\nError Message: " + testError + "\n\nTest Details: " + testDetail
     
     if (!testError.contains("KULRICE")) { // TODO These should be here, why wasn't the Jira found during by test name?
         def outputFile = fileDir + job + "-" + buildNumber + "-" + testShort + ".jira"
