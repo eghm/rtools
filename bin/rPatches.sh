@@ -40,3 +40,6 @@ patch -p0 < ../rtools/etc/patches/FreemarkerUpdateDelay.patch
 
 #echo -e "\nApplying rtools/etc/patches/MVDemoCollectionLookup.patch
 #patch -p0 < ../rtools/etc/patches/MVDemoCollectionLookup.patch
+
+echo -e "\nApplying JiraAwareIncidentReport.patch"
+patch -p0 < ../rtools/etc/patches/JiraAwareIncidentReport.patch

@@ -43,44 +43,32 @@ Index: rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/web/c
              incidentReportForm.setUserName(userSession.getPrincipalName());
 Index: rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/web/form/IncidentReportForm.java
 ===================================================================
---- rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/web/form/IncidentReportForm.java	(revision 43159)
+--- rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/web/form/IncidentReportForm.java	(revision 43559)
 +++ rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/web/form/IncidentReportForm.java	(working copy)
-@@ -35,13 +35,14 @@
+@@ -35,6 +35,7 @@
      protected String exceptionMessage;
      protected String exceptionStackTrace;
  
--    protected String userInput;
-+    protected String controller;
++    protected String jira;
+     protected String userInput;
      protected String incidentDocId;
      protected String incidentViewId;
--    protected String controller;
-+    protected String jira;
-+    protected String userEmail;
-     protected String userName;
-     protected String userId;
--    protected String userEmail;
-+    protected String userInput;
- 
-     protected boolean devMode;
- 
-@@ -219,6 +220,16 @@
-         return incidentViewId;
+@@ -159,6 +160,14 @@
+         this.exceptionStackTrace = exceptionStackTrace;
      }
  
-+
 +    public void setJira(String jira) {
 +        this.jira = jira;
 +    }
-+
 +
 +    public String getJira() {
 +        return jira;
 +    }
 +
      /**
-      * @param exception
-      *            the exception to set
-Index: rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifIncidentReportDefinitions.xml
+      * @return the userInput
+      */
+iIndex: rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifIncidentReportDefinitions.xml
 ===================================================================
 --- rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifIncidentReportDefinitions.xml	(revision 43159)
 +++ rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifIncidentReportDefinitions.xml	(working copy)
