@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ -z "$R_HOME" ]
 then
     echo "env R_HOME is not set!  Exiting."
@@ -32,7 +34,7 @@ fi
 
 if [ ! -e db ]
 then
-    echo "svn checkout of db and scripts directories need for impex to $R_HOME/$1"
+    echo "svn checkout to $R_HOME/$1"
 	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout -r $1 $R_SVN $R_HOME/$1
 #	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout $R_SVN $R_HOME/$1
 fi

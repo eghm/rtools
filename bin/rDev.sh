@@ -45,11 +45,19 @@ mkdir -p $R_HOME/$1
 
 mkdir -p $R_HOME/$1/.rdev
 
-# we only checkout the db stuff, if there is a problem we avoid checking out everything.
-# however, if there was just a release the whole project needs to be checked out.
-rMysqlDBs.sh $1 $2 $RICE_DB_USER $RICE_DB_PASS
-
-cd $R_HOME/$1
+# we used to only checkout the db stuff, if there is a problem we avoid checking out everything.
+# however, if there was just a release the whole project needs to be checked out which is now the default
+if [ ! -e "$R_HOME/trunk-wubot" ] || [ -n "$R_SVN_CLEAN" ] 
+then
+	rImpexPrep.sh $1 $2 $RICE_DB_USER $RICE_DB_PASS
+    mysqlCreateDBs.sh $1 $2 $RICE_DB_USER $RICE_DB_PASS
+    cd $R_HOME/$1
+else 
+	echo "R_SVN_CLEAN not set copying from $R_HOME/trunk-wubot then updating to revision $1"
+	cp -R $R_HOME/trunk-wubot/ $R_HOME/$1/
+    cd $R_HOME/$1
+    log-command.sh rdev.svn.update.$1 svn --trust-server-cert --non-interactive update -r $1
+fi
 
 if [ ! -e db ]
 then

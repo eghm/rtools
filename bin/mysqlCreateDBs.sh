@@ -1,3 +1,4 @@
+#!/bin/bash
 # version, db root password, db user, db pass
 cd $R_HOME/$1
 
