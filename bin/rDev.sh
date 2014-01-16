@@ -57,6 +57,13 @@ else
 	cp -R $R_HOME/trunk-wubot/ $R_HOME/$1/
     cd $R_HOME/$1
     log-command.sh rdev.svn.update.$1 svn --trust-server-cert --non-interactive update -r $1
+
+    # copied from rImpexPrep.sh
+    echo "impex patching - removing % identified bys"
+    log-command.sh rdev.impex.patch patch -p1 <../rtools/etc/patches/impex-no-user-percent.patch
+
+    mysqlCreateDBs.sh $1 $2 $RICE_DB_USER $RICE_DB_PASS
+    cd $R_HOME/$1
 fi
 
 if [ ! -e db ]
