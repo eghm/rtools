@@ -48,7 +48,7 @@ System.exit(1)
     testDetail = testDetail.substring(0, testDetail.indexOf("\nTest:")).trim()
     def testError = testDetail.substring(testDetail.indexOf("Error Message: ") + 15, testDetail.indexOf("Stack Trace:")).trim()
     if (testError.equals("")) {
-        testError = "NOT DETECTED"
+        testError = "See Test Detail"
     }
     def aftStepsChunk = testDetail.substring(testDetail.indexOf("Standard Output: "), testDetail.length());
     def aftSteps = "";
