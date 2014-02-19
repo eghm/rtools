@@ -8,12 +8,50 @@ public class CiJsonObj {
 
 
     public static void main(String[] args) throws Exception {
+        def jsonFileName = args[0] // rice-2.4-test-functional-saucelabs-95.json
+        ObjectMapper mapper = new ObjectMapper();
+        def goodRead = false
+        while (goodRead == false) {
+            try {
+                JenkinsJobResult value = mapper.readValue(new File(jsonFileName), JenkinsJobResult.class);
+                goodRead = true;
+                process(value, jsonFileName);
+            } catch (JsonMappingException jme) {
+//                System.err.println(jme.getMessage());
+                def message = jme.getMessage();
+                def lineNumber = message.substring(message.indexOf("line: ") + 6, message.lastIndexOf(",")).trim().toInteger();
+                System.err.println("line number to remove " + lineNumber);
+                // remove problematic line
+
+                def line = "";
+                def newFileContents = "";
+                def lineToRemove = "";
+                def count=0;
+                new File(jsonFileName).withReader { reader ->
+                  while ((line = reader.readLine()) != null) {
+                    if (count == lineNumber) {
+                        lineToRemove = line;
+//        System.err.println("line to remove " + lineToRemove);
+                    } else {
+                        newFileContents += line;
+                    }
+                    count++;
+                  }
+                };
+
+                jsonFileName = jsonFileName + ".minus.errors";
+                new File(jsonFileName).write(newFileContents);
+
+                // save problematic line into another file
+                new File(jsonFileName.replace(".minus.errors", "." + lineNumber)).write(lineToRemove);
+
+            }
+        }
+    }
+
+	protected static void process(JenkinsJobResult value, String jsonFileName) {
         def message = ""
         def jenkinsBase = "http://ci.rice.kuali.org"
-        def jsonFileName = args[0] // rice-2.4-test-functional-saucelabs-95.json
-
-        ObjectMapper mapper = new ObjectMapper(); 
-        JenkinsJobResult value = mapper.readValue(new File(jsonFileName), JenkinsJobResult.class);
 
         def totalCount = value.failCount + value.passCount + value.skipCount
         def buildNumber = jsonFileName.substring(jsonFileName.lastIndexOf("-") + 1, jsonFileName.indexOf(".json"))
@@ -60,7 +98,8 @@ public class CiJsonObj {
         // for (s in value.suites) {
         //     println("Suite:\t${s}")
         // }
-    }
+	}
+
 }
 
 class JenkinsJobResult {
