@@ -46,16 +46,26 @@ System.exit(1)
 
     def testDetail = testDetails.substring(testDetails.indexOf("\nTest: " + test) + 7, testDetails.length())
     testDetail = testDetail.substring(0, testDetail.indexOf("\nTest:")).trim()
-    def testError = testDetail.substring(testDetail.indexOf("Error Message: ") + 15, testDetail.indexOf("Stack Trace:")).trim()
-    if (testError.equals("")) {
-        testError = "See Test Detail"
+    def testError = "";
+    try {
+        testError = testDetail.substring(testDetail.indexOf("Error Message: ") + 15, testDetail.indexOf("Stack Trace:")).trim()
+        if (testError.equals("")) {
+            testError = "See Test Detail"
+        }
+    } catch (IndexOutOfBoundsException ioobe) {
+        testError = "Not determined"
     }
-    def aftStepsChunk = testDetail.substring(testDetail.indexOf("Standard Output: "), testDetail.length());
+
     def aftSteps = "";
-    while (aftStepsChunk.contains("AFT Step:")) {
-        aftStepsChunk = aftStepsChunk.substring(aftStepsChunk.indexOf("AFT Step:"), aftStepsChunk.length())
-        aftSteps = aftSteps + aftStepsChunk.substring(0, aftStepsChunk.indexOf("\n") + 1)
-        aftStepsChunk = aftStepsChunk.substring(aftStepsChunk.indexOf("\n"), aftStepsChunk.length())
+    try {
+        def aftStepsChunk = testDetail.substring(testDetail.indexOf("Standard Output: "), testDetail.length());
+        while (aftStepsChunk.contains("AFT Step:")) {
+            aftStepsChunk = aftStepsChunk.substring(aftStepsChunk.indexOf("AFT Step:"), aftStepsChunk.length())
+            aftSteps = aftSteps + aftStepsChunk.substring(0, aftStepsChunk.indexOf("\n") + 1)
+            aftStepsChunk = aftStepsChunk.substring(aftStepsChunk.indexOf("\n"), aftStepsChunk.length())
+        }
+    } catch (IndexOutOfBoundsException ioobe) {
+        aftSteps = "Not determined"
     }
 
     def lastUrl = "No Last AFT given"

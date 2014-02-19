@@ -25,6 +25,11 @@ while (failedTests.contains("\n")) {
 	try {
         jiraContents = new URL(url).getText()
 
+        if (args.length > 1) {
+            System.out.println("\n" + test + " NO JIRA FOUND")
+            jiraTests.get("NO JIRAS FOUND").add(test)
+        } else
+
         if (!jiraContents.contains("\"key\":\"")) { // didn't find with long name
 
             // Try short name

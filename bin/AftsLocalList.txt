@@ -1,0 +1,17 @@
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/0/rice-2.4-test-functional-saucelabs-136-ActionListNavAft.testActionListApproveFullNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/1/rice-2.4-test-functional-saucelabs-136-DocumentSearchUrlParametersAft.testAdvancedSearchFields.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/1/rice-2.4-test-functional-saucelabs-136-DocumentSearchUrlParametersAft.testAdvancedSearchFieldsAndExecuteSearch.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/1/rice-2.4-test-functional-saucelabs-136-DocumentSearchUrlParametersAft.testBasicSearchFields.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/1/rice-2.4-test-functional-saucelabs-136-DocumentSearchUrlParametersAft.testBasicSearchFieldsAndExecuteSearch.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/10/rice-2.4-test-functional-saucelabs-136-PeopleFlowCreateNewNotesAndAttachmentsAft.testPeopleFlowCreateNewNotesAndAttachments_NoNoteTextNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/11/rice-2.4-test-functional-saucelabs-136-QuickLinksAft.testQuickLinksBookmark.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/11/rice-2.4-test-functional-saucelabs-136-QuickLinksAft.testQuickLinksNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/13/rice-2.4-test-functional-saucelabs-136-UifComponentValidationRegexPatternNavAft.testValidCharacterConstraintNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/14/rice-2.4-test-functional-saucelabs-136-UifTooltipNavAft.testUifTooltipNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/15/rice-2.4-test-functional-saucelabs-136-ValidCharsConstraintNavAft.testValidCharsConstraintNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/16/rice-2.4-test-functional-saucelabs-136-XmlIngesterNavAft.testXMLIngesterSuccessfulFileUploadNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/3/rice-2.4-test-functional-saucelabs-136-DocumentSearchUrlParametersAft.testAdvancedSearchMode.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/3/rice-2.4-test-functional-saucelabs-136-DocumentSearchUrlParametersAft.testBasicSearchMode.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/7/rice-2.4-test-functional-saucelabs-136-EdocLiteIuIngestNavAft.testEdocLiteIuIngestNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/8/rice-2.4-test-functional-saucelabs-136-EdocLiteOaaIngestNavAft.testEdocLiteOaaIngestNav.jira
+/Users/eghm/Desktop/JenkinsResults-2014-01-16-AFT-RICE/JiraGroups/9/rice-2.4-test-functional-saucelabs-136-IdentityPersonRoleAft.testPersonRoleBookmark.jira
