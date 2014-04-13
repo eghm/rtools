@@ -15,6 +15,7 @@ fi
 for f in *.jtl
 do
 
+echo "Processing $f"
 # http://code.google.com/p/jmeter-plugins/wiki/JMeterPluginsCMD
 $JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png $f-ResponseTimesOverTime.png --input-jtl $f --plugin-type ResponseTimesOverTime --width 800 --height 600
 $JMETER_HOME/lib/ext/JMeterPluginsCMD.sh --generate-png $f-ThreadsStateOverTime.png --input-jtl $f --plugin-type ThreadsStateOverTime --width 800 --height 600
