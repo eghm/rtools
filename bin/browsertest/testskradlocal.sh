@@ -19,7 +19,7 @@ do
     export SAUCE_BROWSER=$(tail -n 1 $TESTS_FILE | cut -d , -f 2);	
     export SAUCE_VERSION=$(tail -n 1 $TESTS_FILE | cut -d , -f 3);
 		
-    export logname=$1-$SAUCE_OS-$SAUCE_BROWSER-$SAUCE_VERSION-$5-$DTS
+    export logname=localhost-krad-$SAUCE_OS-$SAUCE_BROWSER-$SAUCE_VERSION-$5-$DTS
 
     touch ../logs/$4/$logname.out 
     ln -s ../logs/$4/$logname.out $logname.out
