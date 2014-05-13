@@ -20,15 +20,15 @@ while (failedTests.contains("\n")) {
 //	detail = detail.substring(detail.indexOf("Error Message: ") + 15, testDetails.indexOf("\n")).trim()
 //	testDetails = testDetails.substring(testDetails.indexOf("\n\n"), testDetails.length())
     
-    def url = "https://jira.kuali.org/rest/api/2/search?jql=text~\"" + test + "\"+AND+(status=open+OR+status=\"In+Progress\"+OR+status=Reopened)&fields=id,summary"
 
 	try {
-        jiraContents = new URL(url).getText()
-
         if (args.length > 1) {
             System.out.println("\n" + test + " NO JIRA FOUND")
             jiraTests.get("NO JIRAS FOUND").add(test)
-        } else
+        } else {
+
+            def url = "https://jira.kuali.org/rest/api/2/search?jql=text~\"" + test + "\"+AND+(status=open+OR+status=\"In+Progress\"+OR+status=Reopened)&fields=id,summary"
+            jiraContents = new URL(url).getText()
 
         if (!jiraContents.contains("\"key\":\"")) { // didn't find with long name
 
@@ -59,6 +59,8 @@ while (failedTests.contains("\n")) {
                 if (!jiraContents.contains("\"key\":\"")) { // didn't find with error either
                     System.out.println("\n" + test + " NO JIRA FOUND")
                     jiraTests.get("NO JIRAS FOUND").add(test)
+                } else {
+                    System.out.println("\n" + test + " " + jiraContents.substring(jiraContents.indexOf("\"key\":\"") + 7, jiraContents.length()))
                 }
 //            }
         } else {
@@ -90,6 +92,9 @@ while (failedTests.contains("\n")) {
 
             System.out.println("\t" + id + " " + summary)
         }
+        
+        }
+
 	} catch (Exception e) {
 	    System.out.println("\nTest: " + test + " " + e.getMessage())
         System.out.println("Full: " +  fullContents)

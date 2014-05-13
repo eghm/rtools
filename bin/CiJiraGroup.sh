@@ -1,6 +1,7 @@
 C=0
 for f in $1/*.jira
 do
+    echo "CiJiraGrouping $f"
     mkdir -p $1/JiraGroups/${C}
     ERR_MESSAGE=$(grep "Error Message" $f)
 
@@ -25,16 +26,18 @@ then
   echo "fdupes not installed, http://code.google.com/p/fdupes/"
   exit
 fi
-fdupes -rf $1 | grep JiraFiles.txt > $1/JiraGroups/JiraFilesDups.txt
+fdupes -rf $1/JiraGroups | grep JiraFiles.txt > $1/JiraGroups/JiraFilesDups.txt
 
 for line in $(cat $1/JiraGroups/JiraFilesDups.txt)
 do
     DUP_DIR=$(dirname $line)
+    echo "removing duplicate directory $DUP_DIR"
     rm $DUP_DIR/JiraFiles.txt
     find $DUP_DIR -name '*.jira' -exec rm {} \;
 #    rm $DUP_DIR/*.jira
     rmdir $DUP_DIR
 done  
+
 
 find $1/JiraGroups -name '*.jira' > $1/JiraGroups/JiraFilesIdentified.txt
 
