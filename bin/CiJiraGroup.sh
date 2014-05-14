@@ -3,14 +3,14 @@ for f in $1/*.jira
 do
     echo "CiJiraGrouping $f"
     mkdir -p $1/JiraGroups/${C}
-    ERR_MESSAGE=$(grep "Error Message" $f)
+    ERR_MESSAGE=$(grep -A 1 "Error Message" $f)
 
 #    ERR_MESSAGE=`printf "%q" $ERR_MESSAGE`
-#    echo "FOUND ${ERR_MESSAGE}"
+    echo "FOUND ${ERR_MESSAGE}"
 #    grep -l "${ERR_MESSAGE}" $1/*.jira > $1/JiraGroups/${C}/JiraFiles.txt
 #    echo "grep -l \"${ERR_MESSAGE}\" $1/*.jira" > $1/JiraGroups/${C}-grep.txt
 
-    groovy match.groovy "${ERR_MESSAGE}" $1 jira > $1/JiraGroups/${C}/JiraFiles.txt
+    groovy matchStackTraceMessage.groovy "${ERR_MESSAGE}" $1 jira > $1/JiraGroups/${C}/JiraFiles.txt
 
     for line in $(cat $1/JiraGroups/${C}/JiraFiles.txt)
     do

@@ -34,8 +34,8 @@ do
     groovy ExtEmailResultsDiff.groovy ExtEmailBlank.txt $f.1 > $f.2
 
     # Identify existing (open) Jiras for failed tests flag those that don't have Jiras
-    groovy ExtResultsJiras.groovy $f.2 JIRA_DETECTION_OFF > $f.out
-#    groovy ExtResultsJiras.groovy $f.2 > $f.out
+#    groovy ExtResultsJiras.groovy $f.2 JIRA_DETECTION_OFF > $f.out
+    groovy ExtResultsJiras.groovy $f.2 > $f.out
 
     # Pull out failures with no jiras
     grep "NO JIRA FOUND" $f.out > $f.NoJiras   
