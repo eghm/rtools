@@ -23,12 +23,15 @@ do
 
     touch ../logs/$4/$logname.out 
     ln -s ../logs/$4/$logname.out $logname.out
+    date >> $logname.out
     mvn -version  >> $logname.out
     echo "MAVEN_OPTS=$MAVEN_OPTS" >> $logname.out
 
     echo "mvn -f rice-framework/krad-sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.public.user=$5 -Drice.version=$4 -Dremote.driver.highlight=false -Dremote.jgrowl.enabled=false $6 $7 $8 $9 >> $logname.out"
 
     ( mvn -f rice-framework/krad-sampleapp/pom.xml failsafe:integration-test -Pstests -Dremote.public.url=$1 -Dremote.public.user=$5 -Drice.version=$4 -Dremote.driver.highlight=false -Dremote.jgrowl.enabled=false $6 $7 $8 $9 >> $logname.out 2>&1 && touch /tmp/$logname )
+
+    date >> $logname.out
 
     while [ ! -e /tmp/$logname ]
     do
@@ -39,5 +42,8 @@ do
 	sed '$d' $TESTS_FILE > $TESTS_FILE.cut
     mv $TESTS_FILE.cut $TESTS_FILE	
 done;
+
+# sleep to give seperate download script chance to complete last file
+sleep 30 
 
 rm "$TESTS_FILE"

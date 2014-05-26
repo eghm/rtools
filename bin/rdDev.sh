@@ -1,6 +1,11 @@
 #!/bin/bash
 # svn revision, db root password, db username, db password, [rice db username], [rice db password], [saucelabs username, saucelabs access key]
 # to checkout a brach set R_SVN=https://svn.kuali.org/repos/rice/branches/rice-2.1
+
+# RAM DISK SPECIFIC
+# create 3G ram disk
+diskutil erasevolume HFS+ "$1" `hdiutil attach -nomount ram://6291456`
+
 stime=$(date '+%s')
 export DTS=$(date +%Y%m%d%H%M)
 
@@ -63,6 +68,7 @@ else
     echo "creating git repository"
     cp ../rtools/etc/gitignore .gitignore
     log-command.sh rdev.git.init git init -q
+    git init
     log-command.sh rdev.git.add git add -A
     echo "git pre impex commit"
     log-command.sh rdev.git.commit git commit -a -m "pre impex"
@@ -116,6 +122,10 @@ log-command.sh rdev.git.add git add -A
 echo "git applied rDev custom updates commit"
 log-command.sh rdev.svn.commit git commit -a -m "applied rDev custom updates"
 
+# RAM DISK SPECIFIC
+rsync -a /$R_HOME/$1/ /Volumes/$1/
+cd /Volumes/$1
+
 echo -e "\nStarting mvn-clean-install.sh this will take a while..."
 mvn-clean-install.sh $5 $6 $7 $8 $9 -T 4
 
@@ -130,4 +140,6 @@ ds=$((dt % 60))
 dm=$(((dt / 60) % 60))
 dh=$((dt / 3600))
 printf 'Elapsed time %d:%02d:%02d' $dh $dm $ds
+echo -e "\n installing rsync git crontab to run every minute"
+(crontab -l ; echo "* * * * * $R_HOME/rtools/bin/rdRsyncGit.sh $1") | crontab -
 echo -e "\n\n"

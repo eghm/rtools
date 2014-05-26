@@ -15,7 +15,7 @@ sub chrome {
 		
     if ($envLine =~ m|.*\schrome\s|) {
         $htmlBit .= "<img src=\"$imgDir/chrome.png\"><br/>";	
-        ($envLine =~ m|.*ff\s(\d*)\s.*|);
+        ($envLine =~ m|.*chrome\s(\d*)\s.*|);
         $htmlBit .= "$1";
     }
     return $htmlBit;
@@ -211,9 +211,11 @@ foreach my $test (@tests) {
         $testDir = substr($testDir, 0, length($testDir) - 1);
 #        print "\t\t$testDir\n";
         if ($result =~ m|^.* passed$|s) {
-            $testsresult .= "<td style=\"text-align: center; background-color: 00FF00\"><a href=\"$testDir/$testDir-video.flv\">S</a></td>";
+            $testsresult .= "<td style=\"text-align: center; background-color: 00FF00\">S</td>";
+#            $testsresult .= "<td style=\"text-align: center; background-color: 00FF00\"><a href=\"$testDir/$testDir-video.flv\">S</a></td>";
         } elsif ($result =~ m|^.* failed$|s)  {
-            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\"><a href=\"$testDir/$testDir-video.flv\">F</a></td>";
+            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\">F</td>";
+#            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\"><a href=\"$testDir/$testDir-video.flv\">F</a></td>";
         } else {
             $testsresult .= "<td style=\"text-align: center; background-color: FFFF00\">E</td>";
         }

@@ -39,14 +39,11 @@ then
 #	log-command.sh rdev.svn.co.db svn --trust-server-cert --non-interactive checkout $R_SVN $R_HOME/$1
 fi
 
-# rice .gitignore + config/ide .svn/ .settings/ .DS_Store
-if [ ! -e .gitignore ]
-then
-    echo "creating git repository"
-    cp ../rtools/etc/gitignore .gitignore
-    log-command.sh rdev.git.init git init -q
-fi
-log-command.sh rdev.git.add git add -A
+# overwrite project gitignore
+echo "creating git repository"
+cp ../rtools/etc/gitignore .gitignore
+log-command.sh rdev.git.init git init -q
+
 echo "git pre impex commit"
 log-command.sh rdev.git.commit git commit -a -m "pre impex"
 

@@ -19,6 +19,7 @@ then
 fi
 
 export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=512m -XX:ErrorFile=$R_HOME/logs/$rDir/hs_err_$DTS.log"
+#export MAVEN_OPTS="-Xms2048m -Xmx2048m -XX:MaxPermSize=1024m -XX:ErrorFile=$R_HOME/logs/$rDir/hs_err_$DTS.log"
 
 svndiff.sh
 

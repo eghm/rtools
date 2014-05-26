@@ -7,3 +7,6 @@ config/ide/
 .DS_Store
 rice-framework/krad-web/src/main/webapp/krad/min
 velocity.log
+.Trashes
+.fseventsd
+*.iml

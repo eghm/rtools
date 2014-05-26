@@ -12,7 +12,8 @@ for f in $(cat Afts2Run.txt) ; do
     rm Aft2Run.rev
     rm Aft.jira
 
-    AFT_ENV=localhost:8080/kr-dev
+    #AFT_ENV=localhost:8080/kr-dev
+    AFT_ENV=env8.rice.kuali.org
 
     echo -e "\nmvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT"
     mvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT -Dremote.driver.failure.screenshot=true -Dremote.driver.screenshot.dir=$1 > $f.local.out
