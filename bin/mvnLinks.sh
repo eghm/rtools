@@ -15,6 +15,8 @@
 # mvn default of REPO_HOME would be ~/.m2
 export REPO_HOME=/java/m2
 
+echo -e "\n\nmvnLinks.sh uses $REPO_HOME as M2_REPO\n\n"
+
 # mvn default of REPO_HOME would be ~/.m2/repository
 export REPO_DIR=$REPO_HOME/r
 
@@ -60,3 +62,8 @@ done
 # create a link for the kuali directory 
 rm -rf $REPO_HOME/$KVERSION/org/kuali
 ln -s $KUALI_REPO/$KVERSION $REPO_HOME/$KVERSION/org/kuali  
+
+# make sure the repo org/kuali cannot be updated!
+rm -rf $REPO_HOME/org/kuali
+sudo touch $REPO_HOME/org/kuali
+sudo touch $REPO_HOME/org/kuali.locked.use.rice.version.2.dirs.up

@@ -126,7 +126,7 @@ log-command.sh rdev.svn.commit git commit -a -m "applied rDev custom updates"
 rsync -a /$R_HOME/$1/ /Volumes/$1/
 cd /Volumes/$1
 
-mvnLinks.sh $1
+#mvnLinks.sh $1
 
 echo -e "\nStarting mvn-clean-install.sh this will take a while..."
 mvn-clean-install.sh $5 $6 $7 $8 $9 -T 4

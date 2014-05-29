@@ -5,7 +5,9 @@ fi
 
 export rDir=${PWD##*/}
 export DTS=$(date +%Y%m%d%H%M)
-export M2_REPO=/java/m2/$rDir
+
+# mvnLinks
+#export M2_REPO=/java/m2/$rDir
 
 if [ "$rDir" = "$R_HOME" ]
 then
@@ -28,7 +30,12 @@ ln -s $R_HOME/logs/$rDir/$1.$DTS.out $1.$DTS.out
 mvn -version >> $1.$DTS.out
 echo "MAVEN_OPTS=$MAVEN_OPTS" >> $1.$DTS.out
 echo "tail -f $R_HOME/logs/$rDir/$1.$DTS.out to watch progress."
-echo "mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dmaven.repo.local=$M2_REPO -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml" >> $1.$DTS.out
-mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dmaven.repo.local=$M2_REPO -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $1.$DTS.out 2>&1
+echo "mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml" >> $1.$DTS.out
+mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $1.$DTS.out 2>&1
+
+# mvnLinks which requires IntelliJ 13 M2_REPO overrides work
+#echo "mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dmaven.repo.local=$M2_REPO -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml" >> $1.$DTS.out
+#mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dmaven.repo.local=$M2_REPO -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $1.$DTS.out 2>&1
+
 echo -e "\nSee full log at $R_HOME/logs/$rDir/$1.$DTS.out $1.$DTS.out"
 tail -n 40 $1.$DTS.out
