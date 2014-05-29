@@ -2,10 +2,10 @@
 #
 # Existing directories:
 # m2
-# m2/repository
-# m2/kuali
-# m2/kuali/1111
-# m2/kuali/1112
+# m2/repository (m2/r)
+# m2/kuali      (m2/k)
+# m2/kuali/1111 (m2/k/1111)
+# m2/kuali/1112 (m2/k/1112)
 #
 # Symlinks created:
 # m2/1111/org/kuali -> m2/kuali/1111/org/kuali
@@ -38,7 +38,7 @@ export KVERSION=$1
 # recreate linked mvn repository for the passed in version
 rm -rf $REPO_HOME/$KVERSION
 mkdir -p $REPO_HOME/$KVERSION
-mkdir -p $KUALI_REPO
+mkdir -p $KUALI_REPO/$1
 for dir in $REPO_DIR/*
 do
   export DIR_BASE=`basename $dir`
