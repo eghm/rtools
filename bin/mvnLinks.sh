@@ -64,6 +64,9 @@ rm -rf $REPO_HOME/$KVERSION/org/kuali
 ln -s $KUALI_REPO/$KVERSION $REPO_HOME/$KVERSION/org/kuali  
 
 # make sure the repo org/kuali cannot be updated!
-rm -rf $REPO_HOME/org/kuali
-sudo touch $REPO_HOME/org/kuali
-sudo touch $REPO_HOME/org/kuali.locked.use.rice.version.2.dirs.up
+if [ ! -e $REPO_DIR/org/kuali.locked.use.rice.version.2.dirs.up ]
+then
+    rm -rf $REPO_DIR/org/kuali
+    sudo touch $REPO_DIR/org/kuali
+    sudo touch $REPO_DIR/org/kuali.locked.use.rice.version.2.dirs.up
+fi
