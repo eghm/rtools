@@ -13,14 +13,14 @@ cd rice-tools-test && mvn failsafe:integration-test -Pstests -Dmaven.failsafe.sk
 JOBS=$(grep rice-2.4-smoke-test: rice-2.4-smoke-test-last.txt)
 
 cd ..
-
-CiJenkinsResultsFor.sh $1 $2 $RESULTS_DIR $JOBS
-
+mkdir -p $RESULTS_DIR
 cd $RESULTS_DIR
 export FULL_RESULTS_DIR=$(pwd)
 cd ..
 
+CiJenkinsResultsFor.sh $1 $2 $FULL_RESULTS_DIR $JOBS
+
 CiAnalysis.sh $FULL_RESULTS_DIR 
 
-CiAftLocalRice.sh $RESULTS_DIR $AFT_DIR
+CiAftLocalRice.sh $FULL_RESULTS_DIR $AFT_DIR
 
