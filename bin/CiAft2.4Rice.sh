@@ -8,7 +8,7 @@ export AFT_DIR=$(pwd)
 export rDir=${PWD##*/}
 export M2_REPO=/java/m2/$rDir
 
-cd rice-tools-test && mvn failsafe:integration-test -Pstests -Dmaven.failsafe.skip=false -Dit.test=JenkinsLastCompletedBuildNumber -Dcas.username=$1 -Dcas.password=$2 -Djenkins.jobs=-2.4-smoke-test Dremote.driver.dontTearDownOnFailure=y -Dmaven.repo.local=$M2_REPO > rice-2.4-smoke-test-last.txt
+cd rice-tools-test && mvn failsafe:integration-test -Pstests -Dmaven.failsafe.skip=false -Dit.test=JenkinsLastCompletedBuildNumber -Dcas.username=$1 -Dcas.password=$2 -Djenkins.jobs=rice-2.4-smoke-test -Dremote.driver.dontTearDownOnFailure=y -Dmaven.repo.local=$M2_REPO > rice-2.4-smoke-test-last.txt
 
 JOBS=$(cat rice-2.4-smoke-test-last.txt)
 
