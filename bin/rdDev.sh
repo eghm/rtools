@@ -141,6 +141,8 @@ ds=$((dt % 60))
 dm=$(((dt / 60) % 60))
 dh=$((dt / 3600))
 printf 'Elapsed time %d:%02d:%02d' $dh $dm $ds
-echo -e "\n installing rsync git crontab to run every minute"
-(crontab -l ; echo "* * * * * $R_HOME/rtools/bin/rdRsyncGit.sh $1") | crontab -
+
+# RAM DISK SPECIFIC
+echo -e "\n installing rsync git crontab to run every night"
+(crontab -l ; echo "0 0 * * * $R_HOME/rtools/bin/rdRsyncGit.sh $1") | crontab -
 echo -e "\n\n"

@@ -1,6 +1,10 @@
 # JenkinsResults directory, directory to run tests from, [krad, rice]
 cd $2
 
+# mvnLinks
+export rDir=${PWD##*/}
+export M2_REPO=/java/m2/$rDir
+
 find $1/JiraGroups -name '*.jira' > Afts2Run.txt
 
 for f in $(cat Afts2Run.txt) ; do 
@@ -12,9 +16,11 @@ for f in $(cat Afts2Run.txt) ; do
     rm Aft2Run.rev
     rm Aft.jira
 
+    TEST_DIR=$(dirname $f)
+
     AFT_ENV=localhost:8080/krad-dev
-    echo -e "\nmvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT"
-    mvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT -Dremote.driver.failure.screenshot=true -Dremote.driver.screenshot.dir=$1 > $f.local.out
+    echo -e "\nmvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT -Dmaven.repo.local=$M2_REPO"
+    mvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT -Dremote.driver.failure.screenshot=true -Dremote.driver.screenshot.dir=$TEST_DIR -Dmaven.repo.local=$M2_REPO > $f.local.out
 
 done
 

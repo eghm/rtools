@@ -9,4 +9,5 @@ rice-framework/krad-web/src/main/webapp/krad/min
 velocity.log
 .Trashes
 .fseventsd
+.DocumentRevisions-V100
 *.iml
