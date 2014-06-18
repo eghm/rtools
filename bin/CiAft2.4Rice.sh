@@ -16,7 +16,11 @@ cd ..
 
 CiJenkinsResultsFor.sh $1 $2 $RESULTS_DIR $JOBS
 
-CiAnalysis.sh $RESULTS_DIR 
+cd $RESULTS_DIR
+export FULL_RESULTS_DIR=$(pwd)
+cd ..
+
+CiAnalysis.sh $FULL_RESULTS_DIR 
 
 CiAftLocalRice.sh $RESULTS_DIR $AFT_DIR
 
