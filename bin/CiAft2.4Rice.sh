@@ -26,3 +26,5 @@ CiAnalysis.sh $FULL_RESULTS_DIR
 
 CiAftLocalRice.sh $FULL_RESULTS_DIR $AFT_DIR
 
+CiAftLocalCleanup.sh $FULL_RESULTS_DIR
+
