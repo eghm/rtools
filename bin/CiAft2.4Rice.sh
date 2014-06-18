@@ -1,6 +1,6 @@
 stime=$(date '+%s')
 export DTS=$(date +%Y%m%d%H%M)
-export RESULTS_DIR=rice-2.4-smoke-test-$DTS
+export RESULTS_DIR=rice-2.4-aft-rice-$DTS
 
 export AFT_DIR=$(pwd)
 
