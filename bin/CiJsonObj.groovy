@@ -1,9 +1,9 @@
 import com.fasterxml.jackson.databind.*;
 
 @Grapes([
-    @Grab(group='com.fasterxml.jackson.core', module='jackson-core', version='2.3.0'),
-    @Grab(group='com.fasterxml.jackson.core', module='jackson-annotations', version='2.3.0'),
-    @Grab(group='com.fasterxml.jackson.core', module='jackson-databind', version='2.3.0')])
+    @Grab(group='com.fasterxml.jackson.core', module='jackson-core', version='2.4.0'),
+    @Grab(group='com.fasterxml.jackson.core', module='jackson-annotations', version='2.4.0'),
+    @Grab(group='com.fasterxml.jackson.core', module='jackson-databind', version='2.4.0')])
 public class CiJsonObj {
 
 
@@ -49,6 +49,11 @@ public class CiJsonObj {
         }
     }
 
+        /**
+
+            jsonFileName must be formatted as job-buildnumber.json such as rice-2.4-test-functional-saucelabs-95.json.
+
+        */
 	protected static void process(JenkinsJobResult value, String jsonFileName) {
         def message = ""
         def jenkinsBase = "http://ci.rice.kuali.org"
@@ -68,17 +73,18 @@ public class CiJsonObj {
         println("${job} - Build # ${buildNumber}\n") //rice-2.4-test-integration-mysql-daily-email - Build # 57 - Still Unstable:
         println("Check console output at ${jenkinsBase}/job/${job}/${buildNumber}/ to view the results.\n") // Check console output at http://ci.rice.kuali.org/job/rice-2.4-test-integration-mysql-daily-email/57/ to view the results.
         println("${value.failCount} tests failed.") // 148 tests failed.
+
  		for (s in value.suites) {
             for (c in  s.cases) {
-                if (c.status.equals("FAILED")) {
+                if (c.status.equals("FAILED") || c.status.equals("REGRESSION")) {
                     if (c.errorDetails != null) {
                         message = c.errorDetails.replaceAll("\n\n", "\n")
                     } else if (c.stderr != null) {
                         message = c.stderr.replaceAll("\n\n", "\n")
                     } else if (c.stdout != null) {
                         message = c.stdout.replaceAll("\n\n", "\n")
-                    }
-                    else {
+                    } else {
+println("unable to detect message for\t${c}");
                         message = ""
                     }
 
@@ -94,15 +100,16 @@ public class CiJsonObj {
             }
         }
 
-        // println(value.toString())
-        // for (s in value.suites) {
-        //     println("Suite:\t${s}")
-        // }
+//        println(value.toString())
+//        for (s in value.suites) {
+//            println("Suite:\t${s}")
+//         }
 	}
 
 }
 
 class JenkinsJobResult {
+    def empty
     def duration
     def failCount
     def passCount
@@ -114,7 +121,7 @@ class JenkinsJobResult {
 	    for (c in suites) {
 	        cases += "\t\t" + c.toString() + "\n"
 	    }
-	    return "duration: ${duration} failCount: ${failCount} passCount: ${passCount} skipCount: ${skipCount}\n${cases}\n\n"
+	    return "empty: ${empty} duration: ${duration} failCount: ${failCount} passCount: ${passCount} skipCount: ${skipCount}\n${cases}\n\n"
 	}
 }
 
