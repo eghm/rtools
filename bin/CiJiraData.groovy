@@ -11,7 +11,7 @@ def groupedErrors = extResultsDiffJiras.substring(extResultsDiffJiras.indexOf("N
 def testDetails = extResultsDiffJiras.substring(extResultsDiffJiras.indexOf("New Failures Details:"), extResultsDiffJiras.length()) + "\n\nTest:" // add token at end for easier matching
 
 // Properties
-def jenkinsBase = "http://ci.rice.kuali.org"
+def jenkinsBase = "http://ci.kuali.org"
 def buildNumber = fileName.substring(fileName.lastIndexOf("-") + 1, fileName.indexOf(".json"))
 def job = fileName
 if (job.contains("/")) {
