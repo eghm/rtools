@@ -1,3 +1,4 @@
+# cas user, cas pass, results dir, jobs to use to determine count diffs
 CiJenkinsJobsBuilds.sh "$@"
 
 # RESULTS_DIR created in CiJenkinsJobsBuilds.sh

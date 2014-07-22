@@ -56,7 +56,7 @@ public class CiJsonObj {
         */
 	protected static void process(JenkinsJobResult value, String jsonFileName) {
         def message = ""
-        def jenkinsBase = "http://ci.rice.kuali.org"
+        def jenkinsBase = "http://ci.kuali.org"
 
         def totalCount = value.failCount + value.passCount + value.skipCount
         def buildNumber = jsonFileName.substring(jsonFileName.lastIndexOf("-") + 1, jsonFileName.indexOf(".json"))
