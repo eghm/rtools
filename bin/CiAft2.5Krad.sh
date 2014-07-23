@@ -6,10 +6,14 @@ export AFT_DIR=$(pwd)
 
 # mvnLinks
 export rDir=${PWD##*/}
-export M2_REPO=/java/m2/$rDir
+# if repository/r/org/kauli is a file, not a directory, then assume we are in mvnLinks mode
+if [ -f "/java/m2/r/org/kuali" ]; then
+  export M2_REPO=/java/m2/$rDir
+  export MVN_M2_REPO=-Dmaven.repo.local=$M2_REPO
+fi
 
-echo "cd rice-tools-test && mvn failsafe:integration-test -Pstests -Dmaven.failsafe.skip=false -Dit.test=JenkinsLastCompletedBuildNumber -Dcas.username=$1 -Dcas.password=$2 -Djenkins.jobs=rice-2.5-test-functional-env14-jenkins-krad-sampleapp -Dremote.driver.dontTearDownOnFailure=y -Dmaven.repo.local=$M2_REPO > ../rice-2.5-aft-krad-last.txt"
-cd rice-tools-test && mvn failsafe:integration-test -Pstests -Dmaven.failsafe.skip=false -Dit.test=JenkinsLastCompletedBuildNumber -Dcas.username=$1 -Dcas.password=$2 -Djenkins.jobs=rice-2.5-test-functional-env14-jenkins-krad-sampleapp -Dremote.driver.dontTearDownOnFailure=y -Dmaven.repo.local=$M2_REPO > ../rice-2.5-aft-krad-last.txt
+echo "cd rice-tools-test && mvn failsafe:integration-test -Pstests -Dmaven.failsafe.skip=false -Dit.test=JenkinsLastCompletedBuildNumber -Dcas.username=$1 -Dcas.password=$2 -Djenkins.jobs=rice-2.5-test-functional-env14-jenkins-krad-sampleapp -Dremote.driver.dontTearDownOnFailure=y $MVN_M2_REPO > ../rice-2.5-aft-krad-last.txt"
+cd rice-tools-test && mvn failsafe:integration-test -Pstests -Dmaven.failsafe.skip=false -Dit.test=JenkinsLastCompletedBuildNumber -Dcas.username=$1 -Dcas.password=$2 -Djenkins.jobs=rice-2.5-test-functional-env14-jenkins-krad-sampleapp -Dremote.driver.dontTearDownOnFailure=y $MVN_M2_REPO > ../rice-2.5-aft-krad-last.txt
 
 cd ..
 
