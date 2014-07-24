@@ -42,6 +42,8 @@ cd $R_HOME
 mkdir -p $R_HOME/logs/$1
 mkdir -p $R_HOME/$1
 
+settingsSed.sh /java/m2/$1
+
 #if [ "$(ls -A $R_HOME/$1)" ]
 #then
 #     echo "$R_HOME/$1 should be emtpy but is not.  Hangning file pointer possible, exiting."
