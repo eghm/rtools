@@ -3,11 +3,15 @@ then
     echo "env R_HOME is not set!  Exiting."
 fi
 
-export rDir=${PWD##*/}
 export DTS=$(date +%Y%m%d%H%M)
 
 # mvnLinks
-export M2_REPO=/java/m2/$rDir
+export rDir=${PWD##*/}
+# if repository/r/org/kauli is a file, not a directory, then assume we are in mvnLinks mode
+if [ -f "/java/m2/r/org/kuali" ]; then
+  export M2_REPO=/java/m2/$rDir
+  export MVN_M2_REPO=-Dmaven.repo.local=$M2_REPO
+fi
 
 if [ "$rDir" = "$R_HOME" ]
 then
@@ -37,7 +41,7 @@ echo "tail -f $R_HOME/logs/$rDir/$1.$DTS.out to watch progress."
 
 # mvnLinks which requires IntelliJ 13 M2_REPO overrides work
 echo "mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dmaven.repo.local=$M2_REPO -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml" >> $1.$DTS.out
-mvn $2 $3 $4 $5 $6 $7 $8 $9 -Dmaven.repo.local=$M2_REPO -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $1.$DTS.out 2>&1
+mvn $2 $3 $4 $5 $6 $7 $8 $9 $MVN_M2_REPO -Dlog4j.debug=true -Dalt.config.location=$R_HOME/$rDir/$rDir-common-test-config.xml >> $1.$DTS.out 2>&1
 
 echo -e "\nSee full log at $R_HOME/logs/$rDir/$1.$DTS.out $1.$DTS.out"
 tail -n 40 $1.$DTS.out
