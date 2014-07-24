@@ -15,6 +15,12 @@
 # mvn default of REPO_HOME would be ~/.m2
 export REPO_HOME=/java/m2
 
+# if repository/r/org/kauli is a directory, then assume we are not in mvnLinks mode
+if [ -d "$REPO_HOME/r/org/kuali" ]; then
+  echo "$REPO_HOME/r/org/kuali is a directory, not in mvnLinks mode"
+  exit 1
+fi
+
 echo -e "\n\nmvnLinks.sh uses $REPO_HOME as M2_REPO\n\n"
 
 # mvn default of REPO_HOME would be ~/.m2/repository
