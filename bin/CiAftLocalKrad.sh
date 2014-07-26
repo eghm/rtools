@@ -3,7 +3,11 @@ cd $2
 
 # mvnLinks
 export rDir=${PWD##*/}
-export M2_REPO=/java/m2/$rDir
+# if repository/r/org/kauli is a file, not a directory, then assume we are in mvnLinks mode
+if [ -f "/java/m2/r/org/kuali" ]; then
+  export M2_REPO=/java/m2/$rDir
+  export MVN_M2_REPO=-Dmaven.repo.local=$M2_REPO
+fi
 
 find $1/JiraGroups -name '*.jira' > Afts2Run.txt
 
@@ -19,8 +23,8 @@ for f in $(cat Afts2Run.txt) ; do
     TEST_DIR=$(dirname $f)
 
     AFT_ENV=localhost:8080/krad-dev
-    echo -e "\nmvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT -Dremote.driver.failure.screenshot=true -Dremote.driver.screenshot.dir=$TEST_DIR -Dmaven.repo.local=$M2_REPO > $f.local.out"
-    mvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT -Dremote.driver.failure.screenshot=true -Dremote.driver.screenshot.dir=$TEST_DIR -Dmaven.repo.local=$M2_REPO > $f.local.out
+    echo -e "\nmvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT -Dremote.driver.failure.screenshot=true -Dremote.driver.screenshot.dir=$TEST_DIR -Dremote.jgrowl.enabled=true $MVN_M2_REPO > $f.local.out"
+    mvn failsafe:integration-test -Pstests -Dremote.jgrowl.enabled=false -Dremote.driver.highlight=false -Dremote.public.url=$AFT_ENV -Dit.test=$AFT -Dremote.driver.failure.screenshot=true -Dremote.driver.screenshot.dir=$TEST_DIR -Dremote.jgrowl.enabled=true $MVN_M2_REPO > $f.local.out
 
 done
 
