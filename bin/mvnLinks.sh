@@ -76,3 +76,5 @@ then
     sudo touch $REPO_DIR/org/kuali
     sudo touch $REPO_DIR/org/kuali.locked.use.rice.version.2.dirs.up
 fi
+
+mvnLinksSettings.sh $1
