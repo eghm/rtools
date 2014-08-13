@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.*;
     @Grab(group='com.fasterxml.jackson.core', module='jackson-core', version='2.4.0'),
     @Grab(group='com.fasterxml.jackson.core', module='jackson-annotations', version='2.4.0'),
     @Grab(group='com.fasterxml.jackson.core', module='jackson-databind', version='2.4.0')])
-public class CiJsonObjFirstFailure {
+public class JenkinsJsonRegressions {
 
     public static void main(String[] args) throws Exception {
         def jsonFileName = args[0] // rice-2.4-test-functional-saucelabs-95.json
@@ -14,7 +14,7 @@ public class CiJsonObjFirstFailure {
             try {
                 JenkinsJobResult value = mapper.readValue(new File(jsonFileName), JenkinsJobResult.class);
                 goodRead = true;
-                process(value, jsonFileName);
+                process(value);
             } catch (JsonMappingException jme) {
 //                System.err.println(jme.getMessage());
                 def message = jme.getMessage();
@@ -48,12 +48,7 @@ public class CiJsonObjFirstFailure {
         }
     }
 
-        /**
-
-            jsonFileName must be formatted as job-buildnumber.json such as rice-2.4-test-functional-saucelabs-95.json.
-
-        */
-	protected static void process(JenkinsJobResult value, String jsonFileName) {
+	protected static void process(JenkinsJobResult value) {
         def message = ""
         def shortClassName = ""
  		for (s in value.suites) {
