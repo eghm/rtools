@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.*;
     @Grab(group='com.fasterxml.jackson.core', module='jackson-core', version='2.4.0'),
     @Grab(group='com.fasterxml.jackson.core', module='jackson-annotations', version='2.4.0'),
     @Grab(group='com.fasterxml.jackson.core', module='jackson-databind', version='2.4.0')])
-public class CiJsonObj {
-
+public class CiJsonObjFirstFailure {
 
     public static void main(String[] args) throws Exception {
         def jsonFileName = args[0] // rice-2.4-test-functional-saucelabs-95.json
@@ -56,49 +55,14 @@ public class CiJsonObj {
         */
 	protected static void process(JenkinsJobResult value, String jsonFileName) {
         def message = ""
-        def jenkinsBase = "http://ci.kuali.org"
-
-        def totalCount = value.failCount + value.passCount + value.skipCount
-        def buildNumber = jsonFileName.substring(jsonFileName.lastIndexOf("-") + 1, jsonFileName.indexOf(".json"))
-        def job = jsonFileName
-        if (job.contains("/")) {
-            job = job.substring(job.lastIndexOf("/") + 1, jsonFileName.indexOf("-" + buildNumber + ".json"))
-        } else if (job.contains("\\")) {
-            job = job.substring(job.lastIndexOf("\\") + 1, jsonFileName.indexOf("-" + buildNumber + ".json"))
-        } else {
-            job = job.substring(0, jsonFileName.indexOf("-" + buildNumber + ".json"))
-        }
-
-		println("Total Tests: ${totalCount}  Failed Tests: ${value.failCount} Skipped: ${value.skipCount}\n") // Total Tests: 1832  Failed Tests: 148 Skipped:  42
-        println("${job} - Build # ${buildNumber}\n") //rice-2.4-test-integration-mysql-daily-email - Build # 57 - Still Unstable:
-        println("Check console output at ${jenkinsBase}/job/${job}/${buildNumber}/ to view the results.\n") // Check console output at http://ci.rice.kuali.org/job/rice-2.4-test-integration-mysql-daily-email/57/ to view the results.
-        println("${value.failCount} tests failed.") // 148 tests failed.
-
  		for (s in value.suites) {
-            for (c in  s.cases) {
-                if (c.status.equals("FAILED") || c.status.equals("REGRESSION")) {
-                    if (c.errorDetails != null) {
-                        message = c.errorDetails.replaceAll("\n\n", "\n")
-                    } else if (c.stderr != null) {
-                        message = c.stderr.replaceAll("\n\n", "\n")
-                    } else if (c.stdout != null) {
-                        message = c.stdout.replaceAll("\n\n", "\n")
-                    } else {
-println("unable to detect message for\t${c}");
-                        message = ""
-                    }
-
-                    message = message.replaceAll("&gt;", ">");
-                    message = message.replaceAll("&lt;", "<");
-                    message = message.replaceAll("&amp;", "&"); // don't replace ampersand first to preserve remaining &gt; and &lt; as they appear in jenkins
-
-                    println("FAILED: ${c.className}.${c.name}\n\nError Message:\n${message}")
-                    println("\nStack Trace: ${c.errorStackTrace}")
-                    println("\nStandard Output: ${c.stdout}")
-                    println("\n\n")
+            for (c in s.cases) {
+                if (c.status.equals("REGRESSION")) { // REGRESSION is first failure
+                    println("${c.className}.${c.name}")
                 }
             }
         }
+        println("\n\n")
 
 //        println(value.toString())
 //        for (s in value.suites) {
@@ -107,4 +71,3 @@ println("unable to detect message for\t${c}");
 	}
 
 }
-
