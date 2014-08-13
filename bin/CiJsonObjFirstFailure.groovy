@@ -55,14 +55,15 @@ public class CiJsonObjFirstFailure {
         */
 	protected static void process(JenkinsJobResult value, String jsonFileName) {
         def message = ""
+        def shortClassName = ""
  		for (s in value.suites) {
             for (c in s.cases) {
                 if (c.status.equals("REGRESSION")) { // REGRESSION is first failure
-                    println("${c.className}.${c.name}")
+                    shortClassName = c.className.substring(c.className.lastIndexOf(".")+1, c.className.length())
+                    println("${shortClassName}#${c.name}")
                 }
             }
         }
-        println("\n\n")
 
 //        println(value.toString())
 //        for (s in value.suites) {
