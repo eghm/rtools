@@ -40,20 +40,29 @@ println(regex)
 
 System.exit(1) 
 */
-    // get statck trace for jiar, there can only be 1 match
+    // get statck trace for jira, there can only be 1 match
 //	def stackTrace = testDetails =~ /.*(\nTest:.test.*)[\n\n].*Test:.*/
 //	println("${stackTrace}[0]")
 
     def testDetail = testDetails.substring(testDetails.indexOf("\nTest: " + test) + 7, testDetails.length())
     testDetail = testDetail.substring(0, testDetail.indexOf("\nTest:")).trim()
-    def testError = "";
+    def testError = ""
     try {
         testError = testDetail.substring(testDetail.indexOf("Error Message: ") + 15, testDetail.indexOf("Stack Trace:")).trim()
         if (testError.equals("")) {
             testError = "See Test Detail"
         }
     } catch (IndexOutOfBoundsException ioobe) {
+        System.out.println(ioobe)
         testError = "Not determined"
+    }
+
+    def testSince = ""
+    try {
+        testSince = testDetail.substring(testDetail.indexOf("Failed Since:") + 13, testDetail.indexOf("Error Message:")).trim()
+    } catch (IndexOutOfBoundsException ioobe) {
+        System.out.println(ioobe)
+        testSince = "-1"
     }
 
     def aftSteps = "";
@@ -94,12 +103,15 @@ System.exit(1)
     // url to test results
     def testResultsUrl = jenkinsBase + "/job/" + job + "/lastCompletedBuild/testReport/" + testPackage + "/" + testClass + "/" + testMethod + "/"
 
+    // url to change set https://ci.kuali.org/view/rice/view/2.5/view/test-release/job/rice-2.5-test-functional-env14-jenkins-krad-sampleapp/190/changes
+    def testSinceUrl = jenkinsBase + "/job/" + job + "/" + testSince + "/changes"
+
     // mvn command to run this test locally
 
     // use long name in description
     def description = ""
 
-    def jira = aftSteps + lastUrl + "\n\nAbbreviated test name: " + testShort + "\nFull test name: " + test + "\nTest results url: " + testResultsUrl + "\nError Message: " + testError + "\n\n{code}Test Details: " + testDetail + "{code}"
+    def jira = aftSteps + lastUrl + "\n\nChange set for failure: " + testSinceUrl + "\nAbbreviated test name: " + testShort + "\nFull test name: " + test + "\nTest results url: " + testResultsUrl + "\nError Message: " + testError + "\n\n{code}Test Details: " + testDetail + "{code}"
    jira = jira.trim() + "\n\n";
     
     if (!testError.contains("KULRICE")) { // TODO These should be here, why wasn't the Jira found during by test name?

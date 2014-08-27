@@ -13,7 +13,8 @@ def String fullContents
 def Map jiraTests = ["NO JIRAS FOUND":[]]
 
 while (failedTests.contains("\n")) {
-	test = failedTests.substring(0, failedTests.indexOf("\n")).trim()	
+
+	test = failedTests.substring(0, failedTests.indexOf("\n")).trim()
 	failedTests = failedTests.substring(test.length(), failedTests.length()).trim()
 	
 //	detail = testDetails.substring(testDetails.indexOf("Test: " + test) + test.length() + 5, testDetails.indexOf("\n\n"))

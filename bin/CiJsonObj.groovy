@@ -92,7 +92,9 @@ println("unable to detect message for\t${c}");
                     message = message.replaceAll("&lt;", "<");
                     message = message.replaceAll("&amp;", "&"); // don't replace ampersand first to preserve remaining &gt; and &lt; as they appear in jenkins
 
-                    println("FAILED: ${c.className}.${c.name}\n\nError Message:\n${message}")
+                    println("FAILED: ${c.className}.${c.name}")
+                    println("\nFailed Since: ${c.failedSince}")
+                    println("\n\nError Message:\n${message}")
                     println("\nStack Trace: ${c.errorStackTrace}")
                     println("\nStandard Output: ${c.stdout}")
                     println("\n\n")

@@ -18,11 +18,13 @@ def int firstCount = firstResults.count("FAILED:")
 def firstTests = new String[firstCount]
 def firstErrors = new String[firstCount]
 def firstTraces = new String[firstCount]
+def firstSince = new String[firstCount]
 
 def secondCount = secondResults.count("FAILED:")
 def secondTests = new String[secondCount]
 def secondErrors = new String[secondCount]
 def secondTraces = new String[secondCount]
+def secondSince = new String[secondCount]
 
 // to view the results is from $DEFAULT_CONTENT
 def header = secondResults.substring(secondResults.indexOf("Total Tests:"), secondResults.indexOf("to view the results.") + 20)
@@ -35,9 +37,10 @@ if (firstResults.contains("FAILED:")) {
     firstResults = firstResults.substring(firstResults.indexOf("FAILED:"), firstResults.length())
 }
 while (firstResults.contains("FAILED:")) {
-    def String testName = firstResults.substring(firstResults.indexOf("FAILED:") + 8, firstResults.indexOf("Error Message:")).trim()
-
-    def String testError = firstResults.substring(firstResults.indexOf("Error Message:") + 14, firstResults.indexOf("Stack Trace:")).trim()
+    def String testName = firstResults.substring(firstResults.indexOf("FAILED:") + 8, firstResults.indexOf("Failed Since:")).trim()
+    def String testSince = firstResults.substring(firstResults.indexOf("Failed Since:") + 14, firstResults.indexOf("Error Message:")).trim()
+    def String testError = firstResults.substring(firstResults.indexOf("Error Message:") + 15, firstResults.indexOf("Stack Trace:")).trim()
+    testError = testError.substring(testError.indexOf("Error Message:") + 14, testError.length())
 	testError = testError.replaceAll(/@.*id=/, "object-instance[id=") // remove instance ids
 	testError = testError.replaceAll(/@.*\)/, "object-instance") // remove instance ids
 	testError = testError.replaceAll(/objectId=.*,/, "objectId=object-id") // remove objectIds
@@ -77,6 +80,7 @@ while (firstResults.contains("FAILED:")) {
     firstTests[i] = testName
     firstErrors[i] = testError
     firstTraces[i] = testTrace
+    firstSince[i] = testSince
     i++
 }
 
@@ -89,9 +93,11 @@ if (secondResults.contains("FAILED:")) {
     secondResults = secondResults.substring(secondResults.indexOf("FAILED:"), secondResults.length())
 }
 while (secondResults.contains("FAILED:")) {
-    def String testName = secondResults.substring(secondResults.indexOf("FAILED:") + 8, secondResults.indexOf("Error Message:")).trim()
-
-    def String testError = secondResults.substring(secondResults.indexOf("Error Message:") + 14, secondResults.indexOf("Stack Trace:")).trim()
+    def String testName = secondResults.substring(secondResults.indexOf("FAILED:") + 8, secondResults.indexOf("Failed Since:")).trim()
+    def String testSince = secondResults.substring(secondResults.indexOf("Failed Since:") + 14, secondResults.indexOf("Error Message:")).trim()
+    def String testError = secondResults.substring(secondResults.indexOf("Error Message:") + 15, secondResults.indexOf("Stack Trace:")).trim()
+    testError = testError.substring(testError.indexOf("Error Message:") + 14, testError.length())
+    testError = testError.substring(testError.indexOf("\n") + 1, testError.length()).trim()
 	testError = testError.replaceAll(/@.*id/, "object-instance[id") // remove instance ids
 	testError = testError.replaceAll(/@.*\)/, "object-instance") // remove instance ids
 	testError = testError.replaceAll(/objectId=.*,/, "objectId=object-id") // remove objectIds
@@ -132,7 +138,7 @@ while (secondResults.contains("FAILED:")) {
     secondTests[i] = testName
     secondErrors[i] = testError
     secondTraces[i] = testTrace
-
+    secondSince[i] = testSince
     i++
 }
 
@@ -143,6 +149,7 @@ for (i = 0; i < secondCount; i++) {
             secondTests[i] = ""
             secondErrors[i] = ""
             secondTraces[i] = ""
+            secondSince[i] = ""
         }
     }
 }
@@ -194,6 +201,6 @@ for (i = 0; i < secondCount; i++) {
 println("\n\nNew Failures Details:\n")
 for (i = 0; i < secondCount; i++) {
     if (!secondTests[i].equals("")) {
-        println("Test: " + secondTests[i] + "\nError Message: " + secondErrors[i] + "\nStack Trace:\n" + secondTraces[i] + "\n\n")
+        println("Test: " + secondTests[i] + "\nFailed Since: " + secondSince[i] + "\nError Message: " + secondErrors[i] + "\nStack Trace:\n" + secondTraces[i] + "\n\n")
     }
 }
