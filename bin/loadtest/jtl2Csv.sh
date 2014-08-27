@@ -60,7 +60,7 @@ tr '\n' , < jtl.headers.txt > jtl.headers.csv
 #echo -e ""
 
 # Setup averages as CVS file
-rm -rf $41.ave.times
+rm -rf $1.ave.times
 for f in $(cat $R_HOME/rtools/bin/loadtest/jtls.txt) ; do
 
     JTL_FILE=$(echo $f | cut -d: -f1)   
@@ -72,17 +72,17 @@ for f in $(cat $R_HOME/rtools/bin/loadtest/jtls.txt) ; do
 #echo "grep lb=.$JTL_PAGE logs/results/$(basename $JTL_FILE) | cut -d\" -f2"
     grep lb=.$JTL_PAGE logs/results/$(basename $JTL_FILE) | cut -d\" -f2 >> $(basename $JTL_FILE).times
 
-    awk '{s+=$1}END{print s/NR}' RS=" " $(basename $JTL_FILE).times >> $41.ave.times
+    awk '{s+=$1}END{print s/NR}' RS=" " $(basename $JTL_FILE).times >> $1.ave.times
 
 done 
 
-tr '\n' , < $41.ave.times > $41.ave.times.csv
+tr '\n' , < $1.ave.times > $1.ave.times.csv
 
 # Display
 echo -e "\n\n\n"
 cat jtl.headers.csv
 echo -e ""
-cat $41.ave.times.csv
+cat $1.ave.times.csv
 echo -e ""
 
 # Cleanup
