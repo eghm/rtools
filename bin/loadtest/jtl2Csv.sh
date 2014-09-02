@@ -30,7 +30,14 @@ fi
 if [ ! -f "rice-2.5-test-jmeter-env19-nightly-$1.zip" ] 
 then
     wget --no-check-certificate https://ci.kuali.org/view/rice/view/2.5/view/performance/job/rice-2.5-test-jmeter-env19-nightly/$1/artifact/*zip*/archive.zip
-	mv archive.zip rice-2.5-test-jmeter-env19-nightly-$1.zip
+
+    if [ ! -f "archive.zip" ] 
+    then
+	echo "archive zip file not found something went wrong with wget"
+	exit
+    fi
+
+    mv archive.zip rice-2.5-test-jmeter-env19-nightly-$1.zip
 fi
 
 # if there isn't an unzipped directory make it
