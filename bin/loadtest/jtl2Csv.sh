@@ -47,7 +47,13 @@ then
     mv archive rice-2.5-test-jmeter-env19-nightly-$1
 fi
 
-cd rice-2.5-test-jmeter-env19-nightly-$1-archive
+if [ -d rice-2.5-test-jmeter-env19-nightly-$1-archive ]
+then
+    cd rice-2.5-test-jmeter-env19-nightly-$1-archive
+else
+    cd rice-2.5-test-jmeter-env19-nightly-$1
+fi
+
 
 rm -rf jtl.headers.txt
 
