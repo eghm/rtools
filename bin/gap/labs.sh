@@ -1,3 +1,10 @@
+XMLGREP=$(xml_gre -v)
+if [ -z "$XMLGREP" ]
+then
+  echo "This script uses xml_grep ( see http://search.cpan.org/dist/XML-Twig/tools/xml_grep/xml_grep )"
+  exit
+fi
+
 xml_grep "//bean[@parent='Uif-Link']" rice-framework/krad-sampleapp/web/src/main/resources/org/kuali/rice/krad/labs/LabsMenu.xml | grep -v 2014 | grep -v "</file>" | grep -v "</xml_grep" > labsLinks.xml
 
 echo "LINK TEXTS"
