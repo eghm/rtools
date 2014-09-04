@@ -29,7 +29,7 @@ fi
 # if there isn't a renamed archive file for the given build number get it
 if [ ! -f "rice-2.5-test-jmeter-env19-nightly-$1.zip" ] 
 then
-    wget --no-check-certificate https://ci.kuali.org/view/rice/view/2.5/view/performance/job/rice-2.5-test-jmeter-env19-nightly/$1/artifact/*zip*/archive.zip
+    wget -q --no-check-certificate https://ci.kuali.org/view/rice/view/2.5/view/performance/job/rice-2.5-test-jmeter-env19-nightly/$1/artifact/*zip*/archive.zip
 
     if [ ! -f "archive.zip" ] 
     then
@@ -43,7 +43,7 @@ fi
 # if there isn't an unzipped directory make it
 if [ ! -d "rice-2.5-test-jmeter-env19-nightly-$1" ] 
 then
-    unzip rice-2.5-test-jmeter-env19-nightly-$1.zip
+    unzip -q rice-2.5-test-jmeter-env19-nightly-$1.zip
     mv archive rice-2.5-test-jmeter-env19-nightly-$1
 fi
 
