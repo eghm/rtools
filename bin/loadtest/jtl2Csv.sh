@@ -57,7 +57,8 @@ fi
 
 rm -rf jtl.headers.txt
 
-
+echo "Date" >> jtl.headers.txt
+echo "Revision" >> jtl.headers.txt
 # Setup pages as CSV file
 for f in $(cat $R_HOME/rtools/bin/loadtest/jtls.txt) ; do
 
@@ -69,11 +70,20 @@ for f in $(cat $R_HOME/rtools/bin/loadtest/jtls.txt) ; do
 done 
 
 tr '\n' , < jtl.headers.txt > jtl.headers.csv
-#cat jtl.headers.csv
-#echo -e ""
+echo "" >> jtl.headers.csv
+
 
 # Setup averages as CVS file
 rm -rf $1.ave.times
+
+KDATE=$(grep "<br/> Rice KRAD Sample Application Web ::"  logs/login.txt | cut -d: -f 7)
+KTIME=$(grep "<br/> Rice KRAD Sample Application Web ::"  logs/login.txt | cut -d: -f 8 | tr -d '\r')
+export KDTS="$KDATE:$KTIME"
+export RVSION=$(grep SVN-Revision logs/manifest.log | cut -d: -f2 | tr -d ' ' | tr -d '\r')
+
+echo -e "$KDTS" > $1.ave.times
+echo -e "$RVSION" >> $1.ave.times
+
 for f in $(cat $R_HOME/rtools/bin/loadtest/jtls.txt) ; do
 
     JTL_FILE=$(echo $f | cut -d: -f1)   
@@ -90,13 +100,12 @@ for f in $(cat $R_HOME/rtools/bin/loadtest/jtls.txt) ; do
 done 
 
 tr '\n' , < $1.ave.times > $1.ave.times.csv
+echo "" >> $1.ave.times.csv
 
 # Display
 echo -e "\n\n\n"
 cat jtl.headers.csv
-echo -e ""
 cat $1.ave.times.csv
-echo -e ""
 
 # Cleanup
 rm -rf jtl.headers.txt
