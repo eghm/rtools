@@ -110,7 +110,7 @@ cat jtl.headers.csv
 cat $1.ave.times.csv
 
 # Cleanup
-#rm -rf jtl.headers.txt
-#rm -rf jtl.headers.csv
-#rm -rf $1.ave.times.csv
-#rm -rf *.times
+rm -rf jtl.headers.txt
+rm -rf jtl.headers.csv
+rm -rf $1.ave.times.csv
+rm -rf *.times
