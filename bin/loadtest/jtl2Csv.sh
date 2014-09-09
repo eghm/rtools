@@ -97,7 +97,7 @@ for f in $(cat $R_HOME/rtools/bin/loadtest/jtls.txt) ; do
 #echo "grep lb=.$JTL_PAGE logs/results/$(basename $JTL_FILE) | cut -d\" -f2"
     grep lb=.$JTL_PAGE logs/results/$(basename $JTL_FILE) | cut -d\" -f2 >> $(basename $JTL_FILE).times
 
-    awk '{s+=$1}END{print s/NR}' RS=" " $(basename $JTL_FILE).times >> $1.ave.times
+    awk '{s+=$1}END{print s/NR}' RS="\n" $(basename $JTL_FILE).times >> $1.ave.times
 
 done 
 
@@ -110,7 +110,7 @@ cat jtl.headers.csv
 cat $1.ave.times.csv
 
 # Cleanup
-rm -rf jtl.headers.txt
-rm -rf jtl.headers.csv
-rm -rf $1.ave.times.csv
-rm -rf *.times
+#rm -rf jtl.headers.txt
+#rm -rf jtl.headers.csv
+#rm -rf $1.ave.times.csv
+#rm -rf *.times

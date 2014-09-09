@@ -89,7 +89,7 @@ for f in $(cat $R_HOME/rtools/bin/loadtest/jtls.txt) ; do
 #echo "grep lb=.$JTL_PAGE rice-framework/krad-sampleapp/web/target/jmeter/results/$(basename $JTL_FILE) | cut -d\" -f2"
     grep lb=.$JTL_PAGE rice-framework/krad-sampleapp/web/target/jmeter/results/$(basename $JTL_FILE) | cut -d\" -f2 >> $(basename $JTL_FILE).times
 
-    awk '{s+=$1}END{print s/NR}' RS=" " $(basename $JTL_FILE).times >> $1.ave.times
+    awk '{s+=$1}END{print s/NR}' RS="\n" $(basename $JTL_FILE).times >> $1.ave.times
 
 done 
 
