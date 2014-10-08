@@ -1,5 +1,5 @@
-export XMLGREP=$(which xml_grep)
-if [ -z "$XMLGREP" ]
+XMLGREP=$(which xml_grep)
+if [ ! -z "$XMLGREP" ]
 then
   echo "This script uses xml_grep ( see http://search.cpan.org/dist/XML-Twig/tools/xml_grep/xml_grep )"
   exit
