@@ -4,6 +4,7 @@
 while [ -s saucelabtargets.csv ]
 do
 	
+	cd $1/$2
 	for f in SauceLabsResources*.sh 
 	do
 		
@@ -15,5 +16,5 @@ do
 		chmod 644 Downloaded-$f
 		
 	done
-	
+	cd $1	
 done

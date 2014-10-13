@@ -13,7 +13,7 @@ then
     cp $R_HOME/rtools/etc/$TESTS_FILE .
 fi
 
-/bin/bash -c "$R_HOME/rtools/bin/browsertest/saucelabsdownload.sh"
+/bin/bash -c "$R_HOME/rtools/bin/browsertest/saucelabsdownload.sh $R_HOME/$4 rice-framework/krad-sampleapp/web/"
 
 while [ -s "$TESTS_FILE" ] 
 do

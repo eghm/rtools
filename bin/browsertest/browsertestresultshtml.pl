@@ -1,6 +1,6 @@
 #!/usr/local/wu/bin/perl
 # From the directory with all the smoke test logs:
-# perl browsertestresults.pl -f=$(pwd) > results.txt
+# perl browsertestresultshtml.pl -f=$(pwd) > results.html
 use Getopt::Long;
 use Tie::File;
 use Date::Manip
@@ -170,11 +170,11 @@ foreach my $testenv (@testenvs) {
         $header .= safari($testenv);
 
     } elsif ($testenv =~ m|.*Windows\s|) {
-        $header .= "<td style=\"text-align:center;vertical-align:middle;\"><img src=\"$imgDir/windows.png\"><br/>";
-        if ($testenv =~ m|.*Windows\s(\d*)\s.*|) {
-            $header .= "$1</br>";	
+        $header .= "<td style=\"text-align:center;vertical-align:middle;\"><img src=\"$imgDir/";
+        if ($testenv =~ m|.*Windows\s(\d*\.*\d*)\s.*|) {
+            $header .= "windows$1.png\"><br>$1</br>";	
         } else {
-            $header .= "XP</br>";		
+            $header .= "windows.png\"><br>XP</br>";	
         }
 
         $header .= chrome($testenv);
