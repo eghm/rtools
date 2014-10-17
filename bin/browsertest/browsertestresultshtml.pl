@@ -125,7 +125,15 @@ foreach my $test (@tests) {
 }
 
 
-my $header = "<html><head></head><body><table border=\"1\">";
+my $header = "<html><head>\n";
+$header .= "	<script type='text/javascript' src='jquery-1.7.2.js'></script>
+    <script type='text/javascript' src='jquery-ui.min.js'></script>
+    <link rel='stylesheet' href='jquery-ui.css' type='text/css' />
+    <script type='text/javascript' src='jquery.stickytableheaders.min.js'></script>    
+    <script type='text/javascript' src='jquery.dragtable.js'></script>
+    <link rel='stylesheet' href='dragtable-default.css' type='text/css' />";
+
+$header .= "</head><body><table id='one' border=\"1\">\n";
 my $headerspace = "    ";;
 for ($i = $testLengthMax; $i >= 0; $i--) {
     $headerspace .= " ";
@@ -146,11 +154,12 @@ foreach my $testenv (@filelist) {
 }
 
 
-$header .= "<tr><td>" . $headerspace . "</td>";
+$header .= "<thead><tr><th data-header='id' style=\"background-color: white;\"><div class='dragtable-drag-handle'></div>" . $headerspace . "</th>";
+my $idnumber = 0;
 foreach my $testenv (@testenvs) {
 	#print "$testenv\n";
     if ($testenv =~ m|.*OS\sX|) {
-        $header .= "<td style=\"text-align:center;vertical-align:middle\"><img src=\"$imgDir/mac.png\"><br/>";	
+        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;background-color: white;\"><img src=\"$imgDir/mac.png\"><br/>";	
         ($testenv =~ m|.*OS\sX\s(\d\d.\d)\s|);
     	$header .= "$1<br/>";	
 
@@ -161,7 +170,7 @@ foreach my $testenv (@testenvs) {
         $header .= safari($testenv);
 
     } elsif ($testenv =~ m|.*Linux|) {
-        $header .= "<td style=\"text-align:center;vertical-align:middle\"><img src=\"$imgDir/linux.png\"><br/>";	
+        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;background-color: white;\"><img src=\"$imgDir/linux.png\"><br/>";	
 
         $header .= chrome($testenv);
         $header .= firefox($testenv);
@@ -170,7 +179,7 @@ foreach my $testenv (@testenvs) {
         $header .= safari($testenv);
 
     } elsif ($testenv =~ m|.*Windows\s|) {
-        $header .= "<td style=\"text-align:center;vertical-align:middle;\"><img src=\"$imgDir/";
+        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;;background-color: white;\"><img src=\"$imgDir/";
         if ($testenv =~ m|.*Windows\s(\d*\.*\d*)\s.*|) {
             $header .= "windows$1.png\"><br>$1</br>";	
         } else {
@@ -184,16 +193,20 @@ foreach my $testenv (@testenvs) {
         $header .= safari($testenv);
 
     } else {
-        $header .= "<td style=\"text-align: center;\">$testenv";
+        $header .= "<th data-header='$idnumber' style=\"text-align: center;background-color: white;\">$testenv";
     }
 
-    $header .= "</td>";	
+    $header .= "</th>";	
+
+    $idnumber++;
 }
-$header .= "</tr>\n";
+$header .= "</tr></thead>\n<tbody\n";
 
 
 print "$header\n";
+
 foreach my $test (@tests) {
+
     my $testsresult = "<td>" . $test;
     for ($i = $testLengthMax - length($test); $i >= 0; $i--) {
         $testsresult .= " ";
@@ -203,24 +216,28 @@ foreach my $test (@tests) {
         my $result = `grep $test $testenv.results`;
 
         ($testenv =~ m|.*-(.*-.*-.*-.*)?-\d*|s);
-        my $dirMatch = $1;
-#	    print "\t$dirMatch\n";
+        my $dirMatch = "$1";
+#	    print "\tDIRMATCH: $dirMatch\n";
 #	    `ls -d *SmokeTest*$dirMatch* > $dirMatch.txt`;
 
-        my $testDir = `ls -d $test-$dirMatch*`;
+        my $testDir = `ls -t -1 -d dls/$test-$dirMatch* | tail -n 1`;
+#        my $testDir = `ls -d $test-$dirMatch*`;
         $testDir = substr($testDir, 0, length($testDir) - 1);
-#        print "\t\t$testDir\n";
+#        print "\t\tTESTDIR: $testDir\n";
+
+        my $testVid = `ls -t -1 -d $testDir/*.flv`;
+
         if ($result =~ m|^.* passed$|s) {
-            $testsresult .= "<td style=\"text-align: center; background-color: 00FF00\">S</td>";
-#            $testsresult .= "<td style=\"text-align: center; background-color: 00FF00\"><a href=\"$testDir/$testDir-video.flv\">S</a></td>";
+#            $testsresult .= "<td style=\"text-align: center; background-color: 00FF00\">S</td>";
+            $testsresult .= "<td style=\"text-align: center; background-color: 00FF00\"><a href=\"$testVid\">S</a></td>";
         } elsif ($result =~ m|^.* failed$|s)  {
-            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\">F</td>";
-#            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\"><a href=\"$testDir/$testDir-video.flv\">F</a></td>";
+#            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\">F</td>";
+            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\"><a href=\"$testVid\">F</a></td>";
         } else {
             $testsresult .= "<td style=\"text-align: center; background-color: FFFF00\">E</td>";
         }
     } 
     print "<tr>$testsresult</tr>\n";
 }
-print "</table></body></html>"
+print '<tbody></table><script type=\'text/javascript\'>$(\'table\').dragtable();$(\'table\').stickyTableHeaders();</script></body></html>';
 
