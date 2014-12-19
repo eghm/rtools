@@ -14,7 +14,7 @@ sub chrome {
 	my $htmlBit = "";
 		
     if ($envLine =~ m|.*\schrome\s|) {
-        $htmlBit .= "<img alt=\"Chrome\" src=\"$imgDir/chrome.png\"><br/>"; 
+        $htmlBit .= "<img alt=\"Chrome\" src=\"$imgDir/chrome.png\"><br/>";	
         ($envLine =~ m|.*chrome\s(\d*)\s.*|);
         $htmlBit .= "$1";
     }
@@ -26,7 +26,7 @@ sub firefox {
 	my $htmlBit = "";
 		
     if ($envLine =~ m|.*\sff\s|) {
-        $htmlBit .= "<img alt=\"Firefox\" src=\"$imgDir/firefox.png\"><br/>";   
+        $htmlBit .= "<img alt=\"Firefox\" src=\"$imgDir/firefox.png\"><br/>";	
         ($envLine =~ m|.*ff\s(\d*)\s.*|);
         $htmlBit .= "$1";
     }
@@ -38,7 +38,7 @@ sub ie {
 	my $htmlBit = "";
 
     if ($envLine =~ m|.*\sie\s|) {
-        $htmlBit .= "<img alt=\"IE\" src=\"$imgDir/ie.png\"><br/>"; 
+        $htmlBit .= "<img alt=\"IE\" src=\"$imgDir/ie.png\"><br/>";	
         ($envLine =~ m|.*ie\s(\d*)\s.*|);
         $htmlBit .= "$1";
     }
@@ -50,7 +50,7 @@ sub opera {
 	my $htmlBit = "";
 
     if ($envLine =~ m|.*\sopera\s|) {
-        $htmlBit .= "<img alt=\"Opera\" src=\"$imgDir/opera.png\"><br/>";   
+        $htmlBit .= "<img alt=\"Opera\" src=\"$imgDir/opera.png\"><br/>";	
         ($envLine =~ m|.*opera\s(\d*)\s.*|);
         $htmlBit .= "$1";
     }
@@ -62,7 +62,7 @@ sub safari {
 	my $htmlBit = "";
 
     if ($envLine =~ m|.*safari|) {
-        $htmlBit .= "<img ant=\"Safari\" src=\"$imgDir/safari.png\"><br/>"; 
+    	$htmlBit .= "<img ant=\"Safari\" src=\"$imgDir/safari.png\"><br/>";	
         ($envLine =~ m|.*safari\s(\d*)|);
         $htmlBit .= "$1";	
     }
@@ -102,20 +102,20 @@ foreach my $importfile (@filelist) {
 # retestresults.sh required this script run on all resuts then run retestresults.sh
 # then manually remove extra results and out, rename results.rerestuls to results, 
 # and files comment out lines in this file run 
-        ($testline =~ m|^.*\s(.*)\s$|s);
-        my $sessionId = $1;
-        #print "\t$test $sessionId\n";
-
-        my @sessionIdStates = `grep $sessionId $importfile`;
-        foreach my $sessionState (@sessionIdStates) {
-            if ($sessionState =~ m|^Registering session.*|s) {
-                #print "\t\t$sessionState\n";
-                ($sessionState =~ m|^Registering session (\S*) $sessionId|s);
-                #print "\t\t\t$1\n";
-                my $state = $1;
-                `echo $test $state >> $importfile.results`;
-            }
-        }
+#        ($testline =~ m|^.*\s(.*)\s$|s);
+#        my $sessionId = $1;
+#        #print "\t$test $sessionId\n";
+#
+#        my @sessionIdStates = `grep $sessionId $importfile`;
+#        foreach my $sessionState (@sessionIdStates) {
+#            if ($sessionState =~ m|^Registering session.*|s) {
+#                #print "\t\t$sessionState\n";
+#                ($sessionState =~ m|^Registering session (\S*) $sessionId|s);
+#                #print "\t\t\t$1\n";
+#                my $state = $1;
+#                `echo $test $state >> $importfile.results`;
+#            }
+#        }
     }
 }
 
@@ -163,7 +163,7 @@ my $idnumber = 0;
 foreach my $testenv (@testenvs) {
 	#print "$testenv\n";
     if ($testenv =~ m|.*OS\sX|) {
-        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;background-color: white;\"><img alt=\"OS X\" src=\"$imgDir/mac.png\"><br/>";    
+        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;background-color: white;\"><img alt=\"OS X\" src=\"$imgDir/mac.png\"><br/>";	
         ($testenv =~ m|.*OS\sX\s(\d\d.\d)\s|);
     	$header .= "$1<br/>";	
 
@@ -174,7 +174,7 @@ foreach my $testenv (@testenvs) {
         $header .= safari($testenv);
 
     } elsif ($testenv =~ m|.*Linux|) {
-        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;background-color: white;\"><img alt=\"Linux\" src=\"$imgDir/linux.png\"><br/>"; 
+        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;background-color: white;\"><img alt=\"Linux\" src=\"$imgDir/linux.png\"><br/>";	
 
         $header .= chrome($testenv);
         $header .= firefox($testenv);
@@ -183,7 +183,7 @@ foreach my $testenv (@testenvs) {
         $header .= safari($testenv);
 
     } elsif ($testenv =~ m|.*Windows\s|) {
-        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;background-color: white;\"><img alt=\"Windows\" src=\"$imgDir/";
+        $header .= "<th data-header='$idnumber' style=\"text-align:center;vertical-align:middle;;background-color: white;\"><img alt=\"Windows\" src=\"$imgDir/";
         if ($testenv =~ m|.*Windows\s(\d*\.*\d*)\s.*|) {
             $header .= "windows$1.png\"><br>$1</br>";	
         } else {
@@ -212,6 +212,7 @@ print "$header\n";
 my $successcount = 0;
 my $failurecount = 0;
 my $errorcount   = 0;
+my $jiracount   = 0;
 
 foreach my $test (@tests) {
 
@@ -224,16 +225,16 @@ foreach my $test (@tests) {
         my $result = `grep $test $testenv.results`;
 
         ($testenv =~ m|.*-(.*-.*-.*-.*)?-\d*|s);
-#        my $dirMatch = "$1";
-##	    print "\tDIRMATCH: $dirMatch\n";
-##	    `ls -d *SmokeTest*$dirMatch* > $dirMatch.txt`;
-#
-#        my $testDir = `ls -t -1 -d dls/$test-$dirMatch* | tail -n 1`;
-##        my $testDir = `ls -d $test-$dirMatch*`;
-#        $testDir = substr($testDir, 0, length($testDir) - 1);
-##        print "\t\tTESTDIR: $testDir\n";
-#
-#        my $testVid = `ls -t -1 -d $testDir/*.flv`;
+        my $dirMatch = "$1";
+#	    print "\tDIRMATCH: $dirMatch\n";
+#	    `ls -d *SmokeTest*$dirMatch* > $dirMatch.txt`;
+
+        my $testDir = `ls -t -1 -d dls/$test-$dirMatch* | tail -n 1`;
+#        my $testDir = `ls -d $test-$dirMatch*`;
+        $testDir = substr($testDir, 0, length($testDir) - 1);
+#        print "\t\tTESTDIR: $testDir\n";
+
+        my $testVid = `ls -t -1 -d $testDir/*.flv`;
 
         if ($result =~ m|^.* passed$|s) {
             $successcount++;
@@ -243,6 +244,12 @@ foreach my $test (@tests) {
             $failurecount++;
             $testsresult .= "<td style=\"text-align: center; background-color: FF0000\">F</td>";
 #            $testsresult .= "<td style=\"text-align: center; background-color: FF0000\"><a href=\"$testVid\">F</a></td>";
+        } elsif ($result =~ m|^.* KULRICE.*|s)  {
+            $jiracount++;
+            ($result =~ m|.*KULRICE-(.*)|s);
+            my $jira = "$1";
+            $testsresult .= "<td style=\"text-align: center; background-color: FFFF00\">$jira</td>";
+#            $testsresult .= "<td style=\"text-align: center; background-color: FFFF00\"><a href=\"$testVid\">$jira</a></td>";
         } else {
             $errorcount++;
             $testsresult .= "<td style=\"text-align: center; background-color: FFFF00\"></td>";
@@ -250,8 +257,9 @@ foreach my $test (@tests) {
     } 
     print "<tr>$testsresult</tr>\n";
 }
+
 print '<tbody></table>';
-print "Passed: $successcount / Failed: $failurecount / Errors: $errorcount\n";
+print "Passed: $successcount / Failed: $failurecount / Errors: $errorcount / Jiraed: $jiracount\n";
 print '<script type=\'text/javascript\'>$(\'table\').dragtable();$(\'table\').stickyTableHeaders();</script>';
 print '</body></html>';
 

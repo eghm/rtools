@@ -20,14 +20,18 @@ for f in $(ls -1 $1/*.results) ; do
         if [ "$FIRST" == "TRUE" ] ;
         then
 
-            for h in $(grep passed $g) ; do 
+            TEST="";
+            for h in $(grep test $g) ; do 
                 echo -e "H: $h"
-                if [ "$h" == "passed" ] || [ "$h" == "failed" ] ;
+                if [[ $h == *.test* ]] ;
                 then
-                    echo "."
-                else
-                    echo -e "s|$(echo $h | cut -d' ' -f 1) failed|$h passed|g"
-                    echo -e "s|$(echo $h | cut -d' ' -f 1) failed|$h passed|g" >> $g.sed        
+                    TEST=$h;
+                elif [ $h != "failed" ] ;
+                then
+                    echo -e "s|$TEST failed|$TEST $h|g"
+                    echo -e "s|$TEST failed|$TEST $h|g" >> $g.sed        
+#                    echo -e "s|$(echo $h | cut -d' ' -f 1) failed|$h passed|g"
+#                    echo -e "s|$(echo $h | cut -d' ' -f 1) failed|$h passed|g" >> $g.sed        
                 fi
 
             done;
@@ -55,11 +59,13 @@ for f in $(ls -1 $1/*.results) ; do
             ((++NEXT_COUNT));
             echo -e "NEXT_COUNT $NEXT_COUNT"
             sed -f $g $FIRST_RESULT.$RUN_COUNT > $FIRST_RESULT.$NEXT_COUNT;
+            rm $FIRST_RESULT.$RUN_COUNT
         fi
         ((++RUN_COUNT));
         echo -e "RUN_COUNT $RUN_COUNT"
     done;
 
+    rm $FIRST_RESULT.sed
     mv $FIRST_RESULT.$RUN_COUNT $FIRST_RESULT.reresults
 
     FIRST_RESULTS="FALSE";
