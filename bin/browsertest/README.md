@@ -6,7 +6,7 @@ The output of the tests can be put into a matrix using https://github.com/eghm/r
 
 Since browser testing can take a long time, I'll often use etc/saucelabtargets.csv as master list and specify a shorter list in the saucelabtargets.csv, in the root of your checked-out project.
 
-A typical BT run for KRAD testing only the Library section would go like:
+#A typical BT run for KRAD testing only the Library section would go like:
 Run BTs on saucelabtargets.csv which is copied into your checked-out project (or manually set up a saucelabstargets.csv in which case the script will not override your saucelabtargets.csv).Y ou must supply the env to run the tests against, saucelabs_user, saucelabs_key, rice project directory (assumed in `$R_HOME`) which will also be used to set the Version on the saucelabs results screen, and any additional parameters to pass to maven (in this case `-Dit.test/**Lib*Aft#*Nav` to run only the Library Navigation AFTs).  Results for this run will be found in /r/logs/rice_2_5 and the log files symbolically linked to /r/rice_2_5
 `/r/rtools/bin/browsertest/testskrad.sh env3.rice.kuali.org saucelabs_user saucelabs_key rice_2_5 admin -Dit.test=**/Lib*Aft#*Nav`
 
