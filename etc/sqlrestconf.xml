@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sqlrestconf>
-  <database>
-    <jdbc-driver-class>DBDRIVER</jdbc-driver-class>
-    <database-url>DBURL</database-url>
-    <user>DBUSER</user>
-    <password>DBPASS</password>
-  </database>
-</sqlrestconf>

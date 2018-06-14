@@ -1,1 +1,0 @@
-mvn archetype:generate -DarchetypeRepository=http://repository-saucelabs.forge.cloudbees.com/release -DarchetypeGroupId=com.saucelabs -DarchetypeArtifactId=quickstart-webdriver-junit -DarchetypeVersion=1.0.7 -DsauceUserName=$1 -DsauceAccessKey=$2

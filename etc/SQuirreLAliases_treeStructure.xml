@@ -1,9 +1,0 @@
-            <Bean Class="net.sourceforge.squirrel_sql.client.gui.db.AliasFolderState">
-                <aliasIdentifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-                    <string>DBUID</string>
-                </aliasIdentifier>
-                <expanded>false</expanded>
-                <folderName/>
-                <kids Indexed="true"/>
-                <selected>false</selected>
-            </Bean>
